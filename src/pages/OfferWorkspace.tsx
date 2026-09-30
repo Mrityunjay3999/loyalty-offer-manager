@@ -425,9 +425,27 @@ export function OfferWorkspace() {
       {/* Lifecycle bar + status actions */}
       <LifecycleBar offer={working} onJump={jumpToField} onApply={applyStatus} />
 
+      {/* Narrow-screen step selector (below 1280px the step nav collapses). */}
+      <div className="mb-3 xl:hidden">
+        <label className="sr-only" htmlFor="step-select">Step</label>
+        <select
+          id="step-select"
+          className="w-full rounded-md border border-border px-3 py-2"
+          value={step}
+          onChange={(e) => setStep(e.target.value)}
+        >
+          {stepInfos.map((s) => (
+            <option key={s.name} value={s.name}>
+              {s.label}
+              {s.status === 'errors' ? ` (${s.errorCount} error${s.errorCount === 1 ? '' : 's'})` : ''}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {/* Body: step nav | form | right panel */}
-      <div className="grid grid-cols-[200px_minmax(0,1fr)_320px] gap-5">
-        <div className="sticky top-4 self-start">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[200px_minmax(0,1fr)_320px]">
+        <div className="sticky top-4 hidden self-start xl:block">
           <StepNav steps={stepInfos} current={step} onSelect={setStep} />
         </div>
 
