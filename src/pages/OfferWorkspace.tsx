@@ -26,6 +26,8 @@ import { ValidationSummary } from '@/components/ValidationSummary';
 import { StepNav, type StepInfo, type StepStatus } from '@/components/workspace/StepNav';
 import { RightPanel } from '@/components/workspace/RightPanel';
 import { LifecycleBar, type ApplyArgs } from '@/components/workspace/LifecycleBar';
+import { GroupedOfferTab } from '@/components/workspace/GroupedOfferTab';
+import { isGroupedTabVisible } from '@/lib/visibility';
 import { fields, fieldsByStep, fieldsById, STEP_ORDER } from '@/lib/dataLoaders';
 import { statusOf } from '@/lib/lifecycle';
 import { optionsForField } from '@/lib/options';
@@ -38,7 +40,7 @@ import { toCsv, downloadCsv } from '@/lib/csv';
 import type { OfferRecord, OfferValue, OfferSetupCombo, FieldDef } from '@/lib/types';
 
 const REVIEW = 'Review';
-const ALL_STEPS = [...STEP_ORDER, REVIEW];
+const GROUPED_TAB = 'Child promotions';
 
 type SaveState = 'saved' | 'saving' | 'unsaved';
 
@@ -239,9 +241,21 @@ export function OfferWorkspace() {
     [working, updateOffer, addAudit, role, push],
   );
 
+  // Steps include the Child promotions tab when Grouped Offer = Yes.
+  const allSteps = useMemo(
+    () =>
+      isGroupedTabVisible(working)
+        ? [...STEP_ORDER, GROUPED_TAB, REVIEW]
+        : [...STEP_ORDER, REVIEW],
+    [working],
+  );
+
   // --- step statuses ---
   const stepInfos: StepInfo[] = useMemo(() => {
-    return ALL_STEPS.map((name) => {
+    return allSteps.map((name) => {
+      if (name === GROUPED_TAB) {
+        return { name, label: GROUPED_TAB, status: 'inProgress' as StepStatus, errorCount: 0 };
+      }
       if (name === REVIEW) {
         const st: StepStatus =
           validation.errors.length > 0 ? 'errors' : 'complete';
@@ -262,7 +276,7 @@ export function OfferWorkspace() {
       else st = 'inProgress';
       return { name, label: name, status: st, errorCount: stepErrors.length };
     });
-  }, [working, validation]);
+  }, [working, validation, allSteps]);
 
   function jumpToField(fieldId: string) {
     const f = fieldsById[fieldId];
@@ -304,7 +318,7 @@ export function OfferWorkspace() {
   }
 
   const slWarn = softLockWarning(working, softLockDate(working));
-  const stepIndex = ALL_STEPS.indexOf(step);
+  const stepIndex = allSteps.indexOf(step);
 
   return (
     <div className="pb-20">
@@ -406,7 +420,9 @@ export function OfferWorkspace() {
         </div>
 
         <div className="min-w-0">
-          {step === REVIEW ? (
+          {step === GROUPED_TAB ? (
+            <GroupedOfferTab offer={working} readOnly={readOnly} />
+          ) : step === REVIEW ? (
             <ReviewStep working={working} onJump={jumpToField} errors={validation.errors} warnings={validation.warnings} />
           ) : (
             <StepForm
@@ -438,7 +454,7 @@ export function OfferWorkspace() {
       <div className="fixed bottom-0 left-60 right-0 flex items-center justify-between border-t border-border bg-white px-6 py-3">
         <button
           disabled={stepIndex === 0}
-          onClick={() => setStep(ALL_STEPS[Math.max(0, stepIndex - 1)])}
+          onClick={() => setStep(allSteps[Math.max(0, stepIndex - 1)])}
           className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 hover:bg-surface disabled:opacity-40"
         >
           <ChevronLeft size={15} /> Back
@@ -464,8 +480,8 @@ export function OfferWorkspace() {
             </button>
           ) : (
             <button
-              disabled={stepIndex === ALL_STEPS.length - 1}
-              onClick={() => setStep(ALL_STEPS[Math.min(ALL_STEPS.length - 1, stepIndex + 1)])}
+              disabled={stepIndex === allSteps.length - 1}
+              onClick={() => setStep(allSteps[Math.min(allSteps.length - 1, stepIndex + 1)])}
               className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-white hover:bg-primary/90 disabled:opacity-40"
             >
               Next <ChevronRight size={15} />

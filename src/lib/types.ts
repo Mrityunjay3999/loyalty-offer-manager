@@ -107,6 +107,20 @@ export interface Constants {
 }
 export type GroupedChild = Record<string, OfferValue>;
 
+/** Editable child promotion row (spec 7.5). */
+export interface ChildPromotion {
+  id: string;
+  offerName: string;
+  startDate: string;
+  endDate: string;
+  numberOfDays: number | string;
+  transactionExternalRefId: string;
+  activationDescriptor: string;
+  activations: number | string;
+  bonusedMembers: number | string;
+  bonusPtsIssued: number | string;
+}
+
 export interface ReferenceData {
   tieringDefinitions: TieringDefinition[];
   tieringNote: string;

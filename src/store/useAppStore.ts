@@ -20,6 +20,8 @@ import type {
   LifecycleStatus,
   OfferSetupCombo,
   SoftLockPlannerRow,
+  ChildPromotion,
+  GroupedChild,
 } from '@/lib/types';
 
 export const STORAGE_KEY = 'lom-prototype-v1';
@@ -80,6 +82,7 @@ export interface AppState extends EditableReference {
   role: Role;
   savedViews: SavedView[];
   feedLog: FeedLogEntry[];
+  groupedChildren: Record<string, ChildPromotion[]>;
 
   // --- actions ---
   setRole: (role: Role) => void;
@@ -94,6 +97,7 @@ export interface AppState extends EditableReference {
   addSavedView: (view: Omit<SavedView, 'id'>) => void;
   deleteSavedView: (id: string) => void;
   addFeedLog: (entry: Omit<FeedLogEntry, 'id' | 'timestamp'>) => void;
+  setGroupedChildren: (uid: string, children: ChildPromotion[]) => void;
 }
 
 const RESULT_FIELD_IDS = fieldsByStep['9. Results'].map((f) => f.id);
@@ -105,7 +109,38 @@ type AppData = EditableReference & {
   role: Role;
   savedViews: SavedView[];
   feedLog: FeedLogEntry[];
+  groupedChildren: Record<string, ChildPromotion[]>;
 };
+
+/** Map a seed grouped child (verbose spreadsheet keys) to an editable row. */
+function toChild(g: GroupedChild, i: number): ChildPromotion {
+  const val = (k: string) => (g[k] === null || g[k] === undefined ? '' : g[k]);
+  return {
+    id: `child-seed-${i}`,
+    offerName: String(val('Offer Name')),
+    startDate: String(val('Start Date')).slice(0, 10),
+    endDate: String(val('End Date')).slice(0, 10),
+    numberOfDays: (g['# of Days Offer Ran'] as number) ?? '',
+    transactionExternalRefId: String(val('Transaction External Ref ID')),
+    activationDescriptor: String(val('Activation Descriptor (External Reference ID)')),
+    activations: (g['Activations'] as number) ?? '',
+    bonusedMembers: (g['Bonused Members'] as number) ?? '',
+    bonusPtsIssued: (g['Bonus Pts Issued'] as number) ?? '',
+  };
+}
+
+/** Seed child promotions for the two documented grouped sample offers. */
+function seedGroupedChildren(offers: OfferRecord[]): Record<string, ChildPromotion[]> {
+  const out: Record<string, ChildPromotion[]> = {};
+  const samples = reference.groupedChildrenSamples;
+  for (const o of offers) {
+    const name = String(o.offerName ?? '');
+    if (o._uid && samples[name]) {
+      out[o._uid] = samples[name].map((g, i) => toChild(g, i));
+    }
+  }
+  return out;
+}
 
 function initialState(): AppData {
   const offers = freshSampleOffers();
@@ -115,6 +150,7 @@ function initialState(): AppData {
     role: 'Offer Team Editor',
     savedViews: [],
     feedLog: [],
+    groupedChildren: seedGroupedChildren(offers),
     ...seedEditableReference(),
   };
 }
@@ -243,6 +279,9 @@ export const useAppStore = create<AppState>()(
             ...s.feedLog,
           ],
         })),
+
+      setGroupedChildren: (uid, children) =>
+        set((s) => ({ groupedChildren: { ...s.groupedChildren, [uid]: children } })),
     }),
     {
       name: STORAGE_KEY,
