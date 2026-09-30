@@ -56,7 +56,12 @@ export const checklistFields: FieldDef[] = fields.filter((f) => f.checklist);
 
 /** Deep clone of the seed offers, so the store never mutates the imported JSON.
  *  Each offer gets a stable internal _uid (prototype-only) for identity. */
+export const SEED_IMPORT_ISO = '2026-09-01T09:00:00.000Z';
 export function freshSampleOffers(): OfferRecord[] {
   const clone = JSON.parse(JSON.stringify(sampleOffers)) as OfferRecord[];
-  return clone.map((o, i) => ({ _uid: `seed-${i}-${o.offerId ?? i}`, ...o }));
+  return clone.map((o, i) => ({
+    _uid: `seed-${i}-${o.offerId ?? i}`,
+    _updatedAt: SEED_IMPORT_ISO,
+    ...o,
+  }));
 }

@@ -56,6 +56,8 @@ export interface OfferRecord {
   [fieldId: string]: OfferValue | undefined;
   /** Stable internal id (prototype only; not a spreadsheet field). */
   _uid?: string;
+  /** Last-updated timestamp (ISO); prototype-only. */
+  _updatedAt?: string;
   _sampleReason?: string;
 }
 
@@ -161,6 +163,7 @@ export type AuditAction =
 export interface AuditEntry {
   id: string;
   offerId: string; // offer's business Offer ID, or a reference-data marker
+  offerUid?: string; // stable internal id, for reliable per-offer history
   timestamp: string; // ISO
   user: Role;
   action: AuditAction;

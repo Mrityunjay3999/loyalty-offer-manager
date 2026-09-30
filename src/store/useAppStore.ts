@@ -4,7 +4,10 @@ import {
   freshSampleOffers,
   dropdowns as seedDropdowns,
   reference,
+  checklistFields,
+  fieldsByStep,
 } from '@/lib/dataLoaders';
+import { todayISO } from '@/lib/format';
 import type {
   OfferRecord,
   AuditEntry,
@@ -33,6 +36,7 @@ function seedAuditLog(offers: OfferRecord[]): AuditEntry[] {
   return offers.map((o) => ({
     id: nextId('audit'),
     offerId: String(o.offerId ?? ''),
+    offerUid: o._uid,
     timestamp: new Date('2026-09-01T09:00:00').toISOString(),
     user: 'Admin' as Role,
     action: 'imported',
@@ -80,9 +84,29 @@ export interface AppState extends EditableReference {
   // --- actions ---
   setRole: (role: Role) => void;
   resetDemoData: () => void;
+  addAudit: (entry: Omit<AuditEntry, 'id' | 'timestamp'> & { timestamp?: string }) => void;
+  createDraft: () => string; // returns new _uid
+  updateOffer: (uid: string, patch: Partial<OfferRecord>) => void;
+  copyOffer: (uid: string) => string | null; // returns new _uid
+  cancelOffer: (uid: string, reason: string, dateISO?: string) => void;
+  changeStatus: (uid: string, newStatus: string, comment?: string, extra?: Partial<OfferRecord>) => void;
+  addSavedView: (view: Omit<SavedView, 'id'>) => void;
+  deleteSavedView: (id: string) => void;
+  addFeedLog: (entry: Omit<FeedLogEntry, 'id' | 'timestamp'>) => void;
 }
 
-function initialState(): Omit<AppState, 'setRole' | 'resetDemoData'> {
+const RESULT_FIELD_IDS = fieldsByStep['9. Results'].map((f) => f.id);
+const CHECKLIST_FIELD_IDS = checklistFields.map((f) => f.id);
+
+type AppData = EditableReference & {
+  offers: OfferRecord[];
+  auditLog: AuditEntry[];
+  role: Role;
+  savedViews: SavedView[];
+  feedLog: FeedLogEntry[];
+};
+
+function initialState(): AppData {
   const offers = freshSampleOffers();
   return {
     offers,
@@ -96,13 +120,125 @@ function initialState(): Omit<AppState, 'setRole' | 'resetDemoData'> {
 
 export const useAppStore = create<AppState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...initialState(),
       setRole: (role) => set({ role }),
       resetDemoData: () => {
         // Rebuild every seeded slice from the source JSON, keeping the chosen role.
         set((state) => ({ ...initialState(), role: state.role }));
       },
+
+      addAudit: (entry) =>
+        set((s) => ({
+          auditLog: [
+            {
+              id: nextId('audit'),
+              timestamp: entry.timestamp ?? new Date().toISOString(),
+              ...entry,
+            } as AuditEntry,
+            ...s.auditLog,
+          ],
+        })),
+
+      createDraft: () => {
+        const uid = nextId('offer');
+        const offer: OfferRecord = {
+          _uid: uid,
+          _updatedAt: new Date().toISOString(),
+          buildStatus: 'Draft',
+        };
+        set((s) => ({ offers: [offer, ...s.offers] }));
+        get().addAudit({ offerId: '', offerUid: uid, user: get().role, action: 'created', comment: 'New draft created' });
+        return uid;
+      },
+
+      updateOffer: (uid, patch) =>
+        set((s) => ({
+          offers: s.offers.map((o) =>
+            o._uid === uid ? { ...o, ...patch, _updatedAt: new Date().toISOString() } : o,
+          ),
+        })),
+
+      copyOffer: (uid) => {
+        const src = get().offers.find((o) => o._uid === uid);
+        if (!src) return null;
+        const newUid = nextId('offer');
+        const copy: OfferRecord = { ...src };
+        copy._uid = newUid;
+        copy._updatedAt = new Date().toISOString();
+        delete copy._sampleReason;
+        copy.offerId = ''; // blank per 11.2
+        copy.offerName = `COPY OF ${src.offerName ?? ''}`.trim();
+        copy.buildStatus = 'Draft';
+        for (const id of CHECKLIST_FIELD_IDS) copy[id] = ''; // checklist reset
+        for (const id of RESULT_FIELD_IDS) copy[id] = ''; // results cleared
+        // forecast kept (not touched)
+        set((s) => ({ offers: [copy, ...s.offers] }));
+        const role = get().role;
+        get().addAudit({
+          offerId: String(src.offerId ?? ''),
+          offerUid: uid,
+          user: role,
+          action: 'copied from',
+          comment: `Copied to new draft "${copy.offerName}"`,
+        });
+        get().addAudit({
+          offerId: '',
+          offerUid: newUid,
+          user: role,
+          action: 'copied from',
+          comment: `Copied from "${src.offerName ?? src.offerId}"`,
+        });
+        return newUid;
+      },
+
+      cancelOffer: (uid, reason, dateISO) => {
+        const src = get().offers.find((o) => o._uid === uid);
+        const prev = src?.buildStatus;
+        get().updateOffer(uid, {
+          buildStatus: 'Cancelled',
+          dateOfChangeCancel: dateISO ?? todayISO(),
+        });
+        get().addAudit({
+          offerId: String(src?.offerId ?? ''),
+          offerUid: uid,
+          user: get().role,
+          action: 'cancelled',
+          fieldLabel: 'Status',
+          oldValue: prev ?? null,
+          newValue: 'Cancelled',
+          comment: reason,
+        });
+      },
+
+      changeStatus: (uid, newStatus, comment, extra) => {
+        const src = get().offers.find((o) => o._uid === uid);
+        const prev = src?.buildStatus;
+        get().updateOffer(uid, { buildStatus: newStatus, ...(extra ?? {}) });
+        get().addAudit({
+          offerId: String(src?.offerId ?? ''),
+          offerUid: uid,
+          user: get().role,
+          action: 'status changed',
+          fieldLabel: 'Status',
+          oldValue: prev ?? null,
+          newValue: newStatus,
+          comment,
+        });
+      },
+
+      addSavedView: (view) =>
+        set((s) => ({ savedViews: [...s.savedViews, { id: nextId('view'), ...view }] })),
+      deleteSavedView: (id) =>
+        set((s) => ({ savedViews: s.savedViews.filter((v) => v.id !== id) })),
+
+      addFeedLog: (entry) =>
+        set((s) => ({
+          feedLog: [
+            { id: nextId('feed'), timestamp: new Date().toISOString(), ...entry },
+            ...s.feedLog,
+          ],
+        })),
     }),
     {
       name: STORAGE_KEY,
