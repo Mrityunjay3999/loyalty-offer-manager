@@ -2,7 +2,7 @@
 // Constants come from reference.constants. "N/A", "", null count as no value.
 // Never return NaN/Infinity/#N/A — callers render "Not entered" / "Not available".
 import { format as fmtDate } from 'date-fns';
-import { reference } from './dataLoaders';
+import { reference, fieldsById } from './dataLoaders';
 import { isNoValue, toNumber, parseISO } from './format';
 import type { OfferRecord, OfferValue } from './types';
 
@@ -436,4 +436,50 @@ export function computedFieldValue(fieldId: string, o: OfferRecord): OfferValue 
     default:
       return null;
   }
+}
+
+// ---------------------------------------------------------------------------
+// Resolve a metadata / submission-form calendarFieldId to a display value.
+// Used by the Data Feed preview and the Inspire submission-form preview.
+// ---------------------------------------------------------------------------
+
+function calcMapFor(o: OfferRecord): Record<string, unknown> {
+  const f = computeForecast(o);
+  const r = computeResults(o);
+  return {
+    ...f,
+    fiscalMonth: fiscalMonth(o),
+    fiscalYear: fiscalYear(o),
+    bonusRate: r.bonusRate,
+    activationRate: r.activationRate,
+    bonusedSalesActual: r.bonusedSalesActual,
+    basePointsActual: r.basePointsActual,
+    basePointsRedeemableActual: r.basePointsRedeemableActual,
+    bonusPointsRedeemableActual: r.bonusPointsRedeemableActual,
+    bonusRedeemableActualWithBreakage: r.bonusRedeemableActualWithBreakage,
+    spendPerBonusedMember: r.spendPerBonusedMember,
+    ltbpOutstanding: r.ltbpOutstanding,
+    ltbpRemoved: r.ltbpRemoved,
+  };
+}
+
+function fmtValue(v: unknown): string {
+  if (isNoValue(v)) return v === 'N/A' ? 'N/A' : 'Not entered';
+  if (typeof v === 'number') return v.toLocaleString('en-US', { maximumFractionDigits: 2 });
+  return String(v);
+}
+
+export function resolveCalendarFieldValue(
+  calendarFieldId: string | null | undefined,
+  o: OfferRecord,
+): { text: string; captured: boolean } {
+  if (!calendarFieldId) return { text: 'Not captured in the calendar form', captured: false };
+  if (calendarFieldId.startsWith('calc.')) {
+    return { text: fmtValue(calcMapFor(o)[calendarFieldId.slice(5)]), captured: true };
+  }
+  const f = fieldsById[calendarFieldId];
+  if (f && f.control === 'computed') {
+    return { text: fmtValue(computedFieldValue(calendarFieldId, o)), captured: true };
+  }
+  return { text: fmtValue(o[calendarFieldId]), captured: true };
 }

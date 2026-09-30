@@ -27,6 +27,8 @@ import { StepNav, type StepInfo, type StepStatus } from '@/components/workspace/
 import { RightPanel } from '@/components/workspace/RightPanel';
 import { LifecycleBar, type ApplyArgs } from '@/components/workspace/LifecycleBar';
 import { GroupedOfferTab } from '@/components/workspace/GroupedOfferTab';
+import { InspireFormModal } from '@/components/InspireFormModal';
+import { PhaseBadge } from '@/components/PhaseBadge';
 import { isGroupedTabVisible } from '@/lib/visibility';
 import { fields, fieldsByStep, fieldsById, STEP_ORDER } from '@/lib/dataLoaders';
 import { statusOf } from '@/lib/lifecycle';
@@ -78,6 +80,7 @@ export function OfferWorkspace() {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [inspireForm, setInspireForm] = useState<'MFP' | 'RA' | null>(null);
 
   // Re-init working when the offer id changes.
   const loadedUid = useRef<string | undefined>(undefined);
@@ -381,25 +384,34 @@ export function OfferWorkspace() {
                 <XCircle size={15} /> Cancel offer
               </button>
             )}
-            {isDraft && can(role, 'deleteDraft') && (
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger asChild>
-                  <button className="rounded-md border border-border p-1.5 hover:bg-surface">
-                    <MoreVertical size={16} />
-                  </button>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Portal>
-                  <DropdownMenu.Content align="end" className="z-50 min-w-[150px] rounded-md border border-border bg-white py-1 shadow-lg">
-                    <DropdownMenu.Item
-                      onSelect={() => setDeleteOpen(true)}
-                      className="flex cursor-pointer items-center gap-2 px-3 py-1.5 text-danger outline-none hover:bg-surface"
-                    >
-                      <Trash2 size={14} /> Delete draft
-                    </DropdownMenu.Item>
-                  </DropdownMenu.Content>
-                </DropdownMenu.Portal>
-              </DropdownMenu.Root>
-            )}
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <button className="rounded-md border border-border p-1.5 hover:bg-surface">
+                  <MoreVertical size={16} />
+                </button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content align="end" className="z-50 min-w-[230px] rounded-md border border-border bg-white py-1 shadow-lg">
+                  <DropdownMenu.Item onSelect={() => setInspireForm('MFP')} className="flex cursor-pointer items-center gap-2 px-3 py-1.5 outline-none hover:bg-surface">
+                    Generate Inspire submission form (MFP)
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item onSelect={() => setInspireForm('RA')} className="flex cursor-pointer items-center gap-2 px-3 py-1.5 outline-none hover:bg-surface">
+                    Generate Inspire submission form (RA)
+                  </DropdownMenu.Item>
+                  {isDraft && can(role, 'deleteDraft') && (
+                    <>
+                      <DropdownMenu.Separator className="my-1 h-px bg-border" />
+                      <DropdownMenu.Item
+                        onSelect={() => setDeleteOpen(true)}
+                        className="flex cursor-pointer items-center gap-2 px-3 py-1.5 text-danger outline-none hover:bg-surface"
+                      >
+                        <Trash2 size={14} /> Delete draft
+                      </DropdownMenu.Item>
+                    </>
+                  )}
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu.Root>
           </div>
         </div>
 
@@ -434,6 +446,7 @@ export function OfferWorkspace() {
               warningByField={warningByField}
               dropdowns={dropdowns}
               categorySubCategory={categorySubCategory}
+              onOpenInspire={setInspireForm}
             />
           )}
         </div>
@@ -496,6 +509,11 @@ export function OfferWorkspace() {
         open={historyOpen}
         onOpenChange={setHistoryOpen}
       />
+      <InspireFormModal
+        offer={inspireForm ? working : null}
+        form={inspireForm}
+        onClose={() => setInspireForm(null)}
+      />
       <ConfirmDialog
         open={cancelOpen}
         title="Cancel offer"
@@ -551,6 +569,7 @@ function StepForm({
   warningByField,
   dropdowns,
   categorySubCategory,
+  onOpenInspire,
 }: {
   step: string;
   working: OfferRecord;
@@ -560,6 +579,7 @@ function StepForm({
   warningByField: Record<string, string>;
   dropdowns: Record<string, string[]>;
   categorySubCategory: import('@/lib/types').CategorySubCategory[];
+  onOpenInspire: (form: 'MFP' | 'RA') => void;
 }) {
   const stepFields = (fieldsByStep[step] ?? []).filter(
     (f) => f.control !== 'hidden' && isFieldVisible(f.id, working),
@@ -573,9 +593,39 @@ function StepForm({
     else blocks.push({ group: f.group, items: [f] });
   }
 
+  const phase2Disabled =
+    'inline-flex cursor-not-allowed items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-sm text-muted opacity-70';
+
   return (
     <div>
-      <h2 className="mb-4 text-lg font-semibold text-ink">{step}</h2>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-lg font-semibold text-ink">{step}</h2>
+        <div className="flex flex-wrap items-center gap-2">
+          {step === '6. Content, Signage & SKUs' && (
+            <>
+              <button onClick={() => onOpenInspire('MFP')} className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-sm hover:bg-surface">
+                Generate Inspire form (MFP) <PhaseBadge note="Phase 2 preview" />
+              </button>
+              <button onClick={() => onOpenInspire('RA')} className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-sm hover:bg-surface">
+                RA
+              </button>
+              <button disabled className={phase2Disabled} title="Integration approach to be decided">
+                Open SKU List Uploader <PhaseBadge />
+              </button>
+            </>
+          )}
+          {step === '7. Forecast' && (
+            <button disabled className={phase2Disabled} title="Confirmed for Phase 2, not MVP.">
+              Pre-fill from Loyalty Offer Forecast data product <PhaseBadge note="Confirmed for Phase 2, not MVP." />
+            </button>
+          )}
+          {step === '9. Results' && (
+            <button disabled className={phase2Disabled}>
+              Pull actuals from LOPD <PhaseBadge />
+            </button>
+          )}
+        </div>
+      </div>
       <div className="space-y-5">
         {blocks.map((block, i) =>
           block.group ? (
