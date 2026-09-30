@@ -54,7 +54,9 @@ export const systemFields: FieldDef[] = fields.filter(
 /** Fields that are part of the build checklist (6 per the corrected data). */
 export const checklistFields: FieldDef[] = fields.filter((f) => f.checklist);
 
-/** Deep clone of the seed offers, so the store never mutates the imported JSON. */
+/** Deep clone of the seed offers, so the store never mutates the imported JSON.
+ *  Each offer gets a stable internal _uid (prototype-only) for identity. */
 export function freshSampleOffers(): OfferRecord[] {
-  return JSON.parse(JSON.stringify(sampleOffers)) as OfferRecord[];
+  const clone = JSON.parse(JSON.stringify(sampleOffers)) as OfferRecord[];
+  return clone.map((o, i) => ({ _uid: `seed-${i}-${o.offerId ?? i}`, ...o }));
 }

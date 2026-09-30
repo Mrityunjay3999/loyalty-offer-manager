@@ -54,6 +54,8 @@ export interface FieldDef {
 export type OfferValue = string | number | boolean | null;
 export interface OfferRecord {
   [fieldId: string]: OfferValue | undefined;
+  /** Stable internal id (prototype only; not a spreadsheet field). */
+  _uid?: string;
   _sampleReason?: string;
 }
 
