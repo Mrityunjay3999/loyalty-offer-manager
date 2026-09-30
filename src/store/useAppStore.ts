@@ -87,6 +87,7 @@ export interface AppState extends EditableReference {
   addAudit: (entry: Omit<AuditEntry, 'id' | 'timestamp'> & { timestamp?: string }) => void;
   createDraft: () => string; // returns new _uid
   updateOffer: (uid: string, patch: Partial<OfferRecord>) => void;
+  deleteOffer: (uid: string) => void;
   copyOffer: (uid: string) => string | null; // returns new _uid
   cancelOffer: (uid: string, reason: string, dateISO?: string) => void;
   changeStatus: (uid: string, newStatus: string, comment?: string, extra?: Partial<OfferRecord>) => void;
@@ -158,6 +159,9 @@ export const useAppStore = create<AppState>()(
             o._uid === uid ? { ...o, ...patch, _updatedAt: new Date().toISOString() } : o,
           ),
         })),
+
+      deleteOffer: (uid) =>
+        set((s) => ({ offers: s.offers.filter((o) => o._uid !== uid) })),
 
       copyOffer: (uid) => {
         const src = get().offers.find((o) => o._uid === uid);
