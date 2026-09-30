@@ -10,6 +10,7 @@ import { EvergreenOffers } from '@/pages/EvergreenOffers';
 import { DataDictionary } from '@/pages/DataDictionary';
 import { DataFeedPreview } from '@/pages/DataFeedPreview';
 import { Phase2Calendar } from '@/pages/Phase2Calendar';
+import { FieldPreview } from '@/pages/dev/FieldPreview';
 import { NotFound } from '@/pages/NotFound';
 
 export default function App() {
@@ -27,6 +28,7 @@ export default function App() {
           <Route path="dictionary" element={<DataDictionary />} />
           <Route path="data-feed" element={<DataFeedPreview />} />
           <Route path="calendar" element={<Phase2Calendar />} />
+          <Route path="dev/fields" element={<FieldPreview />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

@@ -1,0 +1,269 @@
+import { Calculator } from 'lucide-react';
+import type { FieldDef, OfferValue } from '@/lib/types';
+import { FieldTooltip } from './FieldTooltip';
+import { Combobox } from './Combobox';
+import { isNoValue } from '@/lib/format';
+
+const CHAR_COUNT_FIELDS = new Set(['activationDescriptor', 'canActivationDescriptor']);
+
+export interface FieldRendererProps {
+  field: FieldDef;
+  value: OfferValue | undefined;
+  onChange: (value: OfferValue) => void;
+  disabled?: boolean;
+  /** Display string for computed fields (from calculations). */
+  computedValue?: string | number | null;
+  options?: string[];
+  error?: string;
+  warning?: string;
+}
+
+export function FieldRenderer({
+  field,
+  value,
+  onChange,
+  disabled = false,
+  computedValue,
+  options = [],
+  error,
+  warning,
+}: FieldRendererProps) {
+  if (field.control === 'hidden') return null;
+
+  const allowNA = Boolean(field.allowNA) || field.control === 'dateOrNA';
+  const isNA = value === 'N/A';
+  const readOnly = disabled || field.readOnlyInForm;
+  const fieldDomId = `field-${field.id}`;
+
+  const inputBase =
+    'w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:bg-surface disabled:text-muted';
+  const borderClass = error
+    ? 'border-danger focus:border-danger focus:ring-danger'
+    : 'border-border focus:border-primary focus:ring-primary';
+  const cls = `${inputBase} ${borderClass}`;
+
+  function toggleNA(on: boolean) {
+    onChange(on ? 'N/A' : '');
+  }
+
+  function renderControl() {
+    // N/A takes over the input when toggled on.
+    if (allowNA && isNA) {
+      return (
+        <div className="flex items-center rounded-md border border-border bg-surface px-3 py-2 text-muted">
+          N/A
+        </div>
+      );
+    }
+
+    switch (field.control) {
+      case 'computed':
+        return (
+          <div className="flex items-center gap-2 rounded-md border border-border bg-surface px-3 py-2 text-ink">
+            <Calculator size={14} className="shrink-0 text-muted" />
+            <span>
+              {computedValue === null || computedValue === undefined || computedValue === ''
+                ? 'Not entered'
+                : String(computedValue)}
+            </span>
+          </div>
+        );
+
+      case 'textarea':
+        return (
+          <textarea
+            id={fieldDomId}
+            className={cls}
+            rows={3}
+            disabled={readOnly}
+            value={isNoValue(value) ? '' : String(value)}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        );
+
+      case 'select':
+      case 'yesno': {
+        const opts = options;
+        return (
+          <select
+            id={fieldDomId}
+            className={cls}
+            disabled={readOnly}
+            value={isNoValue(value) && value !== 'N/A' ? '' : String(value ?? '')}
+            onChange={(e) => onChange(e.target.value)}
+          >
+            <option value="">— Select —</option>
+            {opts.map((o) => (
+              <option key={o} value={o}>
+                {o}
+              </option>
+            ))}
+          </select>
+        );
+      }
+
+      case 'combobox':
+        return (
+          <Combobox
+            id={fieldDomId}
+            value={isNoValue(value) && value !== 'N/A' ? '' : String(value ?? '')}
+            onChange={(v) => onChange(v)}
+            options={options}
+            disabled={readOnly}
+            allowFreeText={field.id === 'ppContact'}
+            placeholder="Search…"
+          />
+        );
+
+      case 'date':
+      case 'dateOrNA':
+        return (
+          <input
+            id={fieldDomId}
+            type="date"
+            className={cls}
+            disabled={readOnly}
+            value={isNoValue(value) ? '' : String(value).slice(0, 10)}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        );
+
+      case 'number':
+        return (
+          <input
+            id={fieldDomId}
+            type="number"
+            className={cls}
+            disabled={readOnly}
+            value={isNoValue(value) ? '' : String(value)}
+            onChange={(e) =>
+              onChange(e.target.value === '' ? '' : Number(e.target.value))
+            }
+          />
+        );
+
+      case 'currency':
+        return (
+          <div className="relative">
+            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted">
+              $
+            </span>
+            <input
+              id={fieldDomId}
+              type="number"
+              step="0.01"
+              className={`${cls} pl-6`}
+              disabled={readOnly}
+              value={isNoValue(value) ? '' : String(value)}
+              onChange={(e) =>
+                onChange(e.target.value === '' ? '' : Number(e.target.value))
+              }
+            />
+          </div>
+        );
+
+      case 'percent': {
+        // Stored as decimal (0.85), entered as percent (85).
+        const pctDisplay = isNoValue(value) ? '' : String(Number(value) * 100);
+        return (
+          <div className="relative">
+            <input
+              id={fieldDomId}
+              type="number"
+              step="any"
+              className={`${cls} pr-7`}
+              disabled={readOnly}
+              value={pctDisplay}
+              onChange={(e) =>
+                onChange(e.target.value === '' ? '' : Number(e.target.value) / 100)
+              }
+            />
+            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted">
+              %
+            </span>
+          </div>
+        );
+      }
+
+      case 'url':
+        return (
+          <input
+            id={fieldDomId}
+            type="url"
+            className={cls}
+            placeholder="https://…"
+            disabled={readOnly}
+            value={isNoValue(value) ? '' : String(value)}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        );
+
+      case 'text':
+      default:
+        return (
+          <input
+            id={fieldDomId}
+            type="text"
+            className={cls}
+            disabled={readOnly}
+            value={isNoValue(value) ? '' : String(value)}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        );
+    }
+  }
+
+  const charCount =
+    CHAR_COUNT_FIELDS.has(field.id) && !isNoValue(value) ? String(value).length : null;
+
+  return (
+    <div>
+      <label
+        htmlFor={fieldDomId}
+        className="mb-1 flex items-center gap-1.5 font-medium text-ink"
+      >
+        <span>
+          {field.label}
+          {field.required && <span className="ml-0.5 text-danger">*</span>}
+        </span>
+        <FieldTooltip
+          field={field}
+          optionCount={
+            field.control === 'select' || field.control === 'combobox'
+              ? options.length
+              : undefined
+          }
+          selectedValue={value}
+        />
+        {field.phase === 'Phase 2' && (
+          <span className="rounded-full border border-accent px-1.5 py-0.5 text-[11px] font-medium text-accent">
+            Phase 2
+          </span>
+        )}
+      </label>
+
+      {renderControl()}
+
+      <div className="mt-1 flex items-center justify-between gap-2">
+        <div className="flex-1">
+          {error && <p className="text-xs text-danger">{error}</p>}
+          {!error && warning && <p className="text-xs text-warning">{warning}</p>}
+        </div>
+        {charCount !== null && (
+          <span className="text-xs text-muted">{charCount} characters</span>
+        )}
+        {allowNA && field.control !== 'computed' && (
+          <label className="flex items-center gap-1 text-xs text-muted">
+            <input
+              type="checkbox"
+              checked={isNA}
+              disabled={readOnly}
+              onChange={(e) => toggleNA(e.target.checked)}
+            />
+            N/A
+          </label>
+        )}
+      </div>
+    </div>
+  );
+}
