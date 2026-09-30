@@ -22,6 +22,7 @@ import type {
   SoftLockPlannerRow,
   ChildPromotion,
   GroupedChild,
+  OfferValue,
 } from '@/lib/types';
 
 export const STORAGE_KEY = 'lom-prototype-v1';
@@ -57,6 +58,7 @@ interface EditableReference {
   offerSetupCombos: OfferSetupCombo[];
   softLockPlanner: SoftLockPlannerRow[];
   deactivationRules: string[];
+  evergreenOffers: Array<Record<string, OfferValue>>;
   /** Set of dropdown "list::value" entries the Admin has retired (proposed rule). */
   retiredValues: string[];
 }
@@ -71,6 +73,7 @@ function seedEditableReference(): EditableReference {
       offerSetupCombos: reference.offerSetupCombos,
       softLockPlanner: reference.softLockPlanner,
       deactivationRules: reference.deactivationRules,
+      evergreenOffers: reference.evergreenOffers,
       retiredValues: [],
     }),
   ) as EditableReference;
@@ -98,6 +101,8 @@ export interface AppState extends EditableReference {
   deleteSavedView: (id: string) => void;
   addFeedLog: (entry: Omit<FeedLogEntry, 'id' | 'timestamp'>) => void;
   setGroupedChildren: (uid: string, children: ChildPromotion[]) => void;
+  /** Patch any editable reference slice and log it to the audit trail. */
+  editReference: (patch: Partial<EditableReference>, summary: string) => void;
 }
 
 const RESULT_FIELD_IDS = fieldsByStep['9. Results'].map((f) => f.id);
@@ -282,6 +287,16 @@ export const useAppStore = create<AppState>()(
 
       setGroupedChildren: (uid, children) =>
         set((s) => ({ groupedChildren: { ...s.groupedChildren, [uid]: children } })),
+
+      editReference: (patch, summary) => {
+        set((s) => ({ ...s, ...patch }));
+        get().addAudit({
+          offerId: 'REFERENCE',
+          user: get().role,
+          action: 'reference edited',
+          comment: summary,
+        });
+      },
     }),
     {
       name: STORAGE_KEY,
