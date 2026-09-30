@@ -25,6 +25,7 @@ import { FieldRenderer } from '@/components/fields/FieldRenderer';
 import { ValidationSummary } from '@/components/ValidationSummary';
 import { StepNav, type StepInfo, type StepStatus } from '@/components/workspace/StepNav';
 import { RightPanel } from '@/components/workspace/RightPanel';
+import { LifecycleBar, type ApplyArgs } from '@/components/workspace/LifecycleBar';
 import { fields, fieldsByStep, fieldsById, STEP_ORDER } from '@/lib/dataLoaders';
 import { statusOf } from '@/lib/lifecycle';
 import { optionsForField } from '@/lib/options';
@@ -32,7 +33,7 @@ import { isFieldVisible, visibilityReason, CONDITIONAL_FIELD_IDS } from '@/lib/v
 import { computedFieldValue, softLockDate } from '@/lib/calculations';
 import { validateOffer, softLockWarning } from '@/lib/validation';
 import { can } from '@/lib/permissions';
-import { isNoValue, formatDate } from '@/lib/format';
+import { isNoValue, formatDate, todayISO } from '@/lib/format';
 import { toCsv, downloadCsv } from '@/lib/csv';
 import type { OfferRecord, OfferValue, OfferSetupCombo, FieldDef } from '@/lib/types';
 
@@ -211,6 +212,33 @@ export function OfferWorkspace() {
     push('Offer submitted as Proposed', 'success');
   }, [working, offers, categorySubCategory, updateOffer, changeStatus, push]);
 
+  // --- lifecycle status change (owns `working`, commits + audits) ---
+  const applyStatus = useCallback(
+    (args: ApplyArgs) => {
+      const uid = working._uid!;
+      const prev = statusOf(working);
+      const next: OfferRecord = { ...working, buildStatus: args.to, ...(args.extra ?? {}) };
+      if (args.cancel) next.dateOfChangeCancel = todayISO();
+      setWorking(next);
+      updateOffer(uid, next);
+      setSaveState('saved');
+      addAudit({
+        offerId: String(working.offerId ?? ''),
+        offerUid: uid,
+        user: role,
+        action: args.cancel ? 'cancelled' : args.isApproval ? 'approved' : 'status changed',
+        fieldLabel: 'Status',
+        oldValue: prev,
+        newValue: args.to,
+        comment: args.comment || undefined,
+      });
+      if (args.cancel) push('Offer cancelled.', 'warning');
+      else if (args.isApproval) push('Offer and forecast approved.', 'success');
+      else push(`Status changed to ${args.to}.`, 'success');
+    },
+    [working, updateOffer, addAudit, role, push],
+  );
+
   // --- step statuses ---
   const stepInfos: StepInfo[] = useMemo(() => {
     return ALL_STEPS.map((name) => {
@@ -367,6 +395,9 @@ export function OfferWorkspace() {
           </div>
         )}
       </div>
+
+      {/* Lifecycle bar + status actions */}
+      <LifecycleBar offer={working} onJump={jumpToField} onApply={applyStatus} />
 
       {/* Body: step nav | form | right panel */}
       <div className="grid grid-cols-[200px_minmax(0,1fr)_320px] gap-5">
