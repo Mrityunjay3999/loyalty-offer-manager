@@ -1,0 +1,60 @@
+// Typed loaders for the seed JSON. The JSON in /src/data is the single source of
+// truth; these modules just import it and attach types. Nothing here transforms
+// or invents data.
+import fieldsJson from '@/data/fields.json';
+import dropdownsJson from '@/data/dropdowns.json';
+import referenceJson from '@/data/reference.json';
+import metadataJson from '@/data/metadataFields.json';
+import offersJson from '@/data/sampleOffers.json';
+
+import type {
+  FieldDef,
+  Dropdowns,
+  ReferenceData,
+  MetadataField,
+  OfferRecord,
+} from './types';
+
+export const fields = fieldsJson as unknown as FieldDef[];
+export const dropdowns = dropdownsJson as unknown as Dropdowns;
+export const reference = referenceJson as unknown as ReferenceData;
+export const metadataFields = metadataJson as unknown as MetadataField[];
+export const sampleOffers = offersJson as unknown as OfferRecord[];
+
+// Convenience indexes built once.
+export const fieldsById: Record<string, FieldDef> = Object.fromEntries(
+  fields.map((f) => [f.id, f]),
+);
+
+/** Ordered list of the form step names as they appear in fields.json. */
+export const STEP_ORDER: string[] = [
+  '1. Request & Timing',
+  '2. Offer Basics',
+  '3. Reward & Rules',
+  '4. Audience & Merchandising',
+  '5. Loyalty Platform Setup',
+  '6. Content, Signage & SKUs',
+  '7. Forecast',
+  '8. Build Checklist',
+  '9. Results',
+];
+
+export const fieldsByStep: Record<string, FieldDef[]> = STEP_ORDER.reduce(
+  (acc, step) => {
+    acc[step] = fields.filter((f) => f.step === step);
+    return acc;
+  },
+  {} as Record<string, FieldDef[]>,
+);
+
+export const systemFields: FieldDef[] = fields.filter(
+  (f) => f.step === 'System (hidden)',
+);
+
+/** Fields that are part of the build checklist (6 per the corrected data). */
+export const checklistFields: FieldDef[] = fields.filter((f) => f.checklist);
+
+/** Deep clone of the seed offers, so the store never mutates the imported JSON. */
+export function freshSampleOffers(): OfferRecord[] {
+  return JSON.parse(JSON.stringify(sampleOffers)) as OfferRecord[];
+}

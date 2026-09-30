@@ -1,0 +1,184 @@
+// Shared types for the Loyalty Offer Manager prototype.
+// These describe the shapes of the JSON in /src/data. They never invent data —
+// they only give names to what the files already contain.
+
+export type ControlType =
+  | 'text'
+  | 'textarea'
+  | 'number'
+  | 'currency'
+  | 'percent'
+  | 'date'
+  | 'dateOrNA'
+  | 'url'
+  | 'select'
+  | 'combobox'
+  | 'yesno'
+  | 'computed'
+  | 'hidden';
+
+/** One entry from fields.json (129 total: 123 form fields + 6 System/hidden). */
+export interface FieldDef {
+  id: string;
+  label: string;
+  excelColumn: string;
+  excelHeader: string;
+  step: string;
+  control: ControlType;
+  optionsKey: string | null;
+  excelEntryType: string | null;
+  excelSection: string | null;
+  excelGroup: string | null;
+  excelNote: string | null;
+  tooltip: string;
+  tooltipSource: string;
+  datalakeColumn: string | null;
+  metadataType: string | null;
+  datatype: string | null;
+  sampleValue: unknown;
+  // Optional keys (present on a subset of fields):
+  required?: boolean;
+  note?: string;
+  computed?: string;
+  allowNA?: boolean;
+  showIf?: string;
+  group?: string;
+  validate?: string;
+  checklist?: boolean;
+  dependsOn?: string;
+  readOnlyInForm?: boolean;
+  phase?: string;
+}
+
+/** A single offer record: every field id maps to a value, plus a seed reason. */
+export type OfferValue = string | number | boolean | null;
+export interface OfferRecord {
+  [fieldId: string]: OfferValue | undefined;
+  _sampleReason?: string;
+}
+
+/** dropdowns.json: key -> list of option strings. */
+export type Dropdowns = Record<string, string[]>;
+
+// --- reference.json sub-shapes ---
+export interface TieringDefinition {
+  tier: string;
+  description: string;
+  example: string | null;
+}
+export interface CategorySubCategory {
+  category: string;
+  subCategory: string;
+  isNew: boolean;
+  example: string | null;
+}
+export interface OfferSetupCombo {
+  offerDesign: string;
+  activationSetupType: string;
+  offerSetupType: string;
+  optInMethod: string;
+}
+export interface LifecycleStatus {
+  status: string;
+  definition: string;
+  documented: boolean;
+}
+export interface SoftLockPlannerRow {
+  month: string;
+  plannerStart: string;
+  plannerEnd: string;
+  softLock: string;
+}
+export interface FiscalCalendarEntry {
+  fw: string;
+  fm: string;
+  fy: number;
+}
+export interface Constants {
+  basePointsPerDollar: number;
+  dollarsPerThousandPoints: number;
+  pointsUnit: number;
+  redemptionRateRule: string;
+  notes: string;
+}
+export type GroupedChild = Record<string, OfferValue>;
+
+export interface ReferenceData {
+  tieringDefinitions: TieringDefinition[];
+  tieringNote: string;
+  categorySubCategory: CategorySubCategory[];
+  offerSetupCombos: OfferSetupCombo[];
+  deactivationRules: string[];
+  lifecycle: LifecycleStatus[];
+  transactionTypeIndex: Array<Record<string, OfferValue>>;
+  transactionTypes: Array<Record<string, OfferValue>>;
+  softLockPlanner: SoftLockPlannerRow[];
+  softLockByStartDate: Record<string, string>;
+  fiscalCalendar: Record<string, FiscalCalendarEntry>;
+  evergreenOffers: Array<Record<string, OfferValue>>;
+  loyaltyUseOnlyChecklist: string[];
+  inspireSubmissionForms: Record<string, Array<Record<string, OfferValue>>>;
+  constants: Constants;
+  groupedChildrenSamples: Record<string, GroupedChild[]>;
+}
+
+/** metadataFields.json entry (169 total). */
+export interface MetadataField {
+  sourceColumn: string;
+  datalakeColumn: string;
+  type: 'MA' | 'CM' | null;
+  includeInDatalake: string;
+  datatype: string;
+  deleteFromMetadata: string;
+  renamedFrom: string | null;
+  newColumn: number;
+  description: string;
+  comments: string | null;
+  calendarFieldId: string | null;
+}
+
+// --- Application state types ---
+export type Role =
+  | 'Offer Team Editor'
+  | 'Loyalty & Pricing'
+  | 'Approver (TBC)'
+  | 'View-only'
+  | 'Admin';
+
+export type AuditAction =
+  | 'created'
+  | 'field changed'
+  | 'status changed'
+  | 'approved'
+  | 'checklist item'
+  | 'cancelled'
+  | 'copied from'
+  | 'imported'
+  | 'reference edited';
+
+export interface AuditEntry {
+  id: string;
+  offerId: string; // offer's business Offer ID, or a reference-data marker
+  timestamp: string; // ISO
+  user: Role;
+  action: AuditAction;
+  fieldLabel?: string;
+  oldValue?: OfferValue;
+  newValue?: OfferValue;
+  comment?: string;
+}
+
+export interface SavedView {
+  id: string;
+  name: string;
+  role: Role;
+  state: Record<string, unknown>;
+}
+
+export interface FeedLogEntry {
+  id: string;
+  timestamp: string;
+  records: number;
+  status: 'Success' | 'Failed';
+  message: string;
+}
