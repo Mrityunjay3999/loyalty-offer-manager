@@ -1743,7 +1743,9 @@
   "datalakeColumn": null,
   "metadataType": null,
   "datatype": null,
-  "sampleValue": "N/A"
+  "sampleValue": "N/A",
+  "checklist": true,
+  "note": "Part of the 6-item build checklist. Shown in step 6 and in the step 8 checklist panel (same field, not a copy)."
  },
  {
   "id": "skuUploadDate",

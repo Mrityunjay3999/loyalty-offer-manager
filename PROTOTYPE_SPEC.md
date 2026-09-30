@@ -224,7 +224,7 @@ Top bar: wordmark and Prototype pill, global search (offer name or ID), role swi
 - "Clear filters". Saved views dropdown (per role, localStorage). Saving a view never changes other users' views.
 
 **Default columns** (all sortable):
-Offer ID, Offer Name (link to workspace), Status (pill), Start Date, End Date, # of Days, Soft Lock Date (red text if past and status earlier than Audited / Ready to go), Country, Category, Sub-Category, Tier, Offer Design, Channel, P&P Contact, Checklist (e.g. "4 / 6" progress bar), Forecast Status, Grouped (icon), Last updated.
+Offer ID, Offer Name (link to workspace), Status (pill), Start Date, End Date, # of Days, Soft Lock Date (red text if past and status earlier than Audited / Ready to go), Country, Category, Sub-Category, Tier, Offer Design, Channel, P&P Contact, Checklist (e.g. "4 / 6" progress bar; the 6 items are Submission Form Made, SKU List, Offer Submitted to Kognitiv, Offer Card Built in Contentful, Offer Audited, Secondary Audit; an item counts as done when Yes, Partially or N/A), Forecast Status, Grouped (icon), Last updated.
 
 **Optional columns:** any other field from `fields.json` via the Columns menu.
 
