@@ -83,13 +83,17 @@ export function FieldRenderer({
 
       case 'select':
       case 'yesno': {
-        const opts = options;
+        const current = isNoValue(value) && value !== 'N/A' ? '' : String(value ?? '');
+        // Keep the current value visible even when it is not in the options list
+        // (e.g. read-only Build Status showing the prototype-only "Draft" status,
+        // or a reference value that has since been retired).
+        const opts = current && !options.includes(current) ? [current, ...options] : options;
         return (
           <select
             id={fieldDomId}
             className={cls}
             disabled={readOnly}
-            value={isNoValue(value) && value !== 'N/A' ? '' : String(value ?? '')}
+            value={current}
             onChange={(e) => onChange(e.target.value)}
           >
             <option value="">— Select —</option>
