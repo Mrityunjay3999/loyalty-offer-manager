@@ -525,8 +525,7 @@
     "metadataType": null,
     "datatype": null,
     "sampleValue": "Live",
-    "readOnlyInForm": true,
-    "note": "Changed only through the lifecycle bar actions, not typed in the form."
+    "note": "Status dropdown is editable in the form; it can also be driven by the lifecycle bar (which adds guards). Picking directly here skips those guards."
   },
   {
     "id": "productVsBasket",
