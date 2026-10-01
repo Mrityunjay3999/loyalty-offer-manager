@@ -1,20 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { format } from 'date-fns';
 import { Database, PlayCircle, AlertTriangle, CheckCircle2, XCircle, Table2 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { useToasts } from '@/store/useToasts';
-import { metadataFields, fieldsById } from '@/lib/dataLoaders';
-import {
-  computeForecast,
-  computeResults,
-  computedFieldValue,
-  fiscalMonth,
-  fiscalYear,
-  includeForMetadata,
-} from '@/lib/calculations';
-import { isNoValue } from '@/lib/format';
+import { metadataFields } from '@/lib/dataLoaders';
+import { includeForMetadata, resolveCalendarFieldValue } from '@/lib/calculations';
 import { can } from '@/lib/permissions';
-import type { OfferRecord } from '@/lib/types';
 
 // Databricks-style palette — scoped to this page only (does not touch the app theme).
 const DBX = {
@@ -23,46 +14,6 @@ const DBX = {
   navy2: '#11272E',
   ink: '#0E1A1F',
 };
-
-function fmt(v: unknown): string {
-  if (isNoValue(v)) return v === 'N/A' ? 'N/A' : 'Not entered';
-  if (typeof v === 'number') return v.toLocaleString('en-US', { maximumFractionDigits: 2 });
-  return String(v);
-}
-
-function buildCalcMap(o: OfferRecord): Record<string, unknown> {
-  const f = computeForecast(o);
-  const r = computeResults(o);
-  return {
-    ...f,
-    fiscalMonth: fiscalMonth(o),
-    fiscalYear: fiscalYear(o),
-    bonusRate: r.bonusRate,
-    activationRate: r.activationRate,
-    bonusedSalesActual: r.bonusedSalesActual,
-    basePointsActual: r.basePointsActual,
-    basePointsRedeemableActual: r.basePointsRedeemableActual,
-    bonusPointsRedeemableActual: r.bonusPointsRedeemableActual,
-    bonusRedeemableActualWithBreakage: r.bonusRedeemableActualWithBreakage,
-    spendPerBonusedMember: r.spendPerBonusedMember,
-    ltbpOutstanding: r.ltbpOutstanding,
-    ltbpRemoved: r.ltbpRemoved,
-  };
-}
-
-function metadataValue(
-  calendarFieldId: string | null,
-  o: OfferRecord,
-  calcMap: Record<string, unknown>,
-): { text: string; captured: boolean } {
-  if (!calendarFieldId) return { text: 'Not captured in the calendar form', captured: false };
-  if (calendarFieldId.startsWith('calc.')) {
-    return { text: fmt(calcMap[calendarFieldId.slice(5)]), captured: true };
-  }
-  const f = fieldsById[calendarFieldId];
-  if (f && f.control === 'computed') return { text: fmt(computedFieldValue(calendarFieldId, o)), captured: true };
-  return { text: fmt(o[calendarFieldId]), captured: true };
-}
 
 export function DataFeedPreview() {
   const offers = useAppStore((s) => s.offers);
@@ -74,7 +25,6 @@ export function DataFeedPreview() {
 
   const [uid, setUid] = useState(offers[0]?._uid ?? '');
   const offer = offers.find((o) => o._uid === uid) ?? offers[0];
-  const calcMap = useMemo(() => (offer ? buildCalcMap(offer) : {}), [offer]);
 
   const includeCount = offers.filter((o) => includeForMetadata(o) === 'Yes').length;
   const excluded = offer ? includeForMetadata(offer) === 'No' : false;
@@ -162,7 +112,7 @@ export function DataFeedPreview() {
               </thead>
               <tbody>
                 {metadataFields.map((m, i) => {
-                  const v = offer ? metadataValue(m.calendarFieldId, offer, calcMap) : { text: '', captured: false };
+                  const v = offer ? resolveCalendarFieldValue(m.calendarFieldId, offer) : { text: '', captured: false };
                   return (
                     <tr key={i} style={{ background: i % 2 ? '#FAFBFC' : '#fff' }} className="border-b border-[#1B3139]/5 hover:bg-[#FF3621]/[0.03]">
                       <td className="px-3 py-1.5" style={{ color: DBX.navy }}>{m.sourceColumn}</td>

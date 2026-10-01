@@ -1,7 +1,7 @@
 // Every formula from spec section 8, implemented exactly.
 // Constants come from reference.constants. "N/A", "", null count as no value.
 // Never return NaN/Infinity/#N/A — callers render "Not entered" / "Not available".
-import { format as fmtDate } from 'date-fns';
+import { format as fmtDate, addDays } from 'date-fns';
 import { reference, fieldsById } from './dataLoaders';
 import { isNoValue, toNumber, parseISO } from './format';
 import type { OfferRecord, OfferValue } from './types';
@@ -315,7 +315,9 @@ export function computeResults(o: OfferRecord): ResultsResult {
   const isMultiplier = o.offerDesign === 'Multiplier';
   const isLTBO = o.offerDesign === 'Limited Time Bonus Offer';
   const W = bonusPointFactor(o);
-  const rate = redemptionRate(o);
+  // §8.4: actual-results breakage uses the ACTUAL redemption rule (different from
+  // the forecast rule in redemptionRate / "Fcst - Assumed Redemption Rate").
+  const rate = redemptionRateActual(o);
   const fixed = num(o.fixedPoints);
 
   const bonusRate =
@@ -438,6 +440,214 @@ export function computedFieldValue(fieldId: string, o: OfferRecord): OfferValue 
   }
 }
 
+// ===========================================================================
+// 8.6 Metadata-only calculations (traced from the Metadata "Master Sheet").
+// Some inputs are typed only in the Metadata file and are not captured in our
+// form; those return NOT_CAPTURED so the UI shows "Not captured in the calendar
+// form". Never return NaN/Infinity.
+// ===========================================================================
+
+/** Sentinel: the value is typed only in the Metadata file, not in the calendar. */
+export const NOT_CAPTURED = '__NOT_CAPTURED__';
+
+const DAY_MS = 86_400_000;
+function midnight(d: Date): Date {
+  const t = new Date(d);
+  t.setHours(0, 0, 0, 0);
+  return t;
+}
+
+/** (2) Offer Status — NOT buildStatus; derived from today vs start/end. */
+export function offerStatus(o: OfferRecord, today: Date = new Date()): string {
+  const s = parseISO(o.startDate);
+  const e = parseISO(o.endDate);
+  const t = midnight(today);
+  if (!s) return 'Not Started';
+  if (e && t >= s && t < e) return 'Live';
+  if (e && t >= e) return 'Completed';
+  if (!e && t >= s) return 'Live';
+  return 'Not Started';
+}
+
+/** (3) Early Activation # of days = startDate - earlyActivationDate (0 if none). */
+export function earlyActivationDays(o: OfferRecord): number {
+  if (isNoValue(o.earlyActivationDate)) return 0;
+  const s = parseISO(o.startDate);
+  const ea = parseISO(o.earlyActivationDate);
+  if (!s || !ea) return 0;
+  return Math.round((s.getTime() - ea.getTime()) / DAY_MS);
+}
+
+/** (9) Actual-results redemption rate — a DIFFERENT rule from the forecast rate. */
+export function redemptionRateActual(o: OfferRecord): number {
+  if (o.offerDesign === 'Limited Time Bonus Offer' || o.category === 'REDEMPTION') return 1;
+  const d = parseISO(o.startDate);
+  if (d && d >= new Date('2025-10-01T00:00:00')) return 0.88;
+  if (d && d >= new Date('2024-11-01T00:00:00')) return 0.85;
+  return 0.8;
+}
+
+/** (11-13) Transaction Type External Ref lookup by "Transaction Type". Blank if not found. */
+function lookupTxnRef(value: OfferValue | undefined): string {
+  if (isNoValue(value)) return '';
+  const row = reference.transactionTypes.find(
+    (r) => String(r['Transaction Type']) === String(value),
+  );
+  const ref = row ? row['Transaction Type External Ref'] : null;
+  return ref === null || ref === undefined ? '' : String(ref);
+}
+export function txnRefFixedPointBack(o: OfferRecord): string {
+  return lookupTxnRef(o.txnTypeFixedPointBack);
+}
+export function txnRefUploadPts(o: OfferRecord): string {
+  return lookupTxnRef(o.txnTypeUploadPts);
+}
+export function txnRefRemovePts(o: OfferRecord): string {
+  return lookupTxnRef(o.txnTypeRemovePts);
+}
+
+/** (16) Activation during promo window = activations - Early Activation count (not captured). */
+export function activationDuringPromo(_o: OfferRecord): string {
+  return NOT_CAPTURED;
+}
+
+/** (17) Points Issued per day = bonusPtsIssued / numberOfDays. */
+export function pointsIssuedPerDay(o: OfferRecord): number | null {
+  const pts = num(o.bonusPtsIssued);
+  const days = numberOfDays(o);
+  if (pts === null || days === null || days === 0) return null;
+  return pts / days;
+}
+
+/** (18) Spend per unique bonused member — unique count not captured. */
+export function spendPerUniqueBonusedMember(_o: OfferRecord): string {
+  return NOT_CAPTURED;
+}
+
+/** (19) Redemption Pts (Charities OR TRSG): bonusedMembers x W x -1 for ENTRIES / POINTS DONATION. */
+export function redemptionPts(o: OfferRecord): number | null {
+  const sub = String(o.subCategory ?? '');
+  if (sub !== 'ENTRIES' && sub !== 'POINTS DONATION') return null;
+  const bm = num(o.bonusedMembers);
+  const W = bonusPointFactor(o);
+  if (bm === null || W === null) return null;
+  return bm * W * -1;
+}
+
+/** (20) Value of Redemption Pts (100%) = (redemptionPts / 1000) x 2. */
+export function redemptionPtsValue(o: OfferRecord): number | null {
+  const rp = redemptionPts(o);
+  if (rp === null) return null;
+  return (rp / POINTS_UNIT) * DOLLARS_PER_THOUSAND;
+}
+
+/** (21) Currency: CAD if CAN; USD if US/USPR; else Blended. */
+export function currency(o: OfferRecord): 'USD' | 'CAD' | 'Blended' {
+  const c = String(o.country ?? '');
+  if (c === 'CAN') return 'CAD';
+  if (c === 'US' || c === 'USPR') return 'USD';
+  return 'Blended';
+}
+
+/** (28) Record Date (Activations) = endDate + 1 day. */
+export function recordDateActivations(o: OfferRecord): string | null {
+  const e = parseISO(o.endDate);
+  return e ? fmtDate(addDays(e, 1), 'yyyy-MM-dd') : null;
+}
+/** (29) Record Date (Member Bonused & Bonus Points Issued) = endDate + 5 days. */
+export function recordDateBonus(o: OfferRecord): string | null {
+  const e = parseISO(o.endDate);
+  return e ? fmtDate(addDays(e, 5), 'yyyy-MM-dd') : null;
+}
+
+const DIVISION_FLAGS = [
+  'hardgoodsOffer',
+  'consumablesOffer',
+  'specialtyOffer',
+  'servicesOffer',
+  'charitiesOffer',
+];
+function divisionYesCount(o: OfferRecord): number {
+  return DIVISION_FLAGS.reduce((n, id) => n + (o[id] === 'Yes' ? 1 : 0), 0);
+}
+/** (30) Multiple Divisions = Yes if more than one division flag is Yes. */
+export function multipleDivisions(o: OfferRecord): 'Yes' | 'No' {
+  return divisionYesCount(o) > 1 ? 'Yes' : 'No';
+}
+/** (31) Count of divisions if Multiple (less 1). */
+export function divisionCountLess1(o: OfferRecord): number {
+  return multipleDivisions(o) === 'Yes' ? divisionYesCount(o) - 1 : 0;
+}
+/** (32) Sum pts issued if Multiple = bonusPtsIssued x divisionCountLess1. */
+export function sumPtsIfMultiple(o: OfferRecord): number {
+  if (multipleDivisions(o) !== 'Yes') return 0;
+  return (num(o.bonusPtsIssued) ?? 0) * divisionCountLess1(o);
+}
+/** (33) Sum Redeemable $ with breakage if Multiple. */
+export function sumRedeemableIfMultiple(o: OfferRecord): number {
+  if (multipleDivisions(o) !== 'Yes') return 0;
+  return (computeResults(o).bonusRedeemableActualWithBreakage ?? 0) * divisionCountLess1(o);
+}
+/** (34) Check: N/A unless Multiple; then the % share columns are typed only in Metadata. */
+export function divisionShareCheck(o: OfferRecord): string {
+  return multipleDivisions(o) !== 'Yes' ? 'N/A' : NOT_CAPTURED;
+}
+
+/** (35) Promotional bonus points per $ (multiplier only) = 10 x W. */
+export function promoBonusPtsPerDollar(o: OfferRecord): number | null {
+  if (o.offerDesign !== 'Multiplier') return null;
+  const W = bonusPointFactor(o);
+  return W === null ? null : BASE_POINTS_PER_DOLLAR * W;
+}
+
+const REVERSAL_SETUPS = new Set([
+  'Transaction Bonus Promotion',
+  'Transaction Product Bonus Promotion',
+  'Transaction Product Quantity Bonus Promotion',
+  'Transaction Product Value Bonus Promotion',
+]);
+/** (36) Eligible for Bonus Points Reversal on Return (Yes). */
+export function eligibleForReversal(o: OfferRecord): string | null {
+  return REVERSAL_SETUPS.has(String(o.kognitivOfferSetupType)) ? 'Yes' : null;
+}
+
+/** (37) Promo days (Prorated) — copies the Excel formula, including the early-
+ *  activation branch which caps at the early-activation day count. */
+export function promoDaysProrated(o: OfferRecord, today: Date = new Date()): number | null {
+  const t = midnight(today);
+  const nDays = numberOfDays(o);
+  if (isNoValue(o.earlyActivationDate)) {
+    const s = parseISO(o.startDate);
+    if (!s || nDays === null) return null;
+    if (t < s) return null; // blank before the offer starts
+    return Math.min(Math.round((t.getTime() - s.getTime()) / DAY_MS), nDays);
+  }
+  const ea = parseISO(o.earlyActivationDate);
+  if (!ea) return null;
+  if (t < ea) return null; // blank before early activation
+  // Excel caps this branch at calc.earlyActivationDays (the pre-start day count).
+  return Math.min(Math.round((t.getTime() - ea.getTime()) / DAY_MS), earlyActivationDays(o));
+}
+
+/** (38) Activation per day (Prorated) = activations / (promoDaysProrated + earlyActivationDays). */
+export function activationPerDayProrated(o: OfferRecord, today: Date = new Date()): number | null {
+  const pdp = promoDaysProrated(o, today);
+  const act = num(o.activations);
+  if (pdp === null || act === null) return null;
+  const denom = pdp + earlyActivationDays(o);
+  if (denom === 0) return null;
+  return act / denom;
+}
+
+/** (39) Bonus Points per day (Prorated) = (bonusPtsIssued / promoDaysProrated) x numberOfDays. */
+export function bonusPtsPerDayProrated(o: OfferRecord, today: Date = new Date()): number | null {
+  const pdp = promoDaysProrated(o, today);
+  const pts = num(o.bonusPtsIssued);
+  const nDays = numberOfDays(o);
+  if (pdp === null || pdp === 0 || pts === null || nDays === null) return null;
+  return (pts / pdp) * nDays;
+}
+
 // ---------------------------------------------------------------------------
 // Resolve a metadata / submission-form calendarFieldId to a display value.
 // Used by the Data Feed preview and the Inspire submission-form preview.
@@ -460,6 +670,31 @@ function calcMapFor(o: OfferRecord): Record<string, unknown> {
     spendPerBonusedMember: r.spendPerBonusedMember,
     ltbpOutstanding: r.ltbpOutstanding,
     ltbpRemoved: r.ltbpRemoved,
+    // 8.6 metadata-only keys
+    offerStatus: offerStatus(o),
+    earlyActivationDays: earlyActivationDays(o),
+    redemptionRateActual: redemptionRateActual(o),
+    txnRefFixedPointBack: txnRefFixedPointBack(o),
+    txnRefUploadPts: txnRefUploadPts(o),
+    txnRefRemovePts: txnRefRemovePts(o),
+    activationDuringPromo: activationDuringPromo(o),
+    pointsIssuedPerDay: pointsIssuedPerDay(o),
+    spendPerUniqueBonusedMember: spendPerUniqueBonusedMember(o),
+    redemptionPts: redemptionPts(o),
+    redemptionPtsValue: redemptionPtsValue(o),
+    currency: currency(o),
+    recordDateActivations: recordDateActivations(o),
+    recordDateBonus: recordDateBonus(o),
+    multipleDivisions: multipleDivisions(o),
+    divisionCountLess1: divisionCountLess1(o),
+    sumPtsIfMultiple: sumPtsIfMultiple(o),
+    sumRedeemableIfMultiple: sumRedeemableIfMultiple(o),
+    divisionShareCheck: divisionShareCheck(o),
+    promoBonusPtsPerDollar: promoBonusPtsPerDollar(o),
+    eligibleForReversal: eligibleForReversal(o),
+    promoDaysProrated: promoDaysProrated(o),
+    activationPerDayProrated: activationPerDayProrated(o),
+    bonusPtsPerDayProrated: bonusPtsPerDayProrated(o),
   };
 }
 
@@ -475,7 +710,9 @@ export function resolveCalendarFieldValue(
 ): { text: string; captured: boolean } {
   if (!calendarFieldId) return { text: 'Not captured in the calendar form', captured: false };
   if (calendarFieldId.startsWith('calc.')) {
-    return { text: fmtValue(calcMapFor(o)[calendarFieldId.slice(5)]), captured: true };
+    const v = calcMapFor(o)[calendarFieldId.slice(5)];
+    if (v === NOT_CAPTURED) return { text: 'Not captured in the calendar form', captured: false };
+    return { text: fmtValue(v), captured: true };
   }
   const f = fieldsById[calendarFieldId];
   if (f && f.control === 'computed') {

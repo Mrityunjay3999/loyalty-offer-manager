@@ -16,6 +16,11 @@ const DATA_FINDINGS: string[] = [
   'Offer Submitted to Kognitiv is labelled "Formula" in the spreadsheet but holds typed values.',
   'LOPD Actuals column is never filled and marked "Remove in 2026".',
   'Loyalty platform naming: status definitions say Capillary; checklist and fields say Kognitiv.',
+  'Metadata linkage by running number. The Metadata file links to the Calendar through a running reference number (col CV = max of the numbers above + 1). It renumbers when an offer above is added or changes to/from Cancelled, so Metadata rows can point at the wrong offer. The product uses the Offer ID instead.',
+  'Pasted values, not live lookups. Older Metadata rows hold pasted values, so Calendar edits never reach them.',
+  'The 7 Metadata columns labelled "Forecast" actually read the Calendar’s own forecast columns (Fcst Date, Activation, Bonus rate, Avg spend Low/High).',
+  'In older rows, Metadata "Offer Build Status" copies Metadata "Offer Status" instead of the Calendar build status.',
+  'The actual-results redemption rate (Metadata col CP) uses a different rule from the forecast rate (col DX) — see spec 8.6 item 9.',
 ];
 
 export function DataDictionary() {

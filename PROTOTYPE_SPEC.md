@@ -490,7 +490,7 @@ Show the step 7 right panel as a compact table: Low | High | Average for Activat
 | `calc.basePointsActual` | 10 × bonusedSalesActual |
 | `calc.basePointsRedeemableActual` | basePointsActual ÷ 1000 × 2 |
 | `calc.bonusPointsRedeemableActual` | bonusPtsIssued ÷ 1000 × 2 |
-| `calc.bonusRedeemableActualWithBreakage` | redemptionRate × bonusPointsRedeemableActual |
+| `calc.bonusRedeemableActualWithBreakage` | **`calc.redemptionRateActual`** × bonusPointsRedeemableActual (actual-results rule, see 8.6 item 9 — different from the forecast `redemptionRate`) |
 | `calc.spendPerBonusedMember` | bonusedSalesActual ÷ bonusedMembers |
 | `calc.ltbpOutstanding` | if offerDesign = "Limited Time Bonus Offer": fixedPoints × activations |
 | `calc.ltbpRemoved` | if status = Completed and LTBO: ltbpOutstanding − bonusPtsIssued |
@@ -514,6 +514,40 @@ Show the step 7 right panel as a compact table: Low | High | Average for Activat
 | % completed by days | daysElapsed ÷ numberOfDays |
 | Prorated pts issued | bonusPtsIssued ÷ %completed (projects full-period points, as Excel does) |
 | Colour code | blank if no prorated or no forecast; **Pink** if prorated < bonusPointsLow; **Dark Green** if prorated > bonusPointsHigh; else **Light Green** |
+
+### 8.6 Metadata-only calculations (`lib/calculations.ts`)
+
+Traced from the Metadata "Master Sheet" so all 169 metadata columns follow the real Excel logic. `W` is `calc.bonusPointCalc` (Multiplier ⇒ parseInt(multiplier) − 1, else fixedPoints). Inputs typed only in the Metadata file (Early Activation count, Bonused members (unique), the 5 "% share" columns) resolve to **"Not captured in the calendar form"**. Never show NaN / Infinity / #N/A; treat "N/A", "" and null as no value.
+
+| Calc key | Formula |
+|---|---|
+| `calc.offerStatus` (2) | `"Live"` if today ≥ startDate and today < endDate; else `"Completed"` if today ≥ endDate; else `"Not Started"`. Not the same as buildStatus |
+| `calc.earlyActivationDays` (3) | 0 if earlyActivationDate has no value, else startDate − earlyActivationDate (days) |
+| `calc.redemptionRateActual` (9) | 100% if offerDesign = "Limited Time Bonus Offer" OR category = "REDEMPTION"; else 88% if startDate ≥ 2025-10-01; else 85% if startDate ≥ 2024-11-01; else 80%. Different rule from the forecast `redemptionRate` |
+| `calc.activationDuringPromo` (16) | activations − Early Activation count → Not captured (count typed only in Metadata) |
+| `calc.pointsIssuedPerDay` (17) | bonusPtsIssued ÷ numberOfDays |
+| `calc.spendPerUniqueBonusedMember` (18) | bonusedSalesActual ÷ Bonused members (unique) → Not captured |
+| `calc.redemptionPts` (19) | if subCategory ∈ {ENTRIES, POINTS DONATION}: bonusedMembers × W × −1; else blank |
+| `calc.redemptionPtsValue` (20) | blank if redemptionPts blank, else (redemptionPts ÷ 1000) × 2 |
+| `calc.currency` (21) | "CAD" if country = "CAN"; "USD" if country = "US" or "USPR"; else "Blended" |
+| `calc.basePointsRedeemableLow/High` (22-23) | forecast base points redeemable Low / High (from 8.3) |
+| `calc.bonusPointsRedeemableLow/High` (24-25) | forecast bonus points redeemable Low / High (from 8.3) |
+| `calc.bonusPointsRedeemableAvg` (26) | average of 24 and 25 |
+| `calc.bonusRedeemableAvg` (27) | average of forecast `bonusRedeemableLow` and `bonusRedeemableHigh` |
+| `calc.recordDateActivations` (28) | endDate + 1 day |
+| `calc.recordDateBonus` (29) | endDate + 5 days |
+| `calc.multipleDivisions` (30) | "Yes" if more than one of [hardgoods, consumables, specialty, services, charities] Offer = "Yes"; else "No" |
+| `calc.divisionCountLess1` (31) | if Multiple = "Yes": (count of "Yes") − 1; else 0 |
+| `calc.sumPtsIfMultiple` (32) | if "Yes": bonusPtsIssued × divisionCountLess1; else 0 |
+| `calc.sumRedeemableIfMultiple` (33) | if "Yes": bonusRedeemableActualWithBreakage × divisionCountLess1; else 0 |
+| `calc.divisionShareCheck` (34) | "N/A" if not Multiple; else Not captured (the 5 % share columns are typed only in Metadata) |
+| `calc.promoBonusPtsPerDollar` (35) | if offerDesign = "Multiplier": 10 × W; else blank |
+| `calc.eligibleForReversal` (36) | "Yes" if kognitivOfferSetupType ∈ {Transaction Bonus Promotion, Transaction Product Bonus Promotion, Transaction Product Quantity Bonus Promotion, Transaction Product Value Bonus Promotion}; else blank |
+| `calc.promoDaysProrated` (37) | if earlyActivationDate has no value: blank if today < startDate, else min(today − startDate, numberOfDays). Else: blank if today < earlyActivationDate, else min(today − earlyActivationDate, `calc.earlyActivationDays`) — the second branch caps at early-activation days, exactly as Excel does |
+| `calc.activationPerDayProrated` (38) | activations ÷ (promoDaysProrated + earlyActivationDays); blank if it cannot be calculated |
+| `calc.bonusPtsPerDayProrated` (39) | (bonusPtsIssued ÷ promoDaysProrated) × numberOfDays |
+
+Transaction-type ref lookups (11-13): `calc.txnRefFixedPointBack`, `calc.txnRefUploadPts`, `calc.txnRefRemovePts` — find the selected `txnTypeFixedPointBack` / `txnTypeUploadPts` / `txnTypeRemovePts` in `reference.transactionTypes` by "Transaction Type" and return its "Transaction Type External Ref"; blank if not found.
 
 ---
 
@@ -700,6 +734,11 @@ These came from analysing the current files. Show them on the Data Dictionary pa
 8. **Offer Submitted to Kognitiv** is labelled "Formula" in the spreadsheet but holds typed values.
 9. **LOPD Actuals** column is never filled and marked "Remove in 2026".
 10. **Loyalty platform naming:** status definitions say Capillary; checklist and fields say Kognitiv.
+11. **Metadata linkage by running number.** The Metadata file links to the Calendar through a running reference number (Calendar col CV = max of the numbers above + 1). It renumbers whenever an offer above is added or changes to / from Cancelled, so Metadata rows can point at the wrong offer. The product replaces this with the Offer ID.
+12. **Pasted values, not live lookups.** Older Metadata rows hold pasted values, not formulas, so Calendar edits never reach them.
+13. **"Forecast" metadata columns read the Calendar's forecast.** The 7 Metadata columns labelled "Forecast" actually read the Calendar's own forecast columns (Fcst Date, Activation, Bonus rate, Avg spend Low/High) — they are not a separate forecast.
+14. **Metadata Build Status copies Offer Status.** In older rows, Metadata "Offer Build Status" copies Metadata "Offer Status" instead of the Calendar build status.
+15. **Two different redemption-rate rules.** The actual-results redemption rate (Metadata col CP) uses a different rule from the forecast rate (col DX) — see spec 8.6 item 9 vs 8.3.
 
 ## 16. Open questions to display in the prototype (info icons)
 
@@ -1062,7 +1101,7 @@ Note: CAN-only offers use the same tiering as USPRCAN offers but have CAN append
 ---
 ## Appendix G. Databricks metadata mapping summary
 
-`metadataFields.json` has 169 columns: 101 metadata attributes (MA), 54 calculated metrics (CM), 14 unclassified. 121 map to a form field or a `calc.*` value; the rest display "Not captured in the calendar form" in the Data Feed preview (these are mostly metrics or fields built outside the calendar today).
+`metadataFields.json` has 169 columns: 101 metadata attributes (MA), 54 calculated metrics (CM), 14 unclassified. After tracing every column to its Master-Sheet formula (spec 8.6), **144 of 169 columns now map to a form field or a `calc.*` value**; the remaining **25 show "Not captured in the calendar form"** because they are typed only in the Metadata file today (e.g. Early Activation count, Bonused members (unique), the 5 "% share" columns, funding cap / fixed funding amount / billed party / agreement details, Redemption Conversion, Base Pts per $, Strategic Promotion/Demotion, Offer Exceptions, Bestie/VIPP pts per $, CAN FOS Signage, Red Text Verbiage, Badging / Badging Verbiage, and "Bonus Member per day (Prorated)").
 
 
 ---
