@@ -72,9 +72,13 @@ export function FieldTooltip({
             )}
 
             <div className="mt-2 space-y-0.5 border-t border-border pt-1.5 text-[11px] text-muted">
-              <p>
-                Today: Excel column {field.excelColumn} “{field.excelHeader}”
-              </p>
+              {field.dataDictionaryOnly || !field.excelColumn ? (
+                <p>In the data dictionary, not in today’s calendar (confirm).</p>
+              ) : (
+                <p>
+                  Today: Excel column {field.excelColumn} “{field.excelHeader}”
+                </p>
+              )}
               <p>Source: {field.tooltipSource}</p>
             </div>
             <Tooltip.Arrow className="fill-white" />

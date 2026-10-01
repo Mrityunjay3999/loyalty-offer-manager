@@ -14,6 +14,7 @@ import {
   Send,
   Check,
   AlertTriangle,
+  Clock,
 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { useToasts } from '@/store/useToasts';
@@ -37,7 +38,7 @@ import { isFieldVisible, visibilityReason, CONDITIONAL_FIELD_IDS } from '@/lib/v
 import { computedFieldValue, softLockDate } from '@/lib/calculations';
 import { validateOffer, softLockWarning } from '@/lib/validation';
 import { can } from '@/lib/permissions';
-import { isNoValue, formatDate, todayISO } from '@/lib/format';
+import { isNoValue, formatDate, todayISO, parseISO } from '@/lib/format';
 import { toCsv, downloadCsv } from '@/lib/csv';
 import type { OfferRecord, OfferValue, OfferSetupCombo, FieldDef } from '@/lib/types';
 
@@ -50,6 +51,7 @@ export function OfferWorkspace() {
   const { offerId } = useParams();
   const navigate = useNavigate();
   const offers = useAppStore((s) => s.offers);
+  const auditLog = useAppStore((s) => s.auditLog);
   const role = useAppStore((s) => s.role);
   const dropdowns = useAppStore((s) => s.dropdowns);
   const categorySubCategory = useAppStore((s) => s.categorySubCategory);
@@ -244,6 +246,26 @@ export function OfferWorkspace() {
     [working, updateOffer, addAudit, role, push],
   );
 
+  // --- SLA indicators (spec 7.2): 48h approval clock + 7-day Promo Advisor reminder ---
+  function enteredStatusAt(st: string): string | null {
+    const e = auditLog.find((a) => a.offerUid === working._uid && a.newValue === st);
+    return e?.timestamp ?? working._updatedAt ?? null;
+  }
+  const waitingHours = useMemo(() => {
+    if (status !== 'Proposed' && status !== 'Pending SteerCo Approval') return null;
+    const since = enteredStatusAt(status);
+    return since ? Math.max(0, (Date.now() - new Date(since).getTime()) / 3_600_000) : null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, auditLog, working._uid]);
+  const skuDueDate = useMemo(() => {
+    if (status !== 'Planning Phase' || working.skuList === 'Yes') return null;
+    const approved = enteredStatusAt('Planning Phase');
+    const d = parseISO(approved ? approved.slice(0, 10) : '');
+    if (!d) return null;
+    return formatDate(new Date(d.getTime() + 7 * 86_400_000).toISOString().slice(0, 10));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, working.skuList, auditLog, working._uid]);
+
   // Steps include the Child promotions tab when Grouped Offer = Yes.
   const allSteps = useMemo(
     () =>
@@ -418,6 +440,32 @@ export function OfferWorkspace() {
         {slWarn && (
           <div className="mt-2 flex items-center gap-2 rounded-md border border-warning/40 bg-warning/5 px-3 py-1.5 text-sm text-warning">
             <AlertTriangle size={15} /> {slWarn}
+          </div>
+        )}
+
+        {/* SLA indicators (spec 7.2) */}
+        {(waitingHours !== null || skuDueDate) && (
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            {waitingHours !== null && (
+              <span
+                className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium ${
+                  waitingHours >= 48
+                    ? 'border-danger/40 bg-danger/5 text-danger'
+                    : waitingHours >= 24
+                      ? 'border-warning/40 bg-warning/5 text-warning'
+                      : 'border-border text-muted'
+                }`}
+                title="Approval SLA is 48 hours"
+              >
+                <Clock size={13} /> Waiting{' '}
+                {waitingHours < 48 ? `${Math.round(waitingHours)} h` : `${Math.round(waitingHours / 24)} d`} · 48 h SLA
+              </span>
+            )}
+            {skuDueDate && (
+              <span className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700" title="SKUs sent to Promo Advisor within 7 days of approval">
+                <Clock size={13} /> SKUs to Promo Advisor due {skuDueDate}
+              </span>
+            )}
           </div>
         )}
       </div>

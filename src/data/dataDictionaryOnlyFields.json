@@ -1,0 +1,12 @@
+[
+ {"ddRow": 5, "field": "Offer due date", "definition": "Last date when offer submission is acceptable from internal stakeholders", "inLiveCalendar": false, "dropdownKeyIfAny": null},
+ {"ddRow": 46, "field": "Disclaimer for Email", "definition": "Denotes the disclaimer used for the email", "inLiveCalendar": false, "dropdownKeyIfAny": null},
+ {"ddRow": 47, "field": "Disclaimer for Signage", "definition": "Denotes the disclaimer used for the signage", "inLiveCalendar": false, "dropdownKeyIfAny": null},
+ {"ddRow": 76, "field": "In-Store signage", "definition": "Denotes the information about the signage. Currently team uses this column to capture timing of the signage.", "inLiveCalendar": false, "dropdownKeyIfAny": null},
+ {"ddRow": 77, "field": "Type of In-store signage", "definition": "Denotes the type of the in-store signage but it is not widely used by the team yet", "inLiveCalendar": false, "dropdownKeyIfAny": "_unusedInMainTab_signageType"},
+ {"ddRow": 78, "field": "Offer Card Tiering", "definition": "Denotes the type of the offer card like the size of the offer card. Refer to \"All Keys\" tab for the details", "inLiveCalendar": false, "dropdownKeyIfAny": "_unusedInMainTab_offerCardTier"},
+ {"ddRow": 79, "field": "Offer Card WF Project", "definition": "Lists the WF project link for the future reference", "inLiveCalendar": false, "dropdownKeyIfAny": null},
+ {"ddRow": 82, "field": "FAQ Sheet for Care (Y/N)", "definition": null, "inLiveCalendar": false, "dropdownKeyIfAny": null},
+ {"ddRow": 83, "field": "Media support (Y/N)", "definition": null, "inLiveCalendar": false, "dropdownKeyIfAny": null},
+ {"ddRow": 84, "field": "Added to SHARED Deck (Y/N)", "definition": null, "inLiveCalendar": false, "dropdownKeyIfAny": null}
+]

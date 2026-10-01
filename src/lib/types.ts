@@ -48,6 +48,17 @@ export interface FieldDef {
   dependsOn?: string;
   readOnlyInForm?: boolean;
   phase?: string;
+  /** Defined in the Excel data dictionary but absent from the live Calendar. */
+  dataDictionaryOnly?: boolean;
+}
+
+/** One entry from dataDictionaryOnlyFields.json (defined in the DD, not in the live calendar). */
+export interface DataDictionaryOnlyField {
+  ddRow: number;
+  field: string;
+  definition: string | null;
+  inLiveCalendar: boolean;
+  dropdownKeyIfAny: string | null;
 }
 
 /** A single offer record: every field id maps to a value, plus a seed reason. */

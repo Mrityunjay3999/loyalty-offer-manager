@@ -6,6 +6,7 @@ import dropdownsJson from '@/data/dropdowns.json';
 import referenceJson from '@/data/reference.json';
 import metadataJson from '@/data/metadataFields.json';
 import offersJson from '@/data/sampleOffers.json';
+import ddOnlyJson from '@/data/dataDictionaryOnlyFields.json';
 
 import type {
   FieldDef,
@@ -13,6 +14,7 @@ import type {
   ReferenceData,
   MetadataField,
   OfferRecord,
+  DataDictionaryOnlyField,
 } from './types';
 
 export const fields = fieldsJson as unknown as FieldDef[];
@@ -20,6 +22,7 @@ export const dropdowns = dropdownsJson as unknown as Dropdowns;
 export const reference = referenceJson as unknown as ReferenceData;
 export const metadataFields = metadataJson as unknown as MetadataField[];
 export const sampleOffers = offersJson as unknown as OfferRecord[];
+export const dataDictionaryOnlyFields = ddOnlyJson as unknown as DataDictionaryOnlyField[];
 
 // Convenience indexes built once.
 export const fieldsById: Record<string, FieldDef> = Object.fromEntries(

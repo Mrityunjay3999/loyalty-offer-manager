@@ -68,6 +68,15 @@ export function validateOffer(offer: OfferRecord, ctx: ValidationCtx): Validatio
     if (s && e && e < s) err('endDate', 'End Date must be on or after Start Date.');
   }
 
+  // Offer due date (data-dictionary-only field): warn if after Start Date.
+  {
+    const due = parseISO(offer.offerDueDate);
+    const s = parseISO(offer.startDate);
+    if (due && s && due > s) {
+      warn('offerDueDate', 'Offer due date is after the Start Date.');
+    }
+  }
+
   // 4. earlyActivationDate < startDate (when a real date)
   {
     const ea = parseISO(offer.earlyActivationDate);

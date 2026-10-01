@@ -240,6 +240,11 @@ export function FieldRenderer({
             Phase 2
           </span>
         )}
+        {field.dataDictionaryOnly && (
+          <span className="rounded-full border border-warning/50 bg-warning/5 px-1.5 py-0.5 text-[11px] font-medium text-warning">
+            In data dictionary, not in today’s calendar (confirm)
+          </span>
+        )}
       </label>
 
       {renderControl()}
