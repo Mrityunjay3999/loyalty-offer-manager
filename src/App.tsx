@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import { AppShell } from '@/components/AppShell';
 import { Toasts } from '@/components/Toasts';
 import { OffersList } from '@/pages/OffersList';
@@ -15,7 +15,7 @@ import { NotFound } from '@/pages/NotFound';
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route element={<AppShell />}>
           <Route index element={<OffersList />} />
@@ -33,6 +33,6 @@ export default function App() {
         </Route>
       </Routes>
       <Toasts />
-    </BrowserRouter>
+    </HashRouter>
   );
 }
