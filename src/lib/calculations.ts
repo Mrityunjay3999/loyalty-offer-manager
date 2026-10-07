@@ -431,18 +431,19 @@ export function computedFieldValue(fieldId: string, o: OfferRecord): OfferValue 
       return f().activationLow;
     case 'activationHigh':
       return f().activationHigh;
+    // B4 round-trip totals: 0 when the offer is not in Results & Forecast.
     case 'bonusedMembersLow':
-      return f().bonusedMembersLow;
+      return includeForResultsForecast(o) === 'Yes' ? f().bonusedMembersLow : 0;
     case 'bonusedMembersHigh':
-      return f().bonusedMembersHigh;
+      return includeForResultsForecast(o) === 'Yes' ? f().bonusedMembersHigh : 0;
     case 'bonusedSalesLow':
-      return f().bonusedSalesLow;
+      return includeForResultsForecast(o) === 'Yes' ? f().bonusedSalesLow : 0;
     case 'bonusedSalesHigh':
-      return f().bonusedSalesHigh;
+      return includeForResultsForecast(o) === 'Yes' ? f().bonusedSalesHigh : 0;
     case 'bonusRedeemableLow':
-      return f().bonusRedeemableLow;
+      return includeForResultsForecast(o) === 'Yes' ? f().bonusRedeemableLow : 0;
     case 'bonusRedeemableHigh':
-      return f().bonusRedeemableHigh;
+      return includeForResultsForecast(o) === 'Yes' ? f().bonusRedeemableHigh : 0;
     // Retired in product — not implemented (shown as note in Data Dictionary).
     case 'metadataRefNumber':
     case 'resultsForecastRefNumber':
