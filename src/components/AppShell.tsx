@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import {
   LayoutList,
+  Eye,
   CheckSquare,
   BarChart3,
   Repeat,
@@ -15,6 +16,7 @@ import {
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
+import { can } from '@/lib/permissions';
 import { useToasts } from '@/store/useToasts';
 import { RoleSwitcher } from './RoleSwitcher';
 import { HelpDrawer } from './HelpDrawer';
@@ -30,10 +32,14 @@ interface NavItem {
   adminNote?: boolean;
 }
 
-const NAV: NavItem[] = [
-  { to: '/', label: 'Offers', icon: LayoutList, end: true },
+interface NavItemX extends NavItem {
+  editOnly?: boolean;
+}
+const NAV: NavItemX[] = [
+  { to: '/', label: 'Offers (Edit)', icon: LayoutList, end: true, editOnly: true },
+  { to: '/view', label: 'Offer View', icon: Eye },
   { to: '/approvals', label: 'Approvals', icon: CheckSquare, badge: 'approvals' },
-  { to: '/wbr', label: 'WBR', icon: BarChart3 },
+  { to: '/results-forecast', label: 'Results & Forecast', icon: BarChart3 },
   { to: '/evergreen', label: 'Evergreen offers', icon: Repeat },
   { to: '/reference', label: 'Reference data', icon: Table2, adminNote: true },
   { to: '/dictionary', label: 'Data dictionary', icon: BookOpen },
@@ -113,7 +119,7 @@ export function AppShell() {
         {/* Sidebar */}
         <nav className="w-60 shrink-0 border-r border-border bg-white px-2 py-3">
           <ul className="space-y-0.5">
-            {NAV.map((item) => (
+            {NAV.filter((item) => !item.editOnly || can(role, 'openEditArea')).map((item) => (
               <li key={item.to}>
                 <NavLink
                   to={item.to}

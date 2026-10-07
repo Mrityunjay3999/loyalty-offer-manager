@@ -1,8 +1,14 @@
 // Offer-level helpers used by the list, workspace and WBR.
 import { checklistFields } from './dataLoaders';
-import { startMonth } from './calculations';
+import { startMonth, fiscalYear } from './calculations';
 import { isNoValue } from './format';
 import type { OfferRecord } from './types';
+
+/** A12: derived fiscal year (from Start Date) as a string for filtering/display. */
+export function fiscalYearOf(o: OfferRecord): string {
+  const fy = fiscalYear(o);
+  return typeof fy === 'number' ? String(fy) : '';
+}
 
 const CHECKLIST_DONE_VALUES = new Set(['Yes', 'Partially', 'N/A']);
 

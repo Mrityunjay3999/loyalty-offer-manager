@@ -10,9 +10,12 @@ export type Capability =
   | 'editChecklist'
   | 'enterResults'
   | 'editReference'
-  | 'runSimulations';
+  | 'runSimulations'
+  | 'openEditArea';
 
 const MATRIX: Record<Capability, Role[]> = {
+  // A5: the Offers (Edit) area is only for Editor and Admin.
+  openEditArea: ['Offer Team Editor', 'Admin'],
   createEditCopy: ['Offer Team Editor', 'Loyalty & Pricing', 'Admin'],
   deleteDraft: ['Offer Team Editor', 'Admin'],
   cancel: ['Offer Team Editor', 'Admin'],

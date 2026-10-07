@@ -17,6 +17,7 @@
     "@radix-ui/react-tabs": "^1.1.2",
     "@radix-ui/react-tooltip": "^1.1.6",
     "@tanstack/react-table": "^8.20.6",
+    "@tanstack/react-virtual": "^3.14.13",
     "date-fns": "^3.6.0",
     "lucide-react": "^0.462.0",
     "react": "^18.3.1",
