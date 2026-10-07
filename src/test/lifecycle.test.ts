@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { allowedTransitions, TRANSITIONS, canCancelFrom } from '@/lib/lifecycle';
+import { allowedTransitions, TRANSITIONS, canCancelFrom, isLocked } from '@/lib/lifecycle';
 import type { OfferRecord } from '@/lib/types';
 
 function tx(from: string, to: string) {
@@ -71,5 +71,17 @@ describe('lifecycle transitions & guards (section 7.3)', () => {
   it('reinstate is Admin-only from Cancelled', () => {
     expect(allowedTransitions('Cancelled', 'Admin').map((t) => t.label)).toContain('Reinstate');
     expect(allowedTransitions('Cancelled', 'Offer Team Editor')).toEqual([]);
+  });
+});
+
+describe('A4 lock', () => {
+  it('Completed - Data Final and Cancelled are locked; others are not', () => {
+    expect(isLocked('Completed - Data Final')).toBe(true);
+    expect(isLocked('Cancelled')).toBe(true);
+    expect(isLocked('Live')).toBe(false);
+    expect(isLocked('Draft')).toBe(false);
+  });
+  it('a locked status has no onward lifecycle transition for Editor', () => {
+    expect(allowedTransitions('Completed - Data Final', 'Offer Team Editor')).toEqual([]);
   });
 });

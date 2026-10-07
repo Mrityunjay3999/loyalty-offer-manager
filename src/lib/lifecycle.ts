@@ -68,6 +68,11 @@ export function isEarlierThanAudited(status: string): boolean {
   return PRE_AUDIT.has(status);
 }
 
+/** A4: a fully read-only offer (Completed - Data Final or Cancelled). */
+export function isLocked(status: string): boolean {
+  return status === 'Completed - Data Final' || status === 'Cancelled';
+}
+
 export function statusOf(o: OfferRecord): string {
   return String(o.buildStatus ?? DRAFT);
 }

@@ -77,6 +77,8 @@ export interface OfferRecord {
   _uid?: string;
   /** Last-updated timestamp (ISO); prototype-only. */
   _updatedAt?: string;
+  /** Status the offer held before it was locked (A4 Reopen); prototype-only. */
+  _prevStatus?: string;
   _sampleReason?: string;
 }
 

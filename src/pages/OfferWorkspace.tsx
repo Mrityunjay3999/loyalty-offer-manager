@@ -15,6 +15,7 @@ import {
   Check,
   AlertTriangle,
   Clock,
+  Lock,
 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { useToasts } from '@/store/useToasts';
@@ -33,7 +34,7 @@ import { PhaseBadge } from '@/components/PhaseBadge';
 import { TagPill } from '@/components/TagPill';
 import { isGroupedTabVisible } from '@/lib/visibility';
 import { fields, fieldsByStep, fieldsById, STEP_ORDER } from '@/lib/dataLoaders';
-import { statusOf } from '@/lib/lifecycle';
+import { statusOf, isLocked } from '@/lib/lifecycle';
 import { optionsForField } from '@/lib/options';
 import { isFieldVisible, visibilityReason, CONDITIONAL_FIELD_IDS } from '@/lib/visibility';
 import { computedFieldValue, softLockDate } from '@/lib/calculations';
@@ -97,7 +98,8 @@ export function OfferWorkspace() {
 
   const status = statusOf(working);
   const isDraft = status === 'Draft';
-  const canEdit = can(role, 'createEditCopy');
+  const locked = isLocked(status); // A4: Completed - Data Final or Cancelled
+  const canEdit = can(role, 'createEditCopy') && !locked;
   const readOnly = !canEdit;
 
   // --- validation ---
@@ -239,7 +241,9 @@ export function OfferWorkspace() {
     (args: ApplyArgs) => {
       const uid = working._uid!;
       const prev = statusOf(working);
-      const next: OfferRecord = { ...working, buildStatus: args.to, ...(args.extra ?? {}) };
+      // A4 Reopen: return a locked offer to its previous status.
+      const to = args.reopen ? (working._prevStatus || 'Proposed') : args.to;
+      const next: OfferRecord = { ...working, buildStatus: to, _prevStatus: prev, ...(args.extra ?? {}) };
       if (args.cancel) next.dateOfChangeCancel = todayISO();
       setWorking(next);
       updateOffer(uid, next);
@@ -251,12 +255,13 @@ export function OfferWorkspace() {
         action: args.cancel ? 'cancelled' : args.isApproval ? 'approved' : 'status changed',
         fieldLabel: 'Status',
         oldValue: prev,
-        newValue: args.to,
-        comment: args.comment || undefined,
+        newValue: to,
+        comment: args.reopen ? `Reopened: ${args.comment}` : args.comment || undefined,
       });
       if (args.cancel) push('Offer cancelled.', 'warning');
+      else if (args.reopen) push(`Offer reopened to ${to}.`, 'info');
       else if (args.isApproval) push('Offer and forecast approved.', 'success');
-      else push(`Status changed to ${args.to}.`, 'success');
+      else push(`Status changed to ${to}.`, 'success');
     },
     [working, updateOffer, addAudit, role, push],
   );
@@ -364,7 +369,12 @@ export function OfferWorkspace() {
     <div className="pb-20">
       {/* Header */}
       <div className="mb-4">
-        {readOnly && (
+        {locked && (
+          <div className="mb-2 flex items-center gap-2 rounded-md border border-slate-300 bg-slate-100 px-3 py-1.5 text-sm text-slate-700">
+            <Lock size={15} /> This offer is locked because it is {status}. No changes can be made.
+          </div>
+        )}
+        {readOnly && !locked && (
           <div className="mb-2 rounded-md border border-warning/40 bg-warning/5 px-3 py-1.5 text-sm text-warning">
             View only — this role cannot edit offers.
           </div>
@@ -376,6 +386,7 @@ export function OfferWorkspace() {
                 {String(working.offerName || 'New offer')}
               </h1>
               <StatusPill status={status} />
+              {locked && <TagPill kind="Locked" />}
             </div>
             <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
               <span className="inline-flex items-center gap-1.5">

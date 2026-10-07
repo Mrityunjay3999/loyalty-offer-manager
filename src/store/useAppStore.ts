@@ -99,6 +99,8 @@ export interface AppState extends EditableReference {
   copyOffer: (uid: string) => string | null; // returns new _uid
   cancelOffer: (uid: string, reason: string, dateISO?: string) => void;
   changeStatus: (uid: string, newStatus: string, comment?: string, extra?: Partial<OfferRecord>) => void;
+  /** A4: return a locked offer to its previous status (Admin, comment). */
+  reopenOffer: (uid: string, comment?: string) => void;
   addSavedView: (view: Omit<SavedView, 'id'>) => void;
   deleteSavedView: (id: string) => void;
   addFeedLog: (entry: Omit<FeedLogEntry, 'id' | 'timestamp'>) => void;
@@ -277,6 +279,7 @@ export const useAppStore = create<AppState>()(
         const prev = src?.buildStatus;
         get().updateOffer(uid, {
           buildStatus: 'Cancelled',
+          _prevStatus: String(prev ?? ''),
           dateOfChangeCancel: dateISO ?? todayISO(),
         });
         get().addAudit({
@@ -294,7 +297,11 @@ export const useAppStore = create<AppState>()(
       changeStatus: (uid, newStatus, comment, extra) => {
         const src = get().offers.find((o) => o._uid === uid);
         const prev = src?.buildStatus;
-        get().updateOffer(uid, { buildStatus: newStatus, ...(extra ?? {}) });
+        get().updateOffer(uid, {
+          buildStatus: newStatus,
+          _prevStatus: String(prev ?? ''),
+          ...(extra ?? {}),
+        });
         get().addAudit({
           offerId: String(src?.offerId ?? ''),
           offerUid: uid,
@@ -304,6 +311,24 @@ export const useAppStore = create<AppState>()(
           oldValue: prev ?? null,
           newValue: newStatus,
           comment,
+        });
+      },
+
+      reopenOffer: (uid, comment) => {
+        const src = get().offers.find((o) => o._uid === uid);
+        if (!src) return;
+        const prev = String(src.buildStatus ?? '');
+        const to = src._prevStatus && src._prevStatus !== '' ? src._prevStatus : 'Proposed';
+        get().updateOffer(uid, { buildStatus: to, _prevStatus: prev });
+        get().addAudit({
+          offerId: String(src.offerId ?? ''),
+          offerUid: uid,
+          user: get().role,
+          action: 'status changed',
+          fieldLabel: 'Status',
+          oldValue: prev,
+          newValue: to,
+          comment: comment ? `Reopened: ${comment}` : 'Reopened',
         });
       },
 

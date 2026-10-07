@@ -143,6 +143,7 @@ export function OffersList() {
   const [cancelUid, setCancelUid] = useState<string | null>(null);
   const [saveViewOpen, setSaveViewOpen] = useState(false);
   const [historyUid, setHistoryUid] = useState<string | null>(null);
+  const [showCancelled, setShowCancelled] = useState(false);
 
   const canEdit = can(role, 'createEditCopy');
   const canCancel = can(role, 'cancel');
@@ -180,13 +181,15 @@ export function OffersList() {
     const q = filters.search.trim().toLowerCase();
 
     return offers.filter((o) => {
+      const st = statusOf(o);
+      // A4: Cancelled offers are hidden unless the "Show cancelled" toggle is on.
+      if (st === 'Cancelled' && !showCancelled) return false;
       if (q) {
         const hay = [o.offerName, o.offerId, o.activationDescriptor]
           .map((v) => String(v ?? '').toLowerCase())
           .join(' ');
         if (!hay.includes(q)) return false;
       }
-      const st = statusOf(o);
       if (filters.statuses.length && !filters.statuses.includes(st)) return false;
       if (filters.planningMonth && planningMonth(o) !== filters.planningMonth) return false;
       if (filters.category && o.category !== filters.category) return false;
@@ -207,7 +210,7 @@ export function OffersList() {
       }
       return true;
     });
-  }, [offers, filters]);
+  }, [offers, filters, showCancelled]);
 
   const columns = useMemo<ColumnDef<OfferRecord>[]>(() => {
     const fieldCols: ColumnDef<OfferRecord>[] = Object.values(fieldsById)
@@ -497,6 +500,12 @@ export function OffersList() {
           <input type="checkbox" checked={filters.pastSoftLockNotAudited} onChange={(e) => setFilters((f) => ({ ...f, pastSoftLockNotAudited: e.target.checked }))} />
           Past soft lock &amp; not Audited
         </label>
+        {canEdit && (
+          <label className="flex items-center gap-1.5 text-xs" title="Cancelled offers are hidden by default (A4)">
+            <input type="checkbox" checked={showCancelled} onChange={(e) => setShowCancelled(e.target.checked)} />
+            Show cancelled
+          </label>
+        )}
         <button
           onClick={() => setFilters({ ...EMPTY_FILTERS })}
           className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted hover:bg-surface"

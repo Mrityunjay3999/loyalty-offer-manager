@@ -12,9 +12,11 @@ import {
   statusPillClass,
   allowedTransitions,
   canCancelFrom,
+  isLocked,
   type Transition,
   type GuardMissing,
 } from '@/lib/lifecycle';
+import { can } from '@/lib/permissions';
 import type { OfferRecord } from '@/lib/types';
 
 export interface ApplyArgs {
@@ -23,6 +25,7 @@ export interface ApplyArgs {
   isApproval?: boolean;
   extra?: Partial<OfferRecord>;
   cancel?: boolean;
+  reopen?: boolean;
 }
 
 export function LifecycleBar({
@@ -42,9 +45,13 @@ export function LifecycleBar({
   const [pending, setPending] = useState<Transition | null>(null);
   const [softWarning, setSoftWarning] = useState<string | null>(null);
   const [cancelOpen, setCancelOpen] = useState(false);
+  const [reopenOpen, setReopenOpen] = useState(false);
 
-  const transitions = allowedTransitions(status, role);
-  const showCancel = canCancelFrom(status, role);
+  // A4: a locked offer offers only Reopen (Admin); no other transitions or cancel.
+  const locked = isLocked(status);
+  const canReopen = locked && can(role, 'editReference');
+  const transitions = locked ? [] : allowedTransitions(status, role);
+  const showCancel = locked ? false : canCancelFrom(status, role);
 
   const currentMainIndex = MAIN_PATH.indexOf(status);
   const activeSide = SIDE_STATES.includes(status) ? status : null;
@@ -109,16 +116,27 @@ export function LifecycleBar({
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
               <button
-                disabled={transitions.length === 0 && !showCancel}
+                disabled={transitions.length === 0 && !showCancel && !canReopen}
                 className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-white hover:bg-primary/90 disabled:opacity-40"
               >
-                Change status <ChevronDown size={14} />
+                {locked ? 'Reopen' : 'Change status'} <ChevronDown size={14} />
               </button>
             </DropdownMenu.Trigger>
             <DropdownMenu.Portal>
               <DropdownMenu.Content align="end" className="z-50 min-w-[220px] rounded-md border border-border bg-white py-1 shadow-lg">
-                {transitions.length === 0 && !showCancel && (
-                  <div className="px-3 py-2 text-xs text-muted">No status changes available for this role.</div>
+                {transitions.length === 0 && !showCancel && !canReopen && (
+                  <div className="px-3 py-2 text-xs text-muted">
+                    {locked ? 'This offer is locked. Only an Admin can reopen it.' : 'No status changes available for this role.'}
+                  </div>
+                )}
+                {canReopen && (
+                  <DropdownMenu.Item
+                    onSelect={() => setReopenOpen(true)}
+                    className="flex cursor-pointer items-center gap-2 px-3 py-1.5 text-sm outline-none hover:bg-surface"
+                  >
+                    Reopen offer <span className="text-muted">→ {offer._prevStatus || 'Proposed'}</span>
+                    <ProposedRuleIcon text="Reopening a locked offer is a proposed rule. Confirm with business." />
+                  </DropdownMenu.Item>
                 )}
                 {transitions.map((t, i) => (
                   <DropdownMenu.Item
@@ -225,6 +243,22 @@ export function LifecycleBar({
           setCancelOpen(false);
         }}
         onCancel={() => setCancelOpen(false)}
+      />
+
+      {/* Reopen a locked offer (Admin, A4) */}
+      <ConfirmDialog
+        open={reopenOpen}
+        title="Reopen offer"
+        description={`Return this offer to ${offer._prevStatus || 'Proposed'}. Reopening a locked offer is a proposed rule — confirm with business.`}
+        confirmLabel="Reopen"
+        withInput
+        inputLabel="Comment"
+        inputRequired
+        onConfirm={(comment) => {
+          onApply({ to: '', comment, reopen: true });
+          setReopenOpen(false);
+        }}
+        onCancel={() => setReopenOpen(false)}
       />
     </div>
   );
