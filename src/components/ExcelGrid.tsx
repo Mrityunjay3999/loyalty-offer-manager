@@ -174,7 +174,7 @@ export function ExcelGrid({
               return (
                 <div
                   key={c.id}
-                  className={`shrink-0 border-r border-border/60 px-2 py-1.5 ${frozen ? 'sticky z-10 bg-surface' : ''}`}
+                  className={`shrink-0 border-r border-border/60 px-2 py-1.5 ${c.groupClass ?? ''} ${frozen ? 'sticky z-10 bg-surface' : ''}`}
                   style={{ width: c.width ?? 150, left: frozen ? lefts[i] : undefined }}
                 >
                   <button className="flex w-full items-center gap-1 text-left" onClick={() => toggleSort(c.id)}>
