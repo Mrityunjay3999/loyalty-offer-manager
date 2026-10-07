@@ -9,6 +9,8 @@ import {
 } from '@/lib/dataLoaders';
 import { todayISO } from '@/lib/format';
 import { computeNextOfferId } from '@/lib/offerId';
+import { includedOffers, offerExceptions } from '@/lib/feed';
+import databricksTablesJson from '@/data/databricksTables.json';
 import type {
   OfferRecord,
   AuditEntry,
@@ -88,6 +90,8 @@ export interface AppState extends EditableReference {
   savedViews: SavedView[];
   feedLog: FeedLogEntry[];
   groupedChildren: Record<string, ChildPromotion[]>;
+  feedState: Record<string, { loadedAt?: string }>;
+  databricksTableNames: { attributes: string | null; metrics: string | null };
 
   // --- actions ---
   setRole: (role: Role) => void;
@@ -109,6 +113,9 @@ export interface AppState extends EditableReference {
   editReference: (patch: Partial<EditableReference>, summary: string) => void;
   /** Next auto-generated Offer ID = max(existing numeric offerId) + 1 (A1). */
   nextOfferId: () => number;
+  /** C4: nightly load — stamp included offers without exceptions, log counts. */
+  simulateNightlyLoad: () => void;
+  setDatabricksTableName: (key: 'attributes' | 'metrics', name: string) => void;
 }
 
 const RESULT_FIELD_IDS = fieldsByStep['9. Results'].map((f) => f.id);
@@ -121,6 +128,10 @@ type AppData = EditableReference & {
   savedViews: SavedView[];
   feedLog: FeedLogEntry[];
   groupedChildren: Record<string, ChildPromotion[]>;
+  /** C4: per-offer last Databricks load timestamp (keyed by _uid). */
+  feedState: Record<string, { loadedAt?: string }>;
+  /** C2: editable Databricks table names. */
+  databricksTableNames: { attributes: string | null; metrics: string | null };
 };
 
 /** Map a seed grouped child (verbose spreadsheet keys) to an editable row. */
@@ -162,6 +173,11 @@ function initialState(): AppData {
     savedViews: [],
     feedLog: [],
     groupedChildren: seedGroupedChildren(offers),
+    feedState: {},
+    databricksTableNames: {
+      attributes: databricksTablesJson.attributes.tableName,
+      metrics: databricksTablesJson.metrics.tableName,
+    },
     ...seedEditableReference(),
   };
 }
@@ -349,6 +365,31 @@ export const useAppStore = create<AppState>()(
         set((s) => ({ groupedChildren: { ...s.groupedChildren, [uid]: children } })),
 
       nextOfferId: () => computeNextOfferId(get().offers),
+
+      simulateNightlyLoad: () => {
+        const s = get();
+        const included = includedOffers(s.offers);
+        const now = new Date().toISOString();
+        const cleanUids: string[] = [];
+        let skipped = 0;
+        for (const o of included) {
+          if (offerExceptions(o, s.categorySubCategory).length === 0 && o._uid) cleanUids.push(o._uid);
+          else skipped += 1;
+        }
+        const feedState = { ...s.feedState };
+        for (const uid of cleanUids) feedState[uid] = { loadedAt: now };
+        set({ feedState });
+        get().addFeedLog({
+          records: cleanUids.length,
+          status: 'Success',
+          message: `Nightly load: ${cleanUids.length} to attributes, ${cleanUids.length} to metrics, ${skipped} skipped as exceptions.`,
+        });
+      },
+
+      setDatabricksTableName: (key, name) => {
+        set((st) => ({ databricksTableNames: { ...st.databricksTableNames, [key]: name } }));
+        get().addAudit({ offerId: 'REFERENCE', user: get().role, action: 'reference edited', comment: `Set Databricks ${key} table name to "${name}"` });
+      },
 
       editReference: (patch, summary) => {
         set((s) => ({ ...s, ...patch }));

@@ -41,6 +41,7 @@ import { computedFieldValue, softLockDate } from '@/lib/calculations';
 import { validateOffer, softLockWarning } from '@/lib/validation';
 import { can } from '@/lib/permissions';
 import { isNoValue, formatDate, todayISO, parseISO } from '@/lib/format';
+import { feedChip } from '@/lib/feed';
 import { toCsv, downloadCsv } from '@/lib/csv';
 import type { OfferRecord, OfferValue, OfferSetupCombo, FieldDef } from '@/lib/types';
 
@@ -65,6 +66,7 @@ export function OfferWorkspace() {
   const addAudit = useAppStore((s) => s.addAudit);
   const changeStatus = useAppStore((s) => s.changeStatus);
   const nextOfferId = useAppStore((s) => s.nextOfferId);
+  const feedState = useAppStore((s) => s.feedState);
   const push = useToasts((s) => s.push);
 
   // Create a draft for /offers/new, then redirect to its uid.
@@ -403,6 +405,13 @@ export function OfferWorkspace() {
                 {formatDate(working.startDate)} → {formatDate(working.endDate)}
               </span>
               <span>{isNoValue(working.country) ? '—' : String(working.country)}</span>
+              <button
+                onClick={() => navigate('/data-feed')}
+                className="rounded-full border border-border px-2 py-0.5 text-xs text-muted hover:bg-surface"
+                title="Databricks feed status — click to open the feed"
+              >
+                {feedChip(working, feedState[working._uid ?? '']?.loadedAt, categorySubCategory)}
+              </button>
               <SaveIndicator state={saveState} lastSavedAt={lastSavedAt} isDraft={isDraft} />
             </div>
           </div>

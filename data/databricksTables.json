@@ -1,0 +1,4 @@
+{
+  "attributes": { "displayName": "Features metadata", "tableName": null, "typeCode": "MA", "note": "Offer attributes. Table name to be confirmed." },
+  "metrics":    { "displayName": "Features metadata metrics", "tableName": null, "typeCode": "CM", "note": "Calculated and performance metrics. Table name to be confirmed." }
+}
