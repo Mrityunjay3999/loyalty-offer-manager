@@ -39,13 +39,13 @@ describe('validation (section 9)', () => {
     expect(validateOffer(valid, ctx()).errors).toEqual([]);
   });
 
-  it('missing required fields are errors', () => {
+  it('missing required fields (from requiredFields.json) are errors; offerId is not required (A1)', () => {
     const o: OfferRecord = { _uid: 'me' };
     const ids = errIds(o);
-    expect(ids).toContain('offerId');
     expect(ids).toContain('startDate');
     expect(ids).toContain('offerName');
     expect(ids).toContain('category');
+    expect(ids).not.toContain('offerId'); // auto-generated
   });
 
   it('End before Start is an error', () => {
@@ -56,11 +56,10 @@ describe('validation (section 9)', () => {
     expect(errIds({ ...valid, earlyActivationDate: '2026-11-02' })).toContain('earlyActivationDate');
   });
 
-  it('duplicate Offer ID is an error naming the other offer', () => {
+  it('Offer ID is auto-generated: no duplicate/validation error even if ids collide (A1)', () => {
     const other: OfferRecord = { _uid: 'other', offerId: 9001, offerName: 'EXISTING' };
     const res = validateOffer(valid, ctx([other]));
-    const issue = res.errors.find((e) => e.fieldId === 'offerId');
-    expect(issue?.message).toContain('EXISTING');
+    expect(res.errors.find((e) => e.fieldId === 'offerId')).toBeUndefined();
   });
 
   it('invalid sub-category for category is an error', () => {

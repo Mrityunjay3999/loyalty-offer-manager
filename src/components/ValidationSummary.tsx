@@ -1,5 +1,6 @@
 import { AlertCircle, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { fieldsById } from '@/lib/dataLoaders';
+import { TagPill } from '@/components/TagPill';
 import type { Issue } from '@/lib/validation';
 
 /** Lists validation errors and warnings; each row jumps to the field. */
@@ -21,6 +22,9 @@ export function ValidationSummary({
   }
   return (
     <div className="space-y-3">
+      <div className="flex items-center gap-1.5 text-[11px] text-muted">
+        Required fields are for the metadata load <TagPill kind="Provisional" />
+      </div>
       {errors.length > 0 && (
         <div>
           <div className="mb-1 flex items-center gap-1.5 font-medium text-danger">

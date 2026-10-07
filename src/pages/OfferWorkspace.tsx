@@ -30,6 +30,7 @@ import { LifecycleBar, type ApplyArgs } from '@/components/workspace/LifecycleBa
 import { GroupedOfferTab } from '@/components/workspace/GroupedOfferTab';
 import { InspireFormModal } from '@/components/InspireFormModal';
 import { PhaseBadge } from '@/components/PhaseBadge';
+import { TagPill } from '@/components/TagPill';
 import { isGroupedTabVisible } from '@/lib/visibility';
 import { fields, fieldsByStep, fieldsById, STEP_ORDER } from '@/lib/dataLoaders';
 import { statusOf } from '@/lib/lifecycle';
@@ -62,6 +63,7 @@ export function OfferWorkspace() {
   const cancelOffer = useAppStore((s) => s.cancelOffer);
   const addAudit = useAppStore((s) => s.addAudit);
   const changeStatus = useAppStore((s) => s.changeStatus);
+  const nextOfferId = useAppStore((s) => s.nextOfferId);
   const push = useToasts((s) => s.push);
 
   // Create a draft for /offers/new, then redirect to its uid.
@@ -148,16 +150,25 @@ export function OfferWorkspace() {
     [isDraft, push],
   );
 
+  // A1: assign the auto-generated Offer ID on first save.
+  const ensureId = useCallback(
+    (w: OfferRecord): OfferRecord =>
+      isNoValue(w.offerId) ? { ...w, offerId: nextOfferId() } : w,
+    [nextOfferId],
+  );
+
   // --- draft autosave (1s after last change) ---
   useEffect(() => {
     if (!isDraft || !working._uid || saveState !== 'saving') return;
     const t = setTimeout(() => {
-      updateOffer(working._uid!, working);
+      const toSave = ensureId(working);
+      if (toSave !== working) setWorking(toSave);
+      updateOffer(working._uid!, toSave);
       setSaveState('saved');
       setLastSavedAt(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
     }, 1000);
     return () => clearTimeout(t);
-  }, [working, isDraft, saveState, updateOffer]);
+  }, [working, isDraft, saveState, updateOffer, ensureId]);
 
   // --- save changes (existing offers): one audit per changed field ---
   const commitChanges = useCallback(() => {
@@ -188,11 +199,13 @@ export function OfferWorkspace() {
 
   const saveDraftNow = useCallback(() => {
     if (!working._uid) return;
-    updateOffer(working._uid, working);
+    const toSave = ensureId(working);
+    if (toSave !== working) setWorking(toSave);
+    updateOffer(working._uid, toSave);
     setSaveState('saved');
     setLastSavedAt(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
     push('Draft saved', 'success');
-  }, [working, updateOffer, push]);
+  }, [working, updateOffer, push, ensureId]);
 
   // Ctrl/Cmd+S
   useEffect(() => {
@@ -214,10 +227,12 @@ export function OfferWorkspace() {
       push(`Cannot submit: ${res.errors.length} error${res.errors.length === 1 ? '' : 's'} to fix.`, 'error');
       return;
     }
-    updateOffer(working._uid!, working);
+    const toSave = ensureId(working);
+    if (toSave !== working) setWorking(toSave);
+    updateOffer(working._uid!, toSave);
     changeStatus(working._uid!, 'Proposed', 'Submitted for approval');
     push('Offer submitted as Proposed', 'success');
-  }, [working, offers, categorySubCategory, updateOffer, changeStatus, push]);
+  }, [working, offers, categorySubCategory, updateOffer, changeStatus, push, ensureId]);
 
   // --- lifecycle status change (owns `working`, commits + audits) ---
   const applyStatus = useCallback(
@@ -363,7 +378,16 @@ export function OfferWorkspace() {
               <StatusPill status={status} />
             </div>
             <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
-              <span>ID: {isNoValue(working.offerId) ? '—' : String(working.offerId)}</span>
+              <span className="inline-flex items-center gap-1.5">
+                Offer ID:{' '}
+                {isNoValue(working.offerId) ? (
+                  <span className="italic">Assigned on first save</span>
+                ) : (
+                  <>
+                    {String(working.offerId)} <TagPill kind="Auto-generated" />
+                  </>
+                )}
+              </span>
               <span>
                 {formatDate(working.startDate)} → {formatDate(working.endDate)}
               </span>
@@ -530,7 +554,14 @@ export function OfferWorkspace() {
       </div>
 
       {/* Sticky footer */}
-      <div className="fixed bottom-0 left-60 right-0 flex items-center justify-between border-t border-border bg-white px-6 py-3">
+      <div className="fixed bottom-0 left-60 right-0 border-t border-border bg-white px-6 py-3">
+      {isDraft && validation.errors.length > 0 && (
+        <p className="mb-2 text-xs text-warning">
+          Saved as draft. Fix {validation.errors.length} item
+          {validation.errors.length === 1 ? '' : 's'} before you can submit.
+        </p>
+      )}
+      <div className="flex items-center justify-between">
         <button
           disabled={stepIndex === 0}
           onClick={() => setStep(allSteps[Math.max(0, stepIndex - 1)])}
@@ -567,6 +598,7 @@ export function OfferWorkspace() {
             </button>
           )}
         </div>
+      </div>
       </div>
 
       <HistoryDrawer

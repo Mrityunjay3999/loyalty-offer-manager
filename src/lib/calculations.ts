@@ -84,12 +84,24 @@ export function canActivationDescriptorLength(o: OfferRecord): number {
     : String(o.canActivationDescriptor).length;
 }
 
+/** Draft (prototype-only) and blank status are excluded from all downstream views. */
+function isExcludedStatus(o: OfferRecord): boolean {
+  const s = String(o.buildStatus ?? '');
+  return s === '' || s === 'Draft';
+}
+
 export function includeForMetadata(o: OfferRecord): 'Yes' | 'No' {
-  return o.buildStatus === 'Cancelled' ? 'No' : 'Yes';
+  // C3: status is set and not Cancelled. Drafts excluded.
+  if (isExcludedStatus(o) || o.buildStatus === 'Cancelled') return 'No';
+  return 'Yes';
 }
 
 export function includeForResultsForecast(o: OfferRecord): 'Yes' | 'No' {
-  return o.buildStatus === 'Cancelled' || o.offerDesign === 'IMP only' ? 'No' : 'Yes';
+  // B1: No if Cancelled or Offer Design = "IMP only". Drafts/blank excluded.
+  if (isExcludedStatus(o) || o.buildStatus === 'Cancelled' || o.offerDesign === 'IMP only') {
+    return 'No';
+  }
+  return 'Yes';
 }
 
 export function startMonthNumber(o: OfferRecord): number | null {

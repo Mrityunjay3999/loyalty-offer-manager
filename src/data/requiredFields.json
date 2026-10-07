@@ -1,0 +1,5 @@
+{
+  "status": "provisional",
+  "note": "Final list to be provided by the business (metadata ingestion requirements).",
+  "fields": ["offerRequestDate","submittedBy","ppContact","startDate","endDate","offerName","category","subCategory","offerTiering","country","broadVsTargeted","offerDesign"]
+}

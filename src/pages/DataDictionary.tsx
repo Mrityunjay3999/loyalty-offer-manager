@@ -3,7 +3,7 @@ import * as Popover from '@radix-ui/react-popover';
 import { Search, Eye } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { PageHeader } from '@/components/PageHeader';
-import { fields, STEP_ORDER, dataDictionaryOnlyFields } from '@/lib/dataLoaders';
+import { fields, STEP_ORDER, dataDictionaryOnlyFields, requiredFieldIds } from '@/lib/dataLoaders';
 
 const DATA_FINDINGS: string[] = [
   'Dropdown validation has drifted from its columns. Some Excel dropdown rules now sit on the wrong column (e.g. the multiplier list is attached to the threshold columns). The prototype maps every dropdown to its correct field by meaning.',
@@ -45,9 +45,9 @@ export function DataDictionary() {
     <div>
       <PageHeader title="Data dictionary" count={rows.length} />
       <p className="mb-3 text-sm text-muted">
-        The business’s checklist for confirming field definitions. 124 fields appear in the form
-        (123 from today’s calendar + 1 defined only in the data dictionary); 6 are system/hidden —
-        130 total.
+        The business’s checklist for confirming field definitions. 123 fields appear in the form
+        (from today’s calendar); 6 are system/hidden — 129 total. Offer ID is auto-generated in the
+        product (no typed input).
       </p>
 
       <div className="mb-3 flex flex-wrap items-center gap-2">
@@ -76,6 +76,7 @@ export function DataDictionary() {
               <th className="px-2 py-2 font-medium">Databricks</th>
               <th className="px-2 py-2 font-medium">MA/CM</th>
               <th className="px-2 py-2 font-medium">Datatype</th>
+              <th className="px-2 py-2 font-medium">Required for metadata load</th>
             </tr>
           </thead>
           <tbody>
@@ -87,7 +88,10 @@ export function DataDictionary() {
                   <td className="px-2 py-1.5">
                     <div className="font-medium text-ink">{f.label}</div>
                     <div className="text-muted">{f.tooltip}</div>
-                    {retired && <span className="mt-0.5 inline-block rounded bg-surface px-1 text-[11px] text-muted">Retired in product (use Offer ID)</span>}
+                    {f.id === 'offerId' && (
+                      <span className="mt-0.5 inline-block rounded bg-purple-100 px-1 text-[11px] text-purple-700">Auto-generated in product</span>
+                    )}
+                    {retired && <span className="mt-0.5 inline-block rounded bg-surface px-1 text-[11px] text-muted">Retired in product. Replaced by Offer ID.</span>}
                   </td>
                   <td className="px-2 py-1.5 text-muted">{f.step}</td>
                   <td className="px-2 py-1.5 text-muted">{f.excelColumn} · {f.excelHeader}</td>
@@ -121,6 +125,9 @@ export function DataDictionary() {
                   <td className="px-2 py-1.5 text-muted">{f.datalakeColumn ?? '—'}</td>
                   <td className="px-2 py-1.5 text-muted">{f.metadataType ?? '—'}</td>
                   <td className="px-2 py-1.5 text-muted">{f.datatype ?? '—'}</td>
+                  <td className="px-2 py-1.5 text-muted">
+                    {requiredFieldIds.has(f.id) ? 'Yes (provisional)' : 'No'}
+                  </td>
                 </tr>
               );
             })}
@@ -133,8 +140,8 @@ export function DataDictionary() {
       </h2>
       <p className="mb-2 text-sm text-muted">
         These 10 fields have a definition in the Excel data dictionary but no column in the live
-        Calendar. Only <span className="font-medium text-ink">Offer due date</span> has been added
-        to the form (Step 1); the other 9 are listed here for the business to confirm.
+        Calendar. The business confirmed in the 2 Oct review that the data-dictionary tab is out of
+        date (“Offer due date” became Offer Request Date), so none of these are in the MVP form.
       </p>
       <div className="mb-6 overflow-auto rounded-lg border border-border bg-white">
         <table className="w-full text-left text-xs">
@@ -150,7 +157,7 @@ export function DataDictionary() {
           <tbody>
             {dataDictionaryOnlyFields.map((d) => {
               const opts = d.dropdownKeyIfAny ? dropdowns[d.dropdownKeyIfAny] ?? [] : [];
-              const inForm = d.field === 'Offer due date';
+              const inForm = false; // A2: none of these are in the MVP form
               return (
                 <tr key={d.ddRow} className="border-b border-border last:border-0 align-top">
                   <td className="px-2 py-1.5 text-muted">{d.ddRow}</td>

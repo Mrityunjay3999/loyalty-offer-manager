@@ -7,6 +7,7 @@ import referenceJson from '@/data/reference.json';
 import metadataJson from '@/data/metadataFields.json';
 import offersJson from '@/data/sampleOffers.json';
 import ddOnlyJson from '@/data/dataDictionaryOnlyFields.json';
+import requiredFieldsJson from '@/data/requiredFields.json';
 
 import type {
   FieldDef,
@@ -15,6 +16,7 @@ import type {
   MetadataField,
   OfferRecord,
   DataDictionaryOnlyField,
+  RequiredFields,
 } from './types';
 
 export const fields = fieldsJson as unknown as FieldDef[];
@@ -23,6 +25,13 @@ export const reference = referenceJson as unknown as ReferenceData;
 export const metadataFields = metadataJson as unknown as MetadataField[];
 export const sampleOffers = offersJson as unknown as OfferRecord[];
 export const dataDictionaryOnlyFields = ddOnlyJson as unknown as DataDictionaryOnlyField[];
+export const requiredFields = requiredFieldsJson as unknown as RequiredFields;
+
+/** Field ids required for the metadata load (A7). Drives the red star + validation. */
+export const requiredFieldIds = new Set<string>(requiredFields.fields);
+export function isRequired(fieldId: string): boolean {
+  return requiredFieldIds.has(fieldId);
+}
 
 // Convenience indexes built once.
 export const fieldsById: Record<string, FieldDef> = Object.fromEntries(

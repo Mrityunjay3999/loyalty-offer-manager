@@ -1,6 +1,6 @@
 // Validation rules, spec section 9. Errors block submission / the relevant
 // status change; warnings never block. Hidden fields (section 10) are skipped.
-import { fields } from './dataLoaders';
+import { fields, fieldsById, requiredFieldIds } from './dataLoaders';
 import { isNoValue, toNumber, parseISO } from './format';
 import { isFieldVisible } from './visibility';
 import type { OfferRecord, CategorySubCategory } from './types';
@@ -42,39 +42,20 @@ export function validateOffer(offer: OfferRecord, ctx: ValidationCtx): Validatio
 
   const visible = (id: string) => isFieldVisible(id, offer);
 
-  // 1. Required fields (N/A not accepted). Skip hidden ones.
-  for (const f of fields) {
-    if (!f.required) continue;
-    if (!visible(f.id)) continue;
-    const v = offer[f.id];
-    if (isNoValue(v) || v === 'N/A') err(f.id, `${f.label} is required.`);
+  // 1. Required fields (A7: from requiredFields.json; N/A not accepted). Skip hidden ones.
+  for (const id of requiredFieldIds) {
+    if (!visible(id)) continue;
+    const v = offer[id];
+    if (isNoValue(v) || v === 'N/A') err(id, `${fieldsById[id]?.label ?? id} is required.`);
   }
 
-  // 2. offerId: positive whole number; unique.
-  if (!isNoValue(offer.offerId)) {
-    const n = toNumber(offer.offerId);
-    if (n === null || !Number.isInteger(n) || n <= 0) {
-      err('offerId', 'Offer ID must be a positive whole number.');
-    } else {
-      const dup = others.find((o) => toNumber(o.offerId) === n);
-      if (dup) err('offerId', `Offer ID ${n} is already used by ${nameOf(dup)}.`);
-    }
-  }
+  // (A1) Offer ID is auto-generated: no typed-value or uniqueness validation.
 
   // 3. endDate >= startDate
   {
     const s = parseISO(offer.startDate);
     const e = parseISO(offer.endDate);
     if (s && e && e < s) err('endDate', 'End Date must be on or after Start Date.');
-  }
-
-  // Offer due date (data-dictionary-only field): warn if after Start Date.
-  {
-    const due = parseISO(offer.offerDueDate);
-    const s = parseISO(offer.startDate);
-    if (due && s && due > s) {
-      warn('offerDueDate', 'Offer due date is after the Start Date.');
-    }
   }
 
   // 4. earlyActivationDate < startDate (when a real date)

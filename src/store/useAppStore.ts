@@ -8,6 +8,7 @@ import {
   fieldsByStep,
 } from '@/lib/dataLoaders';
 import { todayISO } from '@/lib/format';
+import { computeNextOfferId } from '@/lib/offerId';
 import type {
   OfferRecord,
   AuditEntry,
@@ -25,7 +26,8 @@ import type {
   OfferValue,
 } from '@/lib/types';
 
-export const STORAGE_KEY = 'lom-prototype-v1';
+export const STORAGE_KEY = 'lom-prototype-v2';
+const V1_KEY = 'lom-prototype-v1';
 
 let idCounter = 0;
 /** Small monotonic id generator (prototype-only; no crypto needed). */
@@ -103,6 +105,8 @@ export interface AppState extends EditableReference {
   setGroupedChildren: (uid: string, children: ChildPromotion[]) => void;
   /** Patch any editable reference slice and log it to the audit trail. */
   editReference: (patch: Partial<EditableReference>, summary: string) => void;
+  /** Next auto-generated Offer ID = max(existing numeric offerId) + 1 (A1). */
+  nextOfferId: () => number;
 }
 
 const RESULT_FIELD_IDS = fieldsByStep['9. Results'].map((f) => f.id);
@@ -159,6 +163,37 @@ function initialState(): AppData {
     ...seedEditableReference(),
   };
 }
+
+/** Best-effort v1 -> v2 migration (ground rule 8): keep offers + audit log,
+ *  drop the removed "Offer due date" value. Runs once, before the store reads
+ *  storage. Fresh seed is used if anything is missing. */
+function migrateV1ToV2(): void {
+  try {
+    if (typeof localStorage === 'undefined') return;
+    if (localStorage.getItem(STORAGE_KEY)) return; // already on v2
+    const raw = localStorage.getItem(V1_KEY);
+    if (!raw) return;
+    const v1 = JSON.parse(raw);
+    const v1offers = v1?.state?.offers;
+    const v1audit = v1?.state?.auditLog;
+    const seeded = initialState();
+    const offers = Array.isArray(v1offers) && v1offers.length
+      ? v1offers.map((o: OfferRecord) => {
+          const c = { ...o };
+          delete (c as Record<string, unknown>).offerDueDate;
+          return c;
+        })
+      : seeded.offers;
+    const auditLog = Array.isArray(v1audit) && v1audit.length ? v1audit : seeded.auditLog;
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ state: { ...seeded, offers, auditLog }, version: 2 }),
+    );
+  } catch {
+    /* ignore — fall back to fresh seed */
+  }
+}
+migrateV1ToV2();
 
 export const useAppStore = create<AppState>()(
   persist(
@@ -288,6 +323,8 @@ export const useAppStore = create<AppState>()(
       setGroupedChildren: (uid, children) =>
         set((s) => ({ groupedChildren: { ...s.groupedChildren, [uid]: children } })),
 
+      nextOfferId: () => computeNextOfferId(get().offers),
+
       editReference: (patch, summary) => {
         set((s) => ({ ...s, ...patch }));
         get().addAudit({
@@ -300,7 +337,7 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: STORAGE_KEY,
-      version: 1,
+      version: 2,
     },
   ),
 );
