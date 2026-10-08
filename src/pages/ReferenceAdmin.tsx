@@ -7,12 +7,18 @@ import { PageHeader } from '@/components/PageHeader';
 import { ProposedRuleIcon } from '@/components/ProposedRuleIcon';
 import { reference } from '@/lib/dataLoaders';
 import { parseISO } from '@/lib/format';
+import { mergedCategoryDropdowns } from '@/lib/options';
 import { can } from '@/lib/permissions';
 import type { CategorySubCategory, TieringDefinition, LifecycleStatus, OfferSetupCombo, SoftLockPlannerRow } from '@/lib/types';
 
 export function ReferenceAdmin() {
   const role = useAppStore((s) => s.role);
-  const isAdmin = can(role, 'addChangeListValues');
+  const permissions = useAppStore((s) => s.permissions); // re-render when the matrix changes
+  // Each area has its own capability so the permission matrix actually gates it.
+  const canLists = can(role, 'addChangeListValues', permissions);
+  const canStatuses = can(role, 'editStatusDefs', permissions);
+  const canDbx = can(role, 'editDatabricksNames', permissions);
+  const canAny = canLists || canStatuses || canDbx;
   const TABS = [
     'Categories', 'Offer tiering', 'Statuses', 'Dropdown lists', 'Offer setups',
     'Transaction types', 'Soft lock planner', 'Deactivation rules', 'Brands', 'Databricks tables',
@@ -21,8 +27,8 @@ export function ReferenceAdmin() {
   return (
     <div>
       <PageHeader title="Reference data">
-        {!isAdmin && (
-          <span className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-xs text-muted" title="Only an Admin can change list values.">
+        {!canAny && (
+          <span className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-xs text-muted" title="You don't have permission to change reference data.">
             <Lock size={12} /> Read-only
           </span>
         )}
@@ -35,7 +41,7 @@ export function ReferenceAdmin() {
         Every change is logged and is immediately available in the dropdowns.
         {' '}Retiring a value keeps it on offers already using it (
         <span className="inline-flex items-center gap-1">proposed rule <ProposedRuleIcon /></span>).
-        {!isAdmin && <span className="ml-1 italic">Only an Admin can change list values.</span>}
+        {!canLists && <span className="ml-1 italic">Changing list values needs the “Add or change list values” permission.</span>}
       </p>
 
       <Tabs.Root defaultValue="Categories">
@@ -51,16 +57,16 @@ export function ReferenceAdmin() {
           ))}
         </Tabs.List>
 
-        <Tabs.Content value="Categories"><CategoriesTab readOnly={!isAdmin} /></Tabs.Content>
-        <Tabs.Content value="Offer tiering"><TieringTab readOnly={!isAdmin} /></Tabs.Content>
-        <Tabs.Content value="Statuses"><StatusesTab readOnly={!isAdmin} /></Tabs.Content>
-        <Tabs.Content value="Dropdown lists"><DropdownsTab readOnly={!isAdmin} /></Tabs.Content>
-        <Tabs.Content value="Offer setups"><SetupsTab readOnly={!isAdmin} /></Tabs.Content>
+        <Tabs.Content value="Categories"><CategoriesTab readOnly={!canLists} /></Tabs.Content>
+        <Tabs.Content value="Offer tiering"><TieringTab readOnly={!canLists} /></Tabs.Content>
+        <Tabs.Content value="Statuses"><StatusesTab readOnly={!canStatuses} /></Tabs.Content>
+        <Tabs.Content value="Dropdown lists"><DropdownsTab readOnly={!canLists} /></Tabs.Content>
+        <Tabs.Content value="Offer setups"><SetupsTab readOnly={!canLists} /></Tabs.Content>
         <Tabs.Content value="Transaction types"><TransactionTypesTab /></Tabs.Content>
-        <Tabs.Content value="Soft lock planner"><SoftLockTab readOnly={!isAdmin} /></Tabs.Content>
-        <Tabs.Content value="Deactivation rules"><DeactivationTab readOnly={!isAdmin} /></Tabs.Content>
-        <Tabs.Content value="Brands"><BrandsTab readOnly={!isAdmin} /></Tabs.Content>
-        <Tabs.Content value="Databricks tables"><DatabricksTablesTab readOnly={!isAdmin} /></Tabs.Content>
+        <Tabs.Content value="Soft lock planner"><SoftLockTab readOnly={!canLists} /></Tabs.Content>
+        <Tabs.Content value="Deactivation rules"><DeactivationTab readOnly={!canLists} /></Tabs.Content>
+        <Tabs.Content value="Brands"><BrandsTab readOnly={!canLists} /></Tabs.Content>
+        <Tabs.Content value="Databricks tables"><DatabricksTablesTab readOnly={!canDbx} /></Tabs.Content>
       </Tabs.Root>
     </div>
   );
@@ -77,6 +83,7 @@ function Toolbar({ children }: { children: React.ReactNode }) {
 // ---- Categories & sub-categories ----
 function CategoriesTab({ readOnly }: { readOnly: boolean }) {
   const rows = useAppStore((s) => s.categorySubCategory);
+  const dropdowns = useAppStore((s) => s.dropdowns);
   const editReference = useAppStore((s) => s.editReference);
   const push = useToasts((s) => s.push);
   const [draft, setDraft] = useState<CategorySubCategory[]>(() => rows.map((r) => ({ ...r })));
@@ -84,6 +91,30 @@ function CategoriesTab({ readOnly }: { readOnly: boolean }) {
   function up(i: number, patch: Partial<CategorySubCategory>) {
     setDraft((d) => d.map((r, j) => (j === i ? { ...r, ...patch } : r)));
   }
+
+  function save() {
+    // Single source of truth: saving here also makes every category/sub-category
+    // selectable by syncing the planningCategory / planningSubCategory dropdown
+    // lists. Additive only — existing values are never removed (retire them in
+    // the Dropdown lists tab instead), so offers already using a value are safe.
+    const { planningCategory, planningSubCategory } = mergedCategoryDropdowns(draft, dropdowns);
+    const addedCats = planningCategory.length - (dropdowns.planningCategory ?? []).length;
+    const addedSubs = planningSubCategory.length - (dropdowns.planningSubCategory ?? []).length;
+    editReference(
+      {
+        categorySubCategory: draft,
+        dropdowns: { ...dropdowns, planningCategory, planningSubCategory },
+      },
+      `Edited category/sub-category list (${draft.length} pairs${addedCats || addedSubs ? `; +${addedCats} category, +${addedSubs} sub-category options` : ''})`,
+    );
+    push(
+      addedCats || addedSubs
+        ? `Categories saved. ${addedCats} new category and ${addedSubs} new sub-category option(s) are now selectable.`
+        : 'Categories saved.',
+      'success',
+    );
+  }
+
   return (
     <div>
       <Toolbar>
@@ -93,11 +124,17 @@ function CategoriesTab({ readOnly }: { readOnly: boolean }) {
           </button>
         )}
         {!readOnly && (
-          <button className={saveBtn} onClick={() => { editReference({ categorySubCategory: draft }, `Edited category/sub-category list (${draft.length} pairs)`); push('Categories saved.', 'success'); }}>
+          <button className={saveBtn} onClick={save}>
             <Save size={14} /> Save changes
           </button>
         )}
       </Toolbar>
+      {!readOnly && (
+        <p className="mb-2 text-xs text-muted">
+          This is the single place to manage categories and sub-categories. Saving adds any new
+          category or sub-category to the offer form dropdowns automatically — no second step.
+        </p>
+      )}
       <div className="max-h-[60vh] overflow-auto rounded-lg border border-border bg-white">
         <table className="w-full text-left text-sm">
           <thead className="sticky top-0 border-b border-border bg-surface text-muted">

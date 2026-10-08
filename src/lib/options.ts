@@ -3,6 +3,25 @@
 // dropdowns.json / reference.json — nothing is invented here.
 import type { Dropdowns, CategorySubCategory, OfferValue } from './types';
 
+/**
+ * Make the Categories tab the single source for category/sub-category: given the
+ * edited pairs, return the planningCategory / planningSubCategory lists with any
+ * new values added so they become selectable on the offer form. Additive only —
+ * existing values are preserved (retire them separately), keeping offers that
+ * already use a value valid.
+ */
+export function mergedCategoryDropdowns(
+  pairs: Array<Pick<CategorySubCategory, 'category' | 'subCategory'>>,
+  dropdowns: Dropdowns,
+): { planningCategory: string[]; planningSubCategory: string[] } {
+  const cats = pairs.map((r) => String(r.category ?? '').trim()).filter(Boolean);
+  const subs = pairs.map((r) => String(r.subCategory ?? '').trim()).filter(Boolean);
+  return {
+    planningCategory: [...new Set([...(dropdowns.planningCategory ?? []), ...cats])],
+    planningSubCategory: [...new Set([...(dropdowns.planningSubCategory ?? []), ...subs])],
+  };
+}
+
 /** Large lists that must render as a searchable combobox, never a plain select. */
 export const LARGE_LIST_KEYS = new Set(['brands', 'transactionTypes']);
 
