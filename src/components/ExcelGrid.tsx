@@ -2,7 +2,7 @@ import { useMemo, useRef, useState, type ReactNode } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as Tooltip from '@radix-ui/react-tooltip';
-import { ChevronUp, ChevronDown, Columns3, Info } from 'lucide-react';
+import { ChevronUp, ChevronDown, Columns3, Info, GripVertical } from 'lucide-react';
 import { TagPill, type TagKind } from '@/components/TagPill';
 import type { OfferRecord } from '@/lib/types';
 
@@ -27,6 +27,7 @@ interface Layout {
   freeze: number;
   density: 'comfortable' | 'compact';
   filters?: Record<string, string>; // per-column "contains" text
+  widths?: Record<string, number>; // per-column overridden width (drag-resize)
 }
 
 function loadLayout(key: string): Layout | null {
@@ -78,6 +79,8 @@ export function ExcelGrid({
       }
     );
   });
+  const layoutRef = useRef(layout);
+  layoutRef.current = layout;
   function update(next: Partial<Layout>) {
     setLayout((l) => {
       const merged = { ...l, ...next };
@@ -88,6 +91,44 @@ export function ExcelGrid({
 
   const visibleCols = layout.visible.map((id) => colById[id]).filter(Boolean) as ExcelColumn[];
   const rowH = layout.density === 'compact' ? 30 : 40;
+
+  // Effective width for a column: a drag-resized override, else its natural width.
+  const colWidth = (c: ExcelColumn) => layout.widths?.[c.id] ?? c.width ?? 150;
+
+  // --- Drag to resize a column (pointer drag on the right edge of a header) ---
+  const resizeRef = useRef<{ id: string; startX: number; startW: number } | null>(null);
+  function onResizeDown(e: React.PointerEvent, c: ExcelColumn) {
+    e.preventDefault();
+    e.stopPropagation();
+    resizeRef.current = { id: c.id, startX: e.clientX, startW: colWidth(c) };
+    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+    const move = (ev: PointerEvent) => {
+      const r = resizeRef.current;
+      if (!r) return;
+      const w = Math.max(60, Math.round(r.startW + (ev.clientX - r.startX)));
+      update({ widths: { ...(layoutRef.current.widths ?? {}), [r.id]: w } });
+    };
+    const up = () => {
+      resizeRef.current = null;
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  }
+
+  // --- Drag to reorder columns (native HTML5 drag on the header label) ---
+  const [dragId, setDragId] = useState<string | null>(null);
+  function onReorderDrop(targetId: string) {
+    if (!dragId || dragId === targetId) return;
+    const order = [...layout.visible];
+    const from = order.indexOf(dragId);
+    const to = order.indexOf(targetId);
+    if (from < 0 || to < 0) return;
+    order.splice(to, 0, order.splice(from, 1)[0]);
+    update({ visible: order });
+    setDragId(null);
+  }
 
   const sorted = useMemo(() => {
     // per-column "contains" filters first
@@ -120,7 +161,7 @@ export function ExcelGrid({
   let acc = 0;
   visibleCols.forEach((c, i) => {
     lefts[i] = acc;
-    if (i < layout.freeze) acc += c.width ?? 150;
+    if (i < layout.freeze) acc += colWidth(c);
   });
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -139,7 +180,7 @@ export function ExcelGrid({
     );
   }
 
-  const totalWidth = visibleCols.reduce((w, c) => w + (c.width ?? 150), 0);
+  const totalWidth = visibleCols.reduce((w, c) => w + colWidth(c), 0);
 
   return (
     <div>
@@ -169,7 +210,7 @@ export function ExcelGrid({
           ))}
         </div>
         <button
-          onClick={() => update({ visible: defaultVisible, freeze: freezeDefault, density: 'compact', sortId: undefined, sortDir: undefined, filters: {} })}
+          onClick={() => update({ visible: defaultVisible, freeze: freezeDefault, density: 'compact', sortId: undefined, sortDir: undefined, filters: {}, widths: {} })}
           className="rounded border border-border px-2 py-0.5 text-xs hover:bg-surface"
         >
           Reset my view
@@ -187,14 +228,39 @@ export function ExcelGrid({
               return (
                 <div
                   key={c.id}
-                  className={`shrink-0 border-r border-border/60 px-2 py-1.5 ${c.groupClass ?? ''} ${frozen ? 'sticky z-10 bg-surface' : ''}`}
-                  style={{ width: c.width ?? 150, left: frozen ? lefts[i] : undefined }}
+                  onDragOver={(e) => dragId && e.preventDefault()}
+                  onDrop={() => onReorderDrop(c.id)}
+                  className={`group/col relative shrink-0 border-r border-border/60 px-2 py-1.5 ${c.groupClass ?? ''} ${frozen ? 'sticky z-10 bg-surface' : ''} ${dragId === c.id ? 'opacity-50' : ''}`}
+                  style={{ width: colWidth(c), left: frozen ? lefts[i] : undefined }}
                 >
-                  <button className="flex w-full items-center gap-1 text-left" onClick={() => toggleSort(c.id)}>
-                    <span className="truncate">{c.header}</span>
-                    {c.excelCol && <span className="text-[9px] text-muted/70">{c.excelCol}</span>}
-                    {layout.sortId === c.id && (layout.sortDir === 'desc' ? <ChevronDown size={11} /> : <ChevronUp size={11} />)}
-                  </button>
+                  <div className="flex w-full items-center gap-1">
+                    <span
+                      draggable
+                      onDragStart={() => setDragId(c.id)}
+                      onDragEnd={() => setDragId(null)}
+                      title="Drag to reorder"
+                      className="shrink-0 cursor-grab text-muted/40 opacity-0 hover:text-primary group-hover/col:opacity-100 active:cursor-grabbing"
+                    >
+                      <GripVertical size={11} />
+                    </span>
+                    <button className="flex min-w-0 flex-1 items-center gap-1 text-left" onClick={() => toggleSort(c.id)}>
+                      <span className="truncate">{c.header}</span>
+                      {c.excelCol && <span className="text-[9px] text-muted/70">{c.excelCol}</span>}
+                      {layout.sortId === c.id && (layout.sortDir === 'desc' ? <ChevronDown size={11} /> : <ChevronUp size={11} />)}
+                    </button>
+                  </div>
+                  {/* Drag-resize handle on the right edge; double-click clears the override. */}
+                  <div
+                    onPointerDown={(e) => onResizeDown(e, c)}
+                    onDoubleClick={(e) => {
+                      e.stopPropagation();
+                      const next = { ...(layout.widths ?? {}) };
+                      delete next[c.id];
+                      update({ widths: next });
+                    }}
+                    title="Drag to resize · double-click to reset"
+                    className="absolute right-0 top-0 z-10 h-full w-1.5 cursor-col-resize touch-none hover:bg-primary/40"
+                  />
                   <input
                     value={layout.filters?.[c.id] ?? ''}
                     onChange={(e) => update({ filters: { ...(layout.filters ?? {}), [c.id]: e.target.value } })}
@@ -241,7 +307,7 @@ export function ExcelGrid({
                       <div
                         key={c.id}
                         className={`flex shrink-0 items-center overflow-hidden border-r border-border/40 px-2 ${frozen ? 'sticky z-10 bg-white' : 'bg-white'}`}
-                        style={{ width: c.width ?? 150, left: frozen ? lefts[i] : undefined }}
+                        style={{ width: colWidth(c), left: frozen ? lefts[i] : undefined }}
                       >
                         <span className="truncate">{c.cell(o)}</span>
                       </div>
