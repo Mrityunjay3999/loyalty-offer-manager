@@ -1123,3 +1123,37 @@ Rules:
 - Write Vitest unit tests for calculations using the worked checks in section 14.
 Start with milestone 1 and show me the project structure before moving on.
 ```
+
+---
+
+# v2 Addendum — 2 Oct review feedback, Results & Forecast, Databricks
+
+This addendum records the v2 changes built on top of the spec above. Where it conflicts with an earlier section, the addendum wins.
+
+## Package A — meeting feedback
+- **A1 Offer ID auto-generated.** No typed Unique Offer ID. The ID is `max(existing offerId)+1`, assigned on first save, never changes; a copy gets a new ID. Shown read-only with the **Auto-generated** tag ("Assigned on first save" before first save). `metadataRefNumber`/`resultsForecastRefNumber` are "Retired in product. Replaced by Offer ID."
+- **A2 Offer due date removed** from `fields.json` (back to 129 fields: 123 form + 6 system).
+- **A3 Draft/Proposed.** Draft saves are never blocked by validation (footer "Saved as draft. Fix n item(s) before you can submit."); Submit → Proposed. Draft excluded from Offer View, Results & Forecast and the feed.
+- **A4 Locking.** Completed - Data Final and Cancelled are fully read-only (Locked banner + tag); Admin **Reopen** (comment, proposed rule) restores the previous status. Cancelled hidden everywhere except the "Show cancelled" toggle in Offers (Edit); record kept.
+- **A5 Two areas.** **Offers (Edit)** (Editor/Admin only; others redirected) and **Offer View** (read-only, all roles, excludes Draft+Cancelled). Both use a virtualised `ExcelGrid` with personal layout per role. "WBR" is replaced by **Results & Forecast** (WBR becomes a tab).
+- **A6 Reference data**: values can change (add/rename/retire, audited, instantly live); fields/columns cannot be added or removed in the app; P&P Contact + all lists editable by Admin; new **Databricks tables** tab for the 2 table names.
+- **A7 Required fields** moved to `src/data/requiredFields.json` (provisional 12); drives the red star + validation; Data dictionary "Required for metadata load" column.
+- **A8 Results & Forecast is MVP** (Package B). The 4 typed results and the 2 Phase 2 pre-fill buttons remain with updated tooltips.
+- **A9 Submission form** (working, 1 CSV per offer, MFP/RA) + **Export selected columns** (pick/reorder, remembered per role) on Offers (Edit) and Offer View.
+- **A10 Grouping** comes only from `fields.json`; Data dictionary **Export grouping (CSV)**.
+- **A11** content/tooltip updates (Dashboard Mo., soft lock, Broad vs Targeted, Early Activation, Pending SteerCo, Prototype pill) + Admin "Business definition confirmed" per status.
+- **A12 One store**: offers never removed at year end; derived **Fiscal year** filter on the grids + info card on the feed.
+- **A13 Calendar view** (Phase 2): month/week stacking coloured by Broad vs Targeted, legend, day tooltip + click-to-list, filters, excludes Draft+Cancelled.
+
+## Package B — Results & Forecast module (`lib/resultsForecast.ts`)
+Reproduces the "LIVE - Results and Forecast" tab (columns A–BZ): RESULTS (S–AE), FORECAST (AF–BL), WBR text (BM–BZ), with `excelRound` (half away from zero). Linked by Offer ID only; appears when `includeForResultsForecast = Yes`. The FORECAST block equals the existing `computeForecast`; the RESULTS block uses the forecast redemption rule and TBD strings; the 6 Step-7 round-trip totals come back by Offer ID (0 when not in the module). Page `/results-forecast`: Grid (group-coloured, compact default), WBR, How-it-is-calculated (incl. the "Same measure, 2 rules" panel). All section-10 worked-example values are covered by unit tests.
+
+## Package C — Databricks (`lib/feed.ts`, `databricksTables.json`)
+Two tables — **Features metadata** (101 MA) and **Features metadata metrics** (54 CM) — plus 14 "Not loaded"; both keyed by `offer_id`. Inclusion = status set, not Cancelled, not Draft. Data feed page `/data-feed`: Record preview (3 sections), Table view (snake_case headers, CSV), Column mapping (169 rows), Exceptions (required/sub-category/dropdown-active/date rules, provisional), Load log (Simulate nightly / failed). Offer header **feed status chip**. Datatype formatting (date, 2/6 decimals, N/A blank).
+
+## Counts & storage
+- localStorage key bumped to `lom-prototype-v2` (version 2) with best-effort v1 migration.
+- Metadata mapping unchanged from the earlier fix: 144 of 169 columns map, 25 "Not captured".
+
+## Known simplifications (prototype)
+- ExcelGrid has column show/hide/freeze/sort/density + personal layout, but not per-column inline header filters or drag resize/reorder (quick filters cover the fields). The automated 3,500-row virtualisation perf test is not wired (needs a jsdom test env).
