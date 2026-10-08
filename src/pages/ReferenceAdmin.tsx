@@ -12,7 +12,7 @@ import type { CategorySubCategory, TieringDefinition, LifecycleStatus, OfferSetu
 
 export function ReferenceAdmin() {
   const role = useAppStore((s) => s.role);
-  const isAdmin = can(role, 'editReference');
+  const isAdmin = can(role, 'addChangeListValues');
   const TABS = [
     'Categories', 'Offer tiering', 'Statuses', 'Dropdown lists', 'Offer setups',
     'Transaction types', 'Soft lock planner', 'Deactivation rules', 'Brands', 'Databricks tables',

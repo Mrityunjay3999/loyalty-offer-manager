@@ -10,7 +10,9 @@ import {
 import { todayISO } from '@/lib/format';
 import { computeNextOfferId } from '@/lib/offerId';
 import { includedOffers, offerExceptions } from '@/lib/feed';
+import { buildDefaultMatrix, registerMatrixAccessor, capabilityMeta } from '@/lib/permissions';
 import databricksTablesJson from '@/data/databricksTables.json';
+import usersJson from '@/data/users.json';
 import type {
   OfferRecord,
   AuditEntry,
@@ -26,6 +28,9 @@ import type {
   ChildPromotion,
   GroupedChild,
   OfferValue,
+  User,
+  PermMatrix,
+  ChangeLogEntry,
 } from '@/lib/types';
 
 export const STORAGE_KEY = 'lom-prototype-v2';
@@ -94,9 +99,24 @@ export interface AppState extends EditableReference {
   databricksTableNames: { attributes: string | null; metrics: string | null };
   /** C6: editable per-field business definition + status. */
   fieldDefinitions: Record<string, { businessDefinition?: string; status?: 'Draft' | 'Confirmed' }>;
+  // --- Part 2: users & roles ---
+  users: User[];
+  currentUserId: string;
+  permissions: PermMatrix;
+  userRoleLog: ChangeLogEntry[];
 
   // --- actions ---
   setRole: (role: Role) => void;
+  /** Part 2: switch the active session user (no password — prototype only). */
+  signInAs: (userId: string) => void;
+  addUser: (u: { name: string; email: string; role: Role }) => string;
+  updateUser: (id: string, patch: { name?: string; email?: string }) => void;
+  setUserRole: (id: string, role: Role) => { ok: boolean; message?: string };
+  setUserActive: (id: string, active: boolean) => { ok: boolean; message?: string };
+  setPermission: (role: Role, cap: string, value: boolean) => { ok: boolean; message?: string };
+  resetPermissions: () => void;
+  /** Internal: append a user/permission change-log entry. */
+  _logUserChange: (type: 'user' | 'permission', what: string, oldValue?: string, newValue?: string) => void;
   resetDemoData: () => void;
   addAudit: (entry: Omit<AuditEntry, 'id' | 'timestamp'> & { timestamp?: string }) => void;
   createDraft: () => string; // returns new _uid
@@ -138,6 +158,10 @@ type AppData = EditableReference & {
   databricksTableNames: { attributes: string | null; metrics: string | null };
   /** C6: editable per-field business definition + status. */
   fieldDefinitions: Record<string, { businessDefinition?: string; status?: 'Draft' | 'Confirmed' }>;
+  users: User[];
+  currentUserId: string;
+  permissions: PermMatrix;
+  userRoleLog: ChangeLogEntry[];
 };
 
 /** Map a seed grouped child (verbose spreadsheet keys) to an editable row. */
@@ -170,12 +194,33 @@ function seedGroupedChildren(offers: OfferRecord[]): Record<string, ChildPromoti
   return out;
 }
 
+const DEFAULT_USER_ID = 'u-editor-1'; // Sample Editor 1 — matches the prior default role
+
+function seedUsers(): User[] {
+  return JSON.parse(JSON.stringify(usersJson)) as User[];
+}
+
+/** Display name of the acting user, for audit + change-log entries. */
+function currentUserName(s: { users: User[]; currentUserId: string }): string {
+  const u = s.users.find((x) => x.id === s.currentUserId);
+  return u ? `${u.name} (${u.role})` : 'Unknown';
+}
+
+/** Is `id` the only active Admin left? (guards against locking everyone out) */
+function isLastActiveAdmin(users: User[], id: string): boolean {
+  const activeAdmins = users.filter((u) => u.active && u.role === 'Admin');
+  return activeAdmins.length === 1 && activeAdmins[0].id === id;
+}
+
 function initialState(): AppData {
   const offers = freshSampleOffers();
+  const users = seedUsers();
+  const currentUserId = DEFAULT_USER_ID;
+  const role = users.find((u) => u.id === currentUserId)?.role ?? 'Offer Team Editor';
   return {
     offers,
     auditLog: seedAuditLog(offers),
-    role: 'Offer Team Editor',
+    role,
     savedViews: [],
     feedLog: [],
     groupedChildren: seedGroupedChildren(offers),
@@ -185,6 +230,10 @@ function initialState(): AppData {
       metrics: databricksTablesJson.metrics.tableName,
     },
     fieldDefinitions: {},
+    users,
+    currentUserId,
+    permissions: buildDefaultMatrix(),
+    userRoleLog: [],
     ...seedEditableReference(),
   };
 }
@@ -224,10 +273,104 @@ export const useAppStore = create<AppState>()(
   persist(
     (set, get) => ({
       ...initialState(),
-      setRole: (role) => set({ role }),
+
+      // --- Part 2: users & roles ---------------------------------------------
+      setRole: (role) => {
+        // Back-compat: switch to the first active user holding this role.
+        const s = get();
+        const u = s.users.find((x) => x.active && x.role === role) ?? s.users.find((x) => x.role === role);
+        if (u) set({ currentUserId: u.id, role });
+        else set({ role });
+      },
+
+      signInAs: (userId) => {
+        const u = get().users.find((x) => x.id === userId);
+        if (!u) return;
+        set({ currentUserId: userId, role: u.role });
+      },
+
+      addUser: ({ name, email, role }) => {
+        const id = nextId('user');
+        const u: User = {
+          id, name, email, role, active: true,
+          createdAt: new Date().toISOString(),
+          lastChangedBy: currentUserName(get()),
+        };
+        set((s) => ({ users: [...s.users, u] }));
+        get()._logUserChange('user', `Added user ${name} (${role})`, undefined, 'created');
+        return id;
+      },
+
+      updateUser: (id, patch) => {
+        const who = currentUserName(get());
+        set((s) => ({
+          users: s.users.map((u) => (u.id === id ? { ...u, ...patch, lastChangedBy: who } : u)),
+        }));
+        get()._logUserChange('user', `Edited user ${patch.name ?? id}`, undefined, JSON.stringify(patch));
+      },
+
+      setUserRole: (id, role) => {
+        const s = get();
+        const u = s.users.find((x) => x.id === id);
+        if (!u) return { ok: false, message: 'User not found.' };
+        if (u.role === 'Admin' && role !== 'Admin' && isLastActiveAdmin(s.users, id)) {
+          return { ok: false, message: 'This is the last active Admin. Make another user an Admin first.' };
+        }
+        const oldRole = u.role;
+        set((st) => ({
+          users: st.users.map((x) => (x.id === id ? { ...x, role, lastChangedBy: currentUserName(st) } : x)),
+          // keep the active session role in sync if we re-roled ourselves
+          role: st.currentUserId === id ? role : st.role,
+        }));
+        get()._logUserChange('user', `Changed role of ${u.name}`, oldRole, role);
+        return { ok: true };
+      },
+
+      setUserActive: (id, active) => {
+        const s = get();
+        const u = s.users.find((x) => x.id === id);
+        if (!u) return { ok: false, message: 'User not found.' };
+        if (!active && id === s.currentUserId) {
+          return { ok: false, message: 'You cannot deactivate yourself.' };
+        }
+        if (!active && u.role === 'Admin' && isLastActiveAdmin(s.users, id)) {
+          return { ok: false, message: 'This is the last active Admin and cannot be deactivated.' };
+        }
+        set((st) => ({
+          users: st.users.map((x) => (x.id === id ? { ...x, active, lastChangedBy: currentUserName(st) } : x)),
+        }));
+        get()._logUserChange('user', `${active ? 'Reactivated' : 'Deactivated'} ${u.name}`, u.active ? 'Active' : 'Inactive', active ? 'Active' : 'Inactive');
+        return { ok: true };
+      },
+
+      setPermission: (role, cap, value) => {
+        const meta = capabilityMeta(cap);
+        if (meta?.locked) return { ok: false, message: 'This rule is fixed and cannot be changed.' };
+        if (role === 'Admin') return { ok: false, message: 'Admin always has every permission.' };
+        const old = !!get().permissions[role]?.[cap];
+        set((s) => ({
+          permissions: { ...s.permissions, [role]: { ...s.permissions[role], [cap]: value } },
+        }));
+        get()._logUserChange('permission', `${meta?.label ?? cap} — ${role}`, old ? 'On' : 'Off', value ? 'On' : 'Off');
+        return { ok: true };
+      },
+
+      resetPermissions: () => {
+        set({ permissions: buildDefaultMatrix() });
+        get()._logUserChange('permission', 'Reset all permissions to defaults', undefined, undefined);
+      },
+
+      _logUserChange: (type: 'user' | 'permission', what: string, oldValue?: string, newValue?: string) =>
+        set((s) => ({
+          userRoleLog: [
+            { id: nextId('chg'), timestamp: new Date().toISOString(), changedBy: currentUserName(s), type, what, oldValue, newValue },
+            ...s.userRoleLog,
+          ],
+        })),
+
       resetDemoData: () => {
-        // Rebuild every seeded slice from the source JSON, keeping the chosen role.
-        set((state) => ({ ...initialState(), role: state.role }));
+        // Rebuild every seeded slice from the source JSON, keeping the current user.
+        set((state) => ({ ...initialState(), currentUserId: state.currentUserId, role: state.role }));
       },
 
       addAudit: (entry) =>
@@ -237,6 +380,8 @@ export const useAppStore = create<AppState>()(
               id: nextId('audit'),
               timestamp: entry.timestamp ?? new Date().toISOString(),
               ...entry,
+              // Stamp the acting user (name + role) regardless of what the caller passed.
+              user: currentUserName(s),
             } as AuditEntry,
             ...s.auditLog,
           ],
@@ -416,6 +561,23 @@ export const useAppStore = create<AppState>()(
     {
       name: STORAGE_KEY,
       version: 2,
+      // Older persisted state (before Part 2) lacks users/permissions/currentUserId.
+      // The default shallow merge keeps those fresh slices; here we only reconcile
+      // the active role with the current user so can() stays correct.
+      onRehydrateStorage: () => (state) => {
+        if (!state) return;
+        const u = state.users?.find((x) => x.id === state.currentUserId);
+        if (u && u.role !== state.role) state.role = u.role;
+        if (!u && state.users?.length) {
+          const first = state.users.find((x) => x.active && x.role === state.role) ?? state.users[0];
+          state.currentUserId = first.id;
+          state.role = first.role;
+        }
+        if (!state.permissions) state.permissions = buildDefaultMatrix();
+      },
     },
   ),
 );
+
+// Let can()/whoCan() read the live, editable matrix without a circular import.
+registerMatrixAccessor(() => useAppStore.getState().permissions);

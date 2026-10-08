@@ -39,7 +39,7 @@ import { STATUS_ORDER, statusOf, isEarlierThanAudited } from '@/lib/lifecycle';
 import { computedFieldValue, softLockDate } from '@/lib/calculations';
 import { checklistProgress, planningMonth } from '@/lib/offers';
 import { formatDate, formatCurrency, formatPercent, isNoValue, parseISO } from '@/lib/format';
-import { can } from '@/lib/permissions';
+import { can, whoCan } from '@/lib/permissions';
 import { toCsv, downloadCsv } from '@/lib/csv';
 import type { OfferRecord, FieldDef } from '@/lib/types';
 
@@ -150,8 +150,10 @@ export function OffersList() {
   const [submissionOpen, setSubmissionOpen] = useState(false);
   const [colPickOpen, setColPickOpen] = useState(false);
 
-  const canEdit = can(role, 'createEditCopy');
-  const canCancel = can(role, 'cancel');
+  const canEdit = can(role, 'editOffer');
+  const canCreate = can(role, 'createOffer');
+  const canCopy = can(role, 'copyOffer');
+  const canCancel = can(role, 'cancelOffer');
 
   // Distinct filter options from the data.
   const distinct = useMemo(() => {
@@ -366,7 +368,8 @@ export function OffersList() {
             className="z-50 min-w-[160px] rounded-md border border-border bg-white py-1 shadow-lg"
           >
             <MenuItem onSelect={() => navigate(`/offers/${offer._uid}`)}>Open</MenuItem>
-            {canEdit && (
+            <MenuItem onSelect={() => navigate(`/calendar?offer=${offer._uid}`)}>View on calendar</MenuItem>
+            {canCopy && (
               <MenuItem
                 onSelect={() => {
                   const id = copyOffer(offer._uid!);
@@ -414,15 +417,15 @@ export function OffersList() {
         right={
           <>
             <button
-              disabled={!canEdit}
+              disabled={!canCreate}
               onClick={() => navigate('/offers/new')}
               className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 font-medium text-white hover:bg-primary/90 disabled:opacity-50"
-              title={canEdit ? '' : 'Only Offer Team Editor, Loyalty & Pricing or Admin can create offers'}
+              title={canCreate ? '' : `Available to: ${whoCan('createOffer')}`}
             >
               <Plus size={15} /> New offer
             </button>
             <button
-              disabled={!canEdit || selectedRows.length !== 1}
+              disabled={!canCopy || selectedRows.length !== 1}
               onClick={() => {
                 const id = copyOffer(selectedRows[0].original._uid!);
                 if (id) {
@@ -431,11 +434,12 @@ export function OffersList() {
                 }
               }}
               className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 hover:bg-surface disabled:opacity-50"
+              title={canCopy ? '' : `Available to: ${whoCan('copyOffer')}`}
             >
               <Copy size={15} /> Copy offer
             </button>
             <button
-              disabled={!canEdit || selectedRows.length === 0}
+              disabled={!can(role, 'generateSubmission') || selectedRows.length === 0}
               onClick={() => setSubmissionOpen(true)}
               className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 hover:bg-surface disabled:opacity-50"
               title="Generate the Inspire submission form for the selected offers"

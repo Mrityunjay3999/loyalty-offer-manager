@@ -49,7 +49,7 @@ export function LifecycleBar({
 
   // A4: a locked offer offers only Reopen (Admin); no other transitions or cancel.
   const locked = isLocked(status);
-  const canReopen = locked && can(role, 'editReference');
+  const canReopen = locked && can(role, 'reopenLocked');
   const transitions = locked ? [] : allowedTransitions(status, role);
   const showCancel = locked ? false : canCancelFrom(status, role);
 

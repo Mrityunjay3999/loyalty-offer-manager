@@ -50,7 +50,7 @@ export function DataDictionary() {
   const role = useAppStore((s) => s.role);
   const fieldDefinitions = useAppStore((s) => s.fieldDefinitions);
   const setFieldDefinition = useAppStore((s) => s.setFieldDefinition);
-  const isAdmin = can(role, 'editReference');
+  const isAdmin = can(role, 'editBusinessDefs');
   const [q, setQ] = useState('');
   const [step, setStep] = useState('');
   const [draftOnly, setDraftOnly] = useState(false);

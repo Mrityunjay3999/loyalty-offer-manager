@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
-import * as Dialog from '@radix-ui/react-dialog';
-import { Download, X } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { useToasts } from '@/store/useToasts';
 import { PageHeader } from '@/components/PageHeader';
@@ -8,27 +7,15 @@ import { EmptyState } from '@/components/EmptyState';
 import { StatusPill } from '@/components/StatusPill';
 import { ExcelGrid, type ExcelColumn } from '@/components/ExcelGrid';
 import { ColumnPickerExportDialog } from '@/components/ColumnPickerExportDialog';
-import { fields, fieldsByStep, STEP_ORDER } from '@/lib/dataLoaders';
+import { OfferDetailDrawer } from '@/components/OfferDetailDrawer';
+import { fields } from '@/lib/dataLoaders';
 import { statusOf } from '@/lib/lifecycle';
 import { computedFieldValue, softLockDate } from '@/lib/calculations';
 import { planningMonth, fiscalYearOf } from '@/lib/offers';
-import { isFieldVisible } from '@/lib/visibility';
-import { isNoValue, formatDate, formatCurrency, formatPercent } from '@/lib/format';
+import { formatDate } from '@/lib/format';
+import { displayField as display } from '@/lib/displayField';
 import { toCsv, downloadCsv } from '@/lib/csv';
-import type { OfferRecord, FieldDef } from '@/lib/types';
-
-function display(f: FieldDef, o: OfferRecord): string {
-  if (f.control === 'computed') {
-    const v = computedFieldValue(f.id, o);
-    return v === null || v === undefined ? '' : String(v);
-  }
-  const v = o[f.id];
-  if (isNoValue(v)) return v === 'N/A' ? 'N/A' : '';
-  if (f.control === 'date' || f.control === 'dateOrNA') return formatDate(v);
-  if (f.control === 'currency') return formatCurrency(v);
-  if (f.control === 'percent') return formatPercent(v, 1);
-  return String(v);
-}
+import type { OfferRecord } from '@/lib/types';
 
 const DEFAULT_COLS = [
   'offerId', 'offerName', 'buildStatus', 'startDate', 'endDate', 'numberOfDays',
@@ -38,7 +25,6 @@ const DEFAULT_COLS = [
 
 export function OfferView() {
   const offers = useAppStore((s) => s.offers);
-  const role = useAppStore((s) => s.role);
   const push = useToasts((s) => s.push);
 
   const [search, setSearch] = useState('');
@@ -138,6 +124,7 @@ export function OfferView() {
     push(`Exported ${rows.length} offers.`, 'success');
   }
 
+  const userId = useAppStore((s) => s.currentUserId);
   const detail = offers.find((o) => o._uid === detailUid);
 
   return (
@@ -180,7 +167,7 @@ export function OfferView() {
         <ExcelGrid
           rows={rows}
           columns={columns}
-          storageKey={`lom-offerview-${role}`}
+          storageKey={`lom-offerview-${userId}`}
           getRowId={(o) => o._uid ?? String(o.offerId)}
           onRowClick={(o) => setDetailUid(o._uid ?? null)}
           toolbarRight={
@@ -197,39 +184,7 @@ export function OfferView() {
       )}
       <ColumnPickerExportDialog offers={rows} open={colPickOpen} onClose={() => setColPickOpen(false)} />
 
-      {/* Read-only detail */}
-      <Dialog.Root open={detailUid !== null} onOpenChange={(o) => !o && setDetailUid(null)}>
-        <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 z-40 bg-black/30" />
-          <Dialog.Content className="fixed right-0 top-0 z-50 flex h-full w-[92vw] max-w-2xl flex-col border-l border-border bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-border px-5 py-3">
-              <Dialog.Title className="flex items-center gap-2 text-base font-semibold text-ink">
-                {String(detail?.offerName ?? detail?.offerId ?? '')}
-                {detail && <StatusPill status={statusOf(detail)} />}
-              </Dialog.Title>
-              <Dialog.Close asChild><button aria-label="Close" className="text-muted hover:text-ink"><X size={18} /></button></Dialog.Close>
-            </div>
-            <div className="flex-1 overflow-y-auto p-5">
-              {detail && STEP_ORDER.map((step) => {
-                const stepFields = (fieldsByStep[step] ?? []).filter((f) => f.control !== 'hidden' && isFieldVisible(f.id, detail));
-                return (
-                  <div key={step} className="mb-5">
-                    <h3 className="mb-2 font-semibold text-ink">{step}</h3>
-                    <dl className="grid grid-cols-2 gap-x-6 gap-y-1 rounded-lg border border-border p-3 text-sm">
-                      {stepFields.map((f) => (
-                        <div key={f.id} className="flex justify-between gap-3 border-b border-border/50 py-1">
-                          <dt className="text-muted">{f.label}</dt>
-                          <dd className="text-right text-ink">{display(f, detail) || '—'}</dd>
-                        </div>
-                      ))}
-                    </dl>
-                  </div>
-                );
-              })}
-            </div>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
+      <OfferDetailDrawer offer={detail} open={detailUid !== null} onClose={() => setDetailUid(null)} />
     </div>
   );
 }

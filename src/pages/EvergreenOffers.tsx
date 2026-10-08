@@ -23,7 +23,7 @@ export function EvergreenOffers() {
   const editReference = useAppStore((s) => s.editReference);
   const role = useAppStore((s) => s.role);
   const push = useToasts((s) => s.push);
-  const canEdit = can(role, 'createEditCopy') || can(role, 'editReference');
+  const canEdit = can(role, 'editOffer') || can(role, 'addChangeListValues');
   const [draft, setDraft] = useState<Array<Record<string, OfferValue>>>(() =>
     rows.map((r) => ({ ...r })),
   );

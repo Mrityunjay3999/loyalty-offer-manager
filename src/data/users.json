@@ -1,0 +1,8 @@
+[
+  { "id": "u-admin", "name": "Sample Admin", "email": "admin@example.com", "role": "Admin", "active": true, "createdAt": "2026-09-01T09:00:00.000Z" },
+  { "id": "u-editor-1", "name": "Sample Editor 1", "email": "editor1@example.com", "role": "Offer Team Editor", "active": true, "createdAt": "2026-09-01T09:00:00.000Z" },
+  { "id": "u-editor-2", "name": "Sample Editor 2", "email": "editor2@example.com", "role": "Offer Team Editor", "active": true, "createdAt": "2026-09-01T09:00:00.000Z" },
+  { "id": "u-approver", "name": "Sample Approver", "email": "approver@example.com", "role": "Approver (TBC)", "active": true, "createdAt": "2026-09-01T09:00:00.000Z" },
+  { "id": "u-analyst", "name": "Sample Analyst", "email": "analyst@example.com", "role": "Loyalty & Pricing", "active": true, "createdAt": "2026-09-01T09:00:00.000Z" },
+  { "id": "u-viewer", "name": "Sample Viewer", "email": "viewer@example.com", "role": "View-only", "active": true, "createdAt": "2026-09-01T09:00:00.000Z" }
+]

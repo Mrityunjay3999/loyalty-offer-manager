@@ -101,7 +101,7 @@ export function OfferWorkspace() {
   const status = statusOf(working);
   const isDraft = status === 'Draft';
   const locked = isLocked(status); // A4: Completed - Data Final or Cancelled
-  const canEdit = can(role, 'createEditCopy') && !locked;
+  const canEdit = can(role, 'editOffer') && !locked;
   const readOnly = !canEdit;
 
   // --- validation ---
@@ -442,7 +442,7 @@ export function OfferWorkspace() {
             >
               <Download size={15} /> Export
             </button>
-            {can(role, 'cancel') && status !== 'Cancelled' && (
+            {can(role, 'cancelOffer') && status !== 'Cancelled' && (
               <button
                 onClick={() => setCancelOpen(true)}
                 className="inline-flex items-center gap-1.5 rounded-md border border-danger/40 px-2.5 py-1.5 text-danger hover:bg-danger/5"

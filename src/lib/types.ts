@@ -204,7 +204,7 @@ export interface AuditEntry {
   offerId: string; // offer's business Offer ID, or a reference-data marker
   offerUid?: string; // stable internal id, for reliable per-offer history
   timestamp: string; // ISO
-  user: Role;
+  user: string; // acting user as "Name (Role)" for live entries; role name for seeded ones
   action: AuditAction;
   fieldLabel?: string;
   oldValue?: OfferValue;
@@ -217,6 +217,41 @@ export interface SavedView {
   name: string;
   role: Role;
   state: Record<string, unknown>;
+}
+
+// --- Users & roles (Part 2) ---
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: Role;
+  active: boolean;
+  createdAt: string; // ISO
+  lastChangedBy?: string; // user name
+}
+
+/** Permission matrix: for each role, a map of capability id -> allowed. */
+export type PermMatrix = Record<Role, Record<string, boolean>>;
+
+/** One capability row (metadata driven, from permissions.json). */
+export interface CapabilityMeta {
+  id: string;
+  label: string;
+  area: string;
+  locked?: boolean;
+  lockedValue?: boolean;
+  lockedTooltip?: string;
+}
+
+/** A user-or-permission change, for the Users & roles change log (Tab C). */
+export interface ChangeLogEntry {
+  id: string;
+  timestamp: string; // ISO
+  changedBy: string; // "Name (Role)"
+  type: 'user' | 'permission';
+  what: string;
+  oldValue?: string;
+  newValue?: string;
 }
 
 export interface FeedLogEntry {

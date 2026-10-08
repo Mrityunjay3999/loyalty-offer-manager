@@ -142,7 +142,9 @@ function getVal(d: Def, o: OfferRecord, rf: RfRow): unknown {
 export function ResultsForecast() {
   const offers = useAppStore((s) => s.offers);
   const role = useAppStore((s) => s.role);
-  const canEdit = can(role, 'createEditCopy');
+  const userId = useAppStore((s) => s.currentUserId);
+  const canForecast = can(role, 'enterForecast');
+  const canResults = can(role, 'enterResults');
   const push = useToasts((s) => s.push);
 
   const [search, setSearch] = useState('');
@@ -276,7 +278,7 @@ export function ResultsForecast() {
           {rows.length === 0 ? (
             <EmptyState title="No offers match these filters." />
           ) : (
-            <ExcelGrid rows={rows} columns={columns} storageKey={`lom-rf-${role}`} getRowId={(o) => o._uid!}
+            <ExcelGrid rows={rows} columns={columns} storageKey={`lom-rf-${userId}`} getRowId={(o) => o._uid!}
               onRowClick={(o) => setDetailUid(o._uid ?? null)}
               toolbarRight={<button onClick={exportCsv} className="inline-flex items-center gap-1 rounded border border-border px-2 py-0.5 text-xs hover:bg-surface"><Download size={13} /> Export CSV</button>} />
           )}
@@ -297,7 +299,13 @@ export function ResultsForecast() {
               </Dialog.Title>
               <Dialog.Close asChild><button aria-label="Close" className="text-muted hover:text-ink"><X size={18} /></button></Dialog.Close>
             </div>
-            {detail && <DetailBody offer={detail} canEdit={canEdit && !isLocked(statusOf(detail))} />}
+            {detail && (
+              <DetailBody
+                offer={detail}
+                canForecast={canForecast && !isLocked(statusOf(detail))}
+                canResults={canResults && !isLocked(statusOf(detail))}
+              />
+            )}
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
@@ -306,7 +314,7 @@ export function ResultsForecast() {
 }
 
 
-function DetailBody({ offer, canEdit }: { offer: OfferRecord; canEdit: boolean }) {
+function DetailBody({ offer, canForecast, canResults }: { offer: OfferRecord; canForecast: boolean; canResults: boolean }) {
   const [panel, setPanel] = useState<null | 'forecast' | 'results'>(null);
   const rf = computeResultsForecast(offer);
   const W = rf.bonusPointCalc;
@@ -335,10 +343,10 @@ function DetailBody({ offer, canEdit }: { offer: OfferRecord; canEdit: boolean }
 
   return (
     <div className="flex-1 overflow-y-auto p-5">
-      {canEdit && (
+      {(canForecast || canResults) && (
         <div className="mb-4 flex gap-2">
-          <button onClick={() => setPanel('forecast')} className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm hover:bg-surface"><Pencil size={14} /> Enter forecast</button>
-          <button onClick={() => setPanel('results')} className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm hover:bg-surface"><Pencil size={14} /> Enter results</button>
+          {canForecast && <button onClick={() => setPanel('forecast')} className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm hover:bg-surface"><Pencil size={14} /> Enter forecast</button>}
+          {canResults && <button onClick={() => setPanel('results')} className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm hover:bg-surface"><Pencil size={14} /> Enter results</button>}
         </div>
       )}
       <div className="grid grid-cols-2 gap-4">

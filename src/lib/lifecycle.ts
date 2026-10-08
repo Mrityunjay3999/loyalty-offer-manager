@@ -287,7 +287,7 @@ export const TRANSITIONS: Transition[] = [
     from: ['Cancelled'],
     to: 'Proposed', // reinstated to a prior working status (simplified)
     label: 'Reinstate',
-    cap: 'editReference', // Admin-only capability stands in for reinstate
+    cap: 'reopenLocked', // reinstating a cancelled offer reuses the reopen capability
     commentRequired: true,
   },
 ];
@@ -299,5 +299,5 @@ export function allowedTransitions(status: string, role: Role): Transition[] {
 
 /** Can this role cancel the offer (any status except Cancelled)? */
 export function canCancelFrom(status: string, role: Role): boolean {
-  return status !== 'Cancelled' && can(role, 'cancel');
+  return status !== 'Cancelled' && can(role, 'cancelOffer');
 }

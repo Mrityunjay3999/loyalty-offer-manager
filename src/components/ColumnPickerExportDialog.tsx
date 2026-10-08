@@ -29,9 +29,9 @@ export function ColumnPickerExportDialog({
   open: boolean;
   onClose: () => void;
 }) {
-  const role = useAppStore((s) => s.role);
+  const userId = useAppStore((s) => s.currentUserId);
   const push = useToasts((s) => s.push);
-  const storageKey = `lom-colpick-${role}`;
+  const storageKey = `lom-colpick-${userId}`;
   const [q, setQ] = useState('');
   const [selected, setSelected] = useState<string[]>(() => {
     try { const raw = localStorage.getItem(storageKey); if (raw) return JSON.parse(raw); } catch { /* ignore */ }

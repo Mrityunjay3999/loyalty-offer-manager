@@ -13,12 +13,13 @@ import {
   RotateCcw,
   HelpCircle,
   Search,
+  Users,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { can } from '@/lib/permissions';
 import { useToasts } from '@/store/useToasts';
-import { RoleSwitcher } from './RoleSwitcher';
+import { SignInAs } from './SignInAs';
 import { HelpDrawer } from './HelpDrawer';
 import { PhaseBadge } from './PhaseBadge';
 
@@ -33,15 +34,17 @@ interface NavItem {
 }
 
 interface NavItemX extends NavItem {
-  editOnly?: boolean;
+  /** Capability required to see this item (hidden when the role lacks it). */
+  cap?: string;
 }
 const NAV: NavItemX[] = [
-  { to: '/', label: 'Offers (Edit)', icon: LayoutList, end: true, editOnly: true },
+  { to: '/', label: 'Offers (Edit)', icon: LayoutList, end: true, cap: 'openEditArea' },
   { to: '/view', label: 'Offer View', icon: Eye },
   { to: '/approvals', label: 'Approvals', icon: CheckSquare, badge: 'approvals' },
   { to: '/results-forecast', label: 'Results & Forecast', icon: BarChart3 },
   { to: '/evergreen', label: 'Evergreen offers', icon: Repeat },
   { to: '/reference', label: 'Reference data', icon: Table2, adminNote: true },
+  { to: '/admin/users', label: 'Users & roles', icon: Users, cap: 'manageUsers' },
   { to: '/dictionary', label: 'Data dictionary', icon: BookOpen },
   { to: '/data-feed', label: 'Data feed (Databricks)', icon: Database },
   { to: '/calendar', label: 'Calendar view', icon: CalendarDays, phase2: true },
@@ -51,6 +54,7 @@ export function AppShell() {
   const navigate = useNavigate();
   const offers = useAppStore((s) => s.offers);
   const role = useAppStore((s) => s.role);
+  const permissions = useAppStore((s) => s.permissions); // subscribe so nav reacts to matrix edits
   const resetDemoData = useAppStore((s) => s.resetDemoData);
   const push = useToasts((s) => s.push);
   const [helpOpen, setHelpOpen] = useState(false);
@@ -98,7 +102,7 @@ export function AppShell() {
         </form>
 
         <div className="flex items-center gap-3">
-          <RoleSwitcher />
+          <SignInAs />
           <button
             className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-ink hover:bg-surface"
             onClick={() => {
@@ -122,7 +126,7 @@ export function AppShell() {
         {/* Sidebar */}
         <nav className="w-60 shrink-0 border-r border-border bg-white px-2 py-3">
           <ul className="space-y-0.5">
-            {NAV.filter((item) => !item.editOnly || can(role, 'openEditArea')).map((item) => (
+            {NAV.filter((item) => !item.cap || can(role, item.cap, permissions)).map((item) => (
               <li key={item.to}>
                 <NavLink
                   to={item.to}

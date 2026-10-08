@@ -1,0 +1,71 @@
+{
+  "roles": ["Offer Team Editor", "Loyalty & Pricing", "Approver (TBC)", "View-only", "Admin"],
+  "capabilities": [
+    { "id": "openOfferView", "label": "Open Offer View", "area": "Areas", "locked": true, "lockedValue": true, "lockedTooltip": "The view area is for everyone (business rule)." },
+    { "id": "openEditArea", "label": "Open Offers (Edit) area", "area": "Areas" },
+    { "id": "openResultsForecast", "label": "Open Results & Forecast", "area": "Areas" },
+    { "id": "openDataFeed", "label": "Open Data feed", "area": "Areas" },
+    { "id": "openCalendar", "label": "Open Calendar view", "area": "Areas", "locked": true, "lockedValue": true, "lockedTooltip": "Read-only view for everyone." },
+    { "id": "openReference", "label": "Open Reference data", "area": "Areas" },
+    { "id": "openUsers", "label": "Open Users & roles", "area": "Areas" },
+
+    { "id": "createOffer", "label": "Create offer", "area": "Offers" },
+    { "id": "editOffer", "label": "Edit offer", "area": "Offers" },
+    { "id": "copyOffer", "label": "Copy offer", "area": "Offers" },
+    { "id": "deleteDraft", "label": "Delete own draft", "area": "Offers" },
+    { "id": "cancelOffer", "label": "Cancel offer", "area": "Offers" },
+    { "id": "changeStatus", "label": "Change status (non-approval)", "area": "Offers" },
+    { "id": "approve", "label": "Approve offer and forecast", "area": "Offers" },
+    { "id": "reopenLocked", "label": "Reopen a locked offer", "area": "Offers" },
+    { "id": "editChecklist", "label": "Edit build checklist", "area": "Offers" },
+
+    { "id": "enterForecast", "label": "Enter forecast", "area": "Forecast and results" },
+    { "id": "enterResults", "label": "Enter results", "area": "Forecast and results" },
+
+    { "id": "exportCsv", "label": "Export CSV", "area": "Output" },
+    { "id": "exportColumns", "label": "Export selected columns", "area": "Output" },
+    { "id": "generateSubmission", "label": "Generate submission form", "area": "Output" },
+
+    { "id": "addChangeListValues", "label": "Add or change list values", "area": "Reference data" },
+    { "id": "editStatusDefs", "label": "Edit status definitions", "area": "Reference data" },
+    { "id": "editBusinessDefs", "label": "Edit business definitions (data dictionary)", "area": "Reference data" },
+    { "id": "editDatabricksNames", "label": "Edit Databricks table names", "area": "Reference data" },
+
+    { "id": "runSimulations", "label": "Run load simulation", "area": "Data feed" },
+
+    { "id": "manageUsers", "label": "Manage users and roles", "area": "Admin" },
+
+    { "id": "savePersonalViews", "label": "Save personal views and filters", "area": "Personal", "locked": true, "lockedValue": true, "lockedTooltip": "Personal. Never affects other users." },
+    { "id": "addRemoveField", "label": "Add or remove a field (column)", "area": "Structure", "locked": true, "lockedValue": false, "lockedTooltip": "Not possible in the app. The structure cannot be changed (business rule)." }
+  ],
+  "defaults": {
+    "Offer Team Editor": {
+      "openEditArea": true, "openResultsForecast": true, "openDataFeed": true, "openReference": true,
+      "createOffer": true, "editOffer": true, "copyOffer": true, "deleteDraft": true, "cancelOffer": true,
+      "changeStatus": true, "editChecklist": true, "enterForecast": true, "enterResults": true,
+      "exportCsv": true, "exportColumns": true, "generateSubmission": true
+    },
+    "Loyalty & Pricing": {
+      "openResultsForecast": true, "openDataFeed": true, "openReference": true,
+      "createOffer": true, "editOffer": true, "copyOffer": true,
+      "exportCsv": true, "exportColumns": true
+    },
+    "Approver (TBC)": {
+      "openResultsForecast": true, "openDataFeed": true, "openReference": true,
+      "approve": true, "exportCsv": true, "exportColumns": true
+    },
+    "View-only": {
+      "openResultsForecast": true, "openDataFeed": true, "openReference": true,
+      "exportCsv": true, "exportColumns": true
+    },
+    "Admin": {
+      "openEditArea": true, "openResultsForecast": true, "openDataFeed": true, "openReference": true, "openUsers": true,
+      "createOffer": true, "editOffer": true, "copyOffer": true, "deleteDraft": true, "cancelOffer": true,
+      "changeStatus": true, "approve": true, "reopenLocked": true, "editChecklist": true,
+      "enterForecast": true, "enterResults": true,
+      "exportCsv": true, "exportColumns": true, "generateSubmission": true,
+      "addChangeListValues": true, "editStatusDefs": true, "editBusinessDefs": true, "editDatabricksNames": true,
+      "runSimulations": true, "manageUsers": true
+    }
+  }
+}
