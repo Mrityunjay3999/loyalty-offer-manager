@@ -1156,4 +1156,28 @@ Two tables — **Features metadata** (101 MA) and **Features metadata metrics** 
 - Metadata mapping unchanged from the earlier fix: 144 of 169 columns map, 25 "Not captured".
 
 ## Known simplifications (prototype)
-- ExcelGrid has column show/hide/freeze/sort/density + personal layout, but not per-column inline header filters or drag resize/reorder (quick filters cover the fields). The automated 3,500-row virtualisation perf test is not wired (needs a jsdom test env).
+- ExcelGrid now has column show/hide/freeze/sort/density, per-column inline header filters, and drag-to-resize / drag-to-reorder, all saved in the personal (per-user) layout. The 3,500-row virtualisation is covered by a jsdom render test; a real-browser FPS benchmark (Playwright) is still out of scope.
+
+# v2.1 addendum — Calendar view & Users/Roles
+
+This addendum records the v2.1 changes (meeting feedback Part 1 + Part 2). Where it conflicts with an earlier section, the later wins.
+
+## Navigation (updated)
+Sidebar order: Offers (Edit) [openEditArea], Offer View, Approvals, Results & Forecast [openResultsForecast], Evergreen offers, Reference data [openReference], **Users & roles [manageUsers]**, Data dictionary, Data feed [openDataFeed], **Calendar view** (Phase 2). Each page has a route guard; without the capability the user is redirected to Offer View with a toast. "Open Offer View" and "Open Calendar view" are locked on for every role.
+
+## Calendar view (`/calendar`, `lib/calendar.ts`) — Part 1
+Read-only for every role; a live projection of the offer store (no data of its own, updates instantly on any create/edit/status/cancel). Excludes Draft and Cancelled; grouped offers drawn once from the parent's dates; offers missing a start or end date are not drawn and are listed in a "not shown" note.
+- **Views:** Month (shaded day cells by count, stacked bar by colour-by group, fiscal-week rows, click a day for the list), Week (per-day chips aligned across the row), Timeline (virtualised Gantt, frozen Offer ID + Name, per-day stack counts, bar tooltip).
+- **Colour by:** Broad vs Targeted (teal / indigo / grey) or Status; legend with counts for the visible period + a shade scale.
+- **Include early activation days** (off by default): adds Early Activation → day-before-Start as a hatched band.
+- **Summary strip:** offers in period, busiest day, average per day, Broad/Targeted split.
+- **Filters** (personal, per user): Country, Tiering, Offer Design, Category, Sub-Category, Broad/Targeted, Channel, Fiscal year, Status (multi); options from `dropdowns.json`.
+- **Two-way links:** "View on calendar" from the Offer Workspace header, the Offers row menu, and the read-only detail drawer (jumps to the start month + highlights); Step 1 shows the live overlap count ("{n} other offers run during these dates"). Clicking an offer opens the shared read-only `OfferDetailDrawer`.
+
+## Users & roles (`/admin/users`, `permissions.json`, `users.json`) — Part 2
+The permission matrix is now data in `src/data/permissions.json` (capabilities grouped by area, with locked rows and per-role defaults) and is editable + persisted. `src/data/users.json` holds six sample users. `can(role, cap, matrix?)` reads the live matrix; Admin is always allowed except locked-off rows.
+- **Sign-in as** (replaces the role switcher): pick any active user (grouped by role), no password. Personal grid layouts are now keyed per user (one-time migration from per-role keys). Audit entries record "Name (Role)".
+- **Tab A Users:** name, email, role pill, active, created, last-changed-by; search + role filter; add / edit / change role / activate-deactivate (no delete). Guards: the last active Admin cannot be deactivated or re-roled; you cannot deactivate yourself.
+- **Tab B Roles & permissions:** matrix of capabilities × 5 roles; Admin column read-only; locked rows (Open Offer View, Open Calendar view, Save personal views = on for all; Add or remove a field = off for all) shown with a lock icon + tooltip; "Confirm with business" banner; Approver (TBC) info icon; identity-system note; Reset to defaults. Confirmed business rules: edit area = operations team, view area = everyone, only certain people change list values; everything else is to be confirmed.
+- **Tab C Change log:** every user/permission change (time, who, what, old → new), filterable by type.
+- **Enforcement:** route guards redirect; disabled buttons name who can ("Available to: …"); a matrix change takes effect across the app (observed on sign-in as the affected role).

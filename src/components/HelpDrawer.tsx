@@ -15,6 +15,9 @@ const DEMO_STEPS: string[] = [
   'Role = Admin. Move the offer to Completed - Data Final: it is locked for everyone. Cancel a different offer with a reason: it disappears from Offer View, Results & Forecast and the feed.',
   'Role = Admin. Reference data → P&P Contact → Add value. It appears in the Step 1 dropdown immediately. There is no control to add a field.',
   'Role = Editor. Select 2 offers → Submission form → MFP → Download: 2 files, 1 per offer.',
+  'Submit a new offer, then click "View on calendar" in its header. The calendar opens on its start month with the offer highlighted.',
+  'On the calendar, switch between Month, Week and Timeline. Read the summary strip, then click the busiest day to see every offer running that day.',
+  'Sign in as Sample Admin → Users & roles → Roles & permissions. Untick a permission (e.g. Enter results for Offer Team Editor). Sign in as Sample Editor 1 and open Results & Forecast: that button is now gone.',
 ];
 
 export function HelpDrawer({

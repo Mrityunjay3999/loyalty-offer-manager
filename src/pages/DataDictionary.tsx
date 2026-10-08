@@ -43,6 +43,8 @@ const OPEN_QUESTIONS: string[] = [
   'Who can reopen a locked offer.',
   'Final step grouping of the fields.',
   'Who approves offers (existing open question).',
+  'The full list of roles and who holds each role.',
+  'Whether roles are managed inside this app or by the company’s identity system.',
 ];
 
 export function DataDictionary() {
