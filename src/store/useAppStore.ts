@@ -92,6 +92,8 @@ export interface AppState extends EditableReference {
   groupedChildren: Record<string, ChildPromotion[]>;
   feedState: Record<string, { loadedAt?: string }>;
   databricksTableNames: { attributes: string | null; metrics: string | null };
+  /** C6: editable per-field business definition + status. */
+  fieldDefinitions: Record<string, { businessDefinition?: string; status?: 'Draft' | 'Confirmed' }>;
 
   // --- actions ---
   setRole: (role: Role) => void;
@@ -116,6 +118,8 @@ export interface AppState extends EditableReference {
   /** C4: nightly load — stamp included offers without exceptions, log counts. */
   simulateNightlyLoad: () => void;
   setDatabricksTableName: (key: 'attributes' | 'metrics', name: string) => void;
+  /** C6: set a field's business definition / status (Admin). */
+  setFieldDefinition: (fieldId: string, patch: { businessDefinition?: string; status?: 'Draft' | 'Confirmed' }) => void;
 }
 
 const RESULT_FIELD_IDS = fieldsByStep['9. Results'].map((f) => f.id);
@@ -132,6 +136,8 @@ type AppData = EditableReference & {
   feedState: Record<string, { loadedAt?: string }>;
   /** C2: editable Databricks table names. */
   databricksTableNames: { attributes: string | null; metrics: string | null };
+  /** C6: editable per-field business definition + status. */
+  fieldDefinitions: Record<string, { businessDefinition?: string; status?: 'Draft' | 'Confirmed' }>;
 };
 
 /** Map a seed grouped child (verbose spreadsheet keys) to an editable row. */
@@ -178,6 +184,7 @@ function initialState(): AppData {
       attributes: databricksTablesJson.attributes.tableName,
       metrics: databricksTablesJson.metrics.tableName,
     },
+    fieldDefinitions: {},
     ...seedEditableReference(),
   };
 }
@@ -389,6 +396,11 @@ export const useAppStore = create<AppState>()(
       setDatabricksTableName: (key, name) => {
         set((st) => ({ databricksTableNames: { ...st.databricksTableNames, [key]: name } }));
         get().addAudit({ offerId: 'REFERENCE', user: get().role, action: 'reference edited', comment: `Set Databricks ${key} table name to "${name}"` });
+      },
+
+      setFieldDefinition: (fieldId, patch) => {
+        set((st) => ({ fieldDefinitions: { ...st.fieldDefinitions, [fieldId]: { ...st.fieldDefinitions[fieldId], ...patch } } }));
+        get().addAudit({ offerId: 'REFERENCE', user: get().role, action: 'reference edited', comment: `Edited business definition for ${fieldId}` });
       },
 
       editReference: (patch, summary) => {

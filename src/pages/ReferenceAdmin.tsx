@@ -15,22 +15,27 @@ export function ReferenceAdmin() {
   const isAdmin = can(role, 'editReference');
   const TABS = [
     'Categories', 'Offer tiering', 'Statuses', 'Dropdown lists', 'Offer setups',
-    'Transaction types', 'Soft lock planner', 'Deactivation rules', 'Brands',
+    'Transaction types', 'Soft lock planner', 'Deactivation rules', 'Brands', 'Databricks tables',
   ];
 
   return (
     <div>
       <PageHeader title="Reference data">
         {!isAdmin && (
-          <span className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-xs text-muted">
+          <span className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-xs text-muted" title="Only an Admin can change list values.">
             <Lock size={12} /> Read-only
           </span>
         )}
       </PageHeader>
+      <div className="mb-3 rounded-md border border-border bg-white px-3 py-2 text-sm text-muted" data-testid="reference-structure-banner">
+        You can add or change list values here. Fields (columns) cannot be added or removed in the
+        app. Lists usually change once a quarter to once a year.
+      </div>
       <p className="mb-3 text-sm text-muted">
         Every change is logged and is immediately available in the dropdowns.
         {' '}Retiring a value keeps it on offers already using it (
         <span className="inline-flex items-center gap-1">proposed rule <ProposedRuleIcon /></span>).
+        {!isAdmin && <span className="ml-1 italic">Only an Admin can change list values.</span>}
       </p>
 
       <Tabs.Root defaultValue="Categories">
@@ -55,6 +60,7 @@ export function ReferenceAdmin() {
         <Tabs.Content value="Soft lock planner"><SoftLockTab readOnly={!isAdmin} /></Tabs.Content>
         <Tabs.Content value="Deactivation rules"><DeactivationTab readOnly={!isAdmin} /></Tabs.Content>
         <Tabs.Content value="Brands"><BrandsTab readOnly={!isAdmin} /></Tabs.Content>
+        <Tabs.Content value="Databricks tables"><DatabricksTablesTab readOnly={!isAdmin} /></Tabs.Content>
       </Tabs.Root>
     </div>
   );
@@ -153,13 +159,14 @@ function StatusesTab({ readOnly }: { readOnly: boolean }) {
       {!readOnly && <Toolbar><button className={saveBtn} onClick={() => { editReference({ lifecycle: draft }, 'Edited status definitions'); push('Statuses saved.', 'success'); }}><Save size={14} /> Save changes</button></Toolbar>}
       <div className="overflow-auto rounded-lg border border-border bg-white">
         <table className="w-full text-left text-sm">
-          <thead className="border-b border-border bg-surface text-muted"><tr><th className="px-2 py-2">Status</th><th className="px-2 py-2">Definition</th><th className="px-2 py-2">Documented</th></tr></thead>
+          <thead className="border-b border-border bg-surface text-muted"><tr><th className="px-2 py-2">Status</th><th className="px-2 py-2">Definition</th><th className="px-2 py-2">Documented</th><th className="px-2 py-2">Business definition confirmed</th></tr></thead>
           <tbody>
             {draft.map((r, i) => (
               <tr key={r.status} className="border-b border-border last:border-0">
                 <td className="px-2 py-1 font-medium">{r.status}</td>
                 <td className="px-2 py-1"><textarea className={input} rows={2} disabled={readOnly} value={r.definition} onChange={(e) => setDraft((d) => d.map((x, j) => (j === i ? { ...x, definition: e.target.value } : x)))} /></td>
                 <td className="px-2 py-1">{r.documented ? 'Yes' : <span className="text-warning">No</span>}</td>
+                <td className="px-2 py-1"><input type="checkbox" disabled={readOnly} checked={r.confirmed ?? false} onChange={(e) => setDraft((d) => d.map((x, j) => (j === i ? { ...x, confirmed: e.target.checked } : x)))} /></td>
               </tr>
             ))}
           </tbody>
@@ -367,6 +374,33 @@ function BrandsTab({ readOnly }: { readOnly: boolean }) {
           {filtered.map((b, i) => <li key={i} className="px-3 py-1.5">{b}</li>)}
         </ul>
       </div>
+    </div>
+  );
+}
+
+// ---- Databricks tables (C2) ----
+function DatabricksTablesTab({ readOnly }: { readOnly: boolean }) {
+  const names = useAppStore((s) => s.databricksTableNames);
+  const setName = useAppStore((s) => s.setDatabricksTableName);
+  const push = useToasts((s) => s.push);
+  const [attr, setAttr] = useState(names.attributes ?? '');
+  const [metric, setMetric] = useState(names.metrics ?? '');
+  return (
+    <div className="max-w-xl space-y-3">
+      <p className="text-sm text-muted">The metadata load writes to two Databricks tables. Exact names are to be confirmed by the business.</p>
+      <div>
+        <label className="mb-1 block text-sm font-medium">Features metadata (attributes · MA)</label>
+        <input className={input} disabled={readOnly} placeholder="catalog.schema.table" value={attr} onChange={(e) => setAttr(e.target.value)} />
+      </div>
+      <div>
+        <label className="mb-1 block text-sm font-medium">Features metadata metrics (CM)</label>
+        <input className={input} disabled={readOnly} placeholder="catalog.schema.table" value={metric} onChange={(e) => setMetric(e.target.value)} />
+      </div>
+      {!readOnly && (
+        <button className={saveBtn} onClick={() => { if (attr.trim()) setName('attributes', attr.trim()); if (metric.trim()) setName('metrics', metric.trim()); push('Databricks table names saved.', 'success'); }}>
+          <Save size={14} /> Save
+        </button>
+      )}
     </div>
   );
 }

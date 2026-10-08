@@ -74,7 +74,10 @@ export function AppShell() {
         <div className="flex items-center gap-2">
           <NavLink to="/" className="flex items-center gap-2">
             <span className="text-lg font-semibold text-ink">Loyalty Offer Manager</span>
-            <span className="rounded-full border border-accent px-2 py-0.5 text-xs font-medium text-accent">
+            <span
+              className="cursor-help rounded-full border border-accent px-2 py-0.5 text-xs font-medium text-accent"
+              title="AI-built prototype for discussion. Design, buttons and features will change. Shown to align on flow and fields only."
+            >
               Prototype
             </span>
           </NavLink>

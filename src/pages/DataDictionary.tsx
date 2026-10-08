@@ -1,9 +1,19 @@
 import { useMemo, useState } from 'react';
 import * as Popover from '@radix-ui/react-popover';
-import { Search, Eye } from 'lucide-react';
+import { Search, Eye, Download } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { PageHeader } from '@/components/PageHeader';
-import { fields, STEP_ORDER, dataDictionaryOnlyFields, requiredFieldIds } from '@/lib/dataLoaders';
+import { fields, STEP_ORDER, dataDictionaryOnlyFields, requiredFieldIds, metadataFields } from '@/lib/dataLoaders';
+import { routeTable } from '@/lib/feed';
+import { can } from '@/lib/permissions';
+import { toCsv, downloadCsv } from '@/lib/csv';
+
+const dbTableForField = (fieldId: string): string => {
+  const m = metadataFields.find((x) => x.calendarFieldId === fieldId);
+  if (!m) return '';
+  const t = routeTable(m);
+  return t === 'attributes' ? 'Features metadata' : t === 'metrics' ? 'Features metadata metrics' : 'Not loaded';
+};
 
 const DATA_FINDINGS: string[] = [
   'Dropdown validation has drifted from its columns. Some Excel dropdown rules now sit on the wrong column (e.g. the multiplier list is attached to the threshold columns). The prototype maps every dropdown to its correct field by meaning.',
@@ -23,12 +33,32 @@ const DATA_FINDINGS: string[] = [
   'The actual-results redemption rate (Metadata col CP) uses a different rule from the forecast rate (col DX) — see spec 8.6 item 9.',
 ];
 
+const OPEN_QUESTIONS: string[] = [
+  'Final list of fields required for the metadata load, and the exception rules.',
+  'Exact Databricks table names for the 2 metadata tables.',
+  'Meaning of Dashboard Mo. (reporting).',
+  'Final definitions for each status, including Pending SteerCo Approval.',
+  'Whether the submission form is in MVP.',
+  'Which redemption-rate rule the product keeps for actual results (Results & Forecast vs metadata).',
+  'Who can reopen a locked offer.',
+  'Final step grouping of the fields.',
+  'Who approves offers (existing open question).',
+];
+
 export function DataDictionary() {
   const dropdowns = useAppStore((s) => s.dropdowns);
+  const role = useAppStore((s) => s.role);
+  const fieldDefinitions = useAppStore((s) => s.fieldDefinitions);
+  const setFieldDefinition = useAppStore((s) => s.setFieldDefinition);
+  const isAdmin = can(role, 'editReference');
   const [q, setQ] = useState('');
   const [step, setStep] = useState('');
   const [draftOnly, setDraftOnly] = useState(false);
   const [feedsOnly, setFeedsOnly] = useState(false);
+  const [notConfirmed, setNotConfirmed] = useState(false);
+
+  const defStatus = (id: string) => fieldDefinitions[id]?.status ?? 'Draft';
+  const defText = (id: string, fallback: string) => fieldDefinitions[id]?.businessDefinition ?? fallback;
 
   const rows = useMemo(() => {
     const s = q.trim().toLowerCase();
@@ -37,18 +67,32 @@ export function DataDictionary() {
       if (step && f.step !== step) return false;
       if (draftOnly && !f.tooltipSource?.startsWith('DRAFT')) return false;
       if (feedsOnly && !f.datalakeColumn) return false;
+      if (notConfirmed && defStatus(f.id) === 'Confirmed') return false;
       return true;
     });
-  }, [q, step, draftOnly, feedsOnly]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [q, step, draftOnly, feedsOnly, notConfirmed, fieldDefinitions]);
+
+  function exportGrouping() {
+    const headers = ['Field label', 'Excel column', 'Current step', 'Current group', 'Proposed step', 'Proposed group', 'Comment'];
+    const data = fields.map((f) => [f.label, f.excelColumn ?? '', f.step, f.group ?? '', '', '', '']);
+    downloadCsv('field-grouping', toCsv(headers, data));
+  }
+  function exportDefinitions() {
+    const headers = ['Field', 'Databricks table', 'Databricks column', 'Required for metadata load', 'Business definition', 'Definition status'];
+    const data = fields.map((f) => [f.label, dbTableForField(f.id), f.datalakeColumn ?? '', requiredFieldIds.has(f.id) ? 'Yes (provisional)' : 'No', defText(f.id, f.tooltip), defStatus(f.id)]);
+    downloadCsv('field-definitions', toCsv(headers, data));
+  }
 
   return (
     <div>
       <PageHeader title="Data dictionary" count={rows.length} />
-      <p className="mb-3 text-sm text-muted">
-        The business’s checklist for confirming field definitions. 123 fields appear in the form
-        (from today’s calendar); 6 are system/hidden — 129 total. Offer ID is auto-generated in the
-        product (no typed input).
+      <p className="mb-2 text-sm text-muted">
+        One place for every field’s business definition. The business reviews and confirms each one.
+        123 fields appear in the form (from today’s calendar); 6 are system/hidden — 129 total.
+        Offer ID is auto-generated in the product (no typed input).
       </p>
+      <p className="mb-3 text-xs text-muted">Step grouping is a first draft. The business will confirm the buckets.</p>
 
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <div className="relative">
@@ -61,6 +105,9 @@ export function DataDictionary() {
         </select>
         <label className="flex items-center gap-1.5 text-sm"><input type="checkbox" checked={draftOnly} onChange={(e) => setDraftOnly(e.target.checked)} /> Draft definitions</label>
         <label className="flex items-center gap-1.5 text-sm"><input type="checkbox" checked={feedsOnly} onChange={(e) => setFeedsOnly(e.target.checked)} /> Feeds Databricks</label>
+        <label className="flex items-center gap-1.5 text-sm"><input type="checkbox" checked={notConfirmed} onChange={(e) => setNotConfirmed(e.target.checked)} /> Definition not confirmed</label>
+        <button onClick={exportGrouping} className="ml-auto inline-flex items-center gap-1 rounded border border-border px-2 py-1 text-xs hover:bg-surface"><Download size={13} /> Export grouping (CSV)</button>
+        <button onClick={exportDefinitions} className="inline-flex items-center gap-1 rounded border border-border px-2 py-1 text-xs hover:bg-surface"><Download size={13} /> Export field definitions (CSV)</button>
       </div>
 
       <div className="max-h-[60vh] overflow-auto rounded-lg border border-border bg-white">
@@ -73,10 +120,13 @@ export function DataDictionary() {
               <th className="px-2 py-2 font-medium">Control</th>
               <th className="px-2 py-2 font-medium">Options</th>
               <th className="px-2 py-2 font-medium">Tooltip source</th>
-              <th className="px-2 py-2 font-medium">Databricks</th>
+              <th className="px-2 py-2 font-medium">Databricks table</th>
+              <th className="px-2 py-2 font-medium">Databricks column</th>
               <th className="px-2 py-2 font-medium">MA/CM</th>
               <th className="px-2 py-2 font-medium">Datatype</th>
               <th className="px-2 py-2 font-medium">Required for metadata load</th>
+              <th className="px-2 py-2 font-medium">Business definition</th>
+              <th className="px-2 py-2 font-medium">Definition status</th>
             </tr>
           </thead>
           <tbody>
@@ -122,11 +172,30 @@ export function DataDictionary() {
                       <span className="text-muted">{f.tooltipSource}</span>
                     )}
                   </td>
-                  <td className="px-2 py-1.5 text-muted">{f.datalakeColumn ?? '—'}</td>
+                  <td className="px-2 py-1.5 text-muted">{dbTableForField(f.id) || '—'}</td>
+                  <td className="px-2 py-1.5 font-mono text-muted">{f.datalakeColumn ?? '—'}</td>
                   <td className="px-2 py-1.5 text-muted">{f.metadataType ?? '—'}</td>
                   <td className="px-2 py-1.5 text-muted">{f.datatype ?? '—'}</td>
                   <td className="px-2 py-1.5 text-muted">
                     {requiredFieldIds.has(f.id) ? 'Yes (provisional)' : 'No'}
+                  </td>
+                  <td className="px-2 py-1.5" style={{ minWidth: 200 }}>
+                    {isAdmin ? (
+                      <textarea className="w-full rounded border border-border px-1 py-0.5 text-xs" rows={2}
+                        value={defText(f.id, f.tooltip)} onChange={(e) => setFieldDefinition(f.id, { businessDefinition: e.target.value })} />
+                    ) : (
+                      <span className="text-muted">{defText(f.id, f.tooltip)}</span>
+                    )}
+                  </td>
+                  <td className="px-2 py-1.5">
+                    {isAdmin ? (
+                      <select className="rounded border border-border px-1 py-0.5 text-xs" value={defStatus(f.id)} onChange={(e) => setFieldDefinition(f.id, { status: e.target.value as 'Draft' | 'Confirmed' })}>
+                        <option value="Draft">Draft</option>
+                        <option value="Confirmed">Confirmed</option>
+                      </select>
+                    ) : (
+                      <span className={defStatus(f.id) === 'Confirmed' ? 'text-success' : 'text-warning'}>{defStatus(f.id)}</span>
+                    )}
                   </td>
                 </tr>
               );
@@ -200,6 +269,16 @@ export function DataDictionary() {
           </tbody>
         </table>
       </div>
+
+      <h2 className="mb-2 mt-6 text-lg font-semibold text-ink">Open questions for the business</h2>
+      <ol className="mb-6 space-y-1.5">
+        {OPEN_QUESTIONS.map((qn, i) => (
+          <li key={i} className="flex gap-3 rounded-lg border border-warning/30 bg-warning/5 px-4 py-2 text-sm">
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-warning/20 text-xs font-semibold text-warning">{i + 1}</span>
+            <span className="text-ink">{qn}</span>
+          </li>
+        ))}
+      </ol>
 
       <h2 className="mb-2 mt-6 text-lg font-semibold text-ink">What we found in today’s spreadsheet</h2>
       <ol className="space-y-2">

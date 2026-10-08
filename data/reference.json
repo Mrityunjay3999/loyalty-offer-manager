@@ -487,62 +487,74 @@
     {
       "status": "Forecast Only",
       "definition": null,
-      "documented": false
+      "documented": false,
+      "confirmed": false
     },
     {
       "status": "Pending SteerCo Approval",
-      "definition": null,
-      "documented": false
+      "definition": "For expensive, high-visibility offers that need steering committee approval before they go ahead. This status was added recently. Final definition to be agreed with the team.",
+      "documented": false,
+      "confirmed": false
     },
     {
       "status": "Proposed",
       "definition": "Offer added to the calendar with an initial forecast. Approval pending. SKUs are not sent to Promo Advisor in this phase. Proposed offers reviewed and approved daily. SLA is 48 hours for approval",
-      "documented": true
+      "documented": true,
+      "confirmed": true
     },
     {
       "status": "Planning Phase",
       "definition": "Approved but not yet submitted to Capillary; forecast is approved, and SKUs sent to Promo Advisor within 7 days",
-      "documented": true
+      "documented": true,
+      "confirmed": true
     },
     {
       "status": "Approved / Build Phase",
       "definition": "Offer submitted to Capillary; build in progress.",
-      "documented": true
+      "documented": true,
+      "confirmed": true
     },
     {
       "status": "Pending MD",
       "definition": "Pending member descriptor before moving to Audited / Ready to go",
-      "documented": true
+      "documented": true,
+      "confirmed": true
     },
     {
       "status": "Audited / Ready to go",
       "definition": "Capillary build complete; offer card set up on contentful: audit complete based on 'binders and checklists'",
-      "documented": true
+      "documented": true,
+      "confirmed": true
     },
     {
       "status": "Live",
       "definition": "Offer activatable; pre-activation or point awards live",
-      "documented": true
+      "documented": true,
+      "confirmed": true
     },
     {
       "status": "Completed",
       "definition": "Offer ended; data not final",
-      "documented": true
+      "documented": true,
+      "confirmed": true
     },
     {
       "status": "Completed - Data Final",
       "definition": "Reporting complete; final data pull complete minimum of 5 days after offer ends",
-      "documented": true
+      "documented": true,
+      "confirmed": true
     },
     {
       "status": "Pending Points Upload",
       "definition": "Points upload file pending after offer ends (example: Afterpay)",
-      "documented": true
+      "documented": true,
+      "confirmed": true
     },
     {
       "status": "Cancelled",
       "definition": "Offer cancelled - row will be deleted during monthly clean up Cancelled offers are locked and hidden from all views. The record is kept for history.",
-      "documented": true
+      "documented": true,
+      "confirmed": true
     }
   ],
   "transactionTypeIndex": [

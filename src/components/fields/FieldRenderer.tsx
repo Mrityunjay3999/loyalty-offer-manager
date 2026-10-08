@@ -271,6 +271,7 @@ export function FieldRenderer({
             In data dictionary, not in today’s calendar (confirm)
           </span>
         )}
+        {field.confirmWithBusiness && <TagPill kind="Confirm with business" />}
       </label>
 
       {renderControl()}

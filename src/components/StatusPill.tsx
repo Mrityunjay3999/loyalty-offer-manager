@@ -15,6 +15,8 @@ export function StatusPill({ status, withTooltip = true }: { status: string; wit
   );
   if (!withTooltip) return pill;
   const { definition } = statusDefinition(status, lifecycle);
+  const row = lifecycle.find((l) => l.status === status);
+  const unconfirmed = row ? row.confirmed === false : false;
   return (
     <Tooltip.Provider delayDuration={150}>
       <Tooltip.Root>
@@ -30,6 +32,9 @@ export function StatusPill({ status, withTooltip = true }: { status: string; wit
             className="z-50 max-w-[320px] rounded-md border border-border bg-white px-3 py-2 text-xs text-ink shadow-md"
           >
             {definition}
+            {unconfirmed && (
+              <span className="mt-1 block font-medium text-warning">Definition to be confirmed with the business.</span>
+            )}
             <Tooltip.Arrow className="fill-white" />
           </Tooltip.Content>
         </Tooltip.Portal>

@@ -23,6 +23,7 @@ import {
   ChevronUp,
   ChevronDown,
   X,
+  FileText,
 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { useToasts } from '@/store/useToasts';
@@ -31,6 +32,8 @@ import { EmptyState } from '@/components/EmptyState';
 import { StatusPill } from '@/components/StatusPill';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { HistoryDrawer } from '@/components/HistoryDrawer';
+import { SubmissionFormDialog } from '@/components/SubmissionFormDialog';
+import { ColumnPickerExportDialog } from '@/components/ColumnPickerExportDialog';
 import { fieldsById } from '@/lib/dataLoaders';
 import { STATUS_ORDER, statusOf, isEarlierThanAudited } from '@/lib/lifecycle';
 import { computedFieldValue, softLockDate } from '@/lib/calculations';
@@ -144,6 +147,8 @@ export function OffersList() {
   const [saveViewOpen, setSaveViewOpen] = useState(false);
   const [historyUid, setHistoryUid] = useState<string | null>(null);
   const [showCancelled, setShowCancelled] = useState(false);
+  const [submissionOpen, setSubmissionOpen] = useState(false);
+  const [colPickOpen, setColPickOpen] = useState(false);
 
   const canEdit = can(role, 'createEditCopy');
   const canCancel = can(role, 'cancel');
@@ -430,6 +435,20 @@ export function OffersList() {
               <Copy size={15} /> Copy offer
             </button>
             <button
+              disabled={!canEdit || selectedRows.length === 0}
+              onClick={() => setSubmissionOpen(true)}
+              className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 hover:bg-surface disabled:opacity-50"
+              title="Generate the Inspire submission form for the selected offers"
+            >
+              <FileText size={15} /> Submission form
+            </button>
+            <button
+              onClick={() => setColPickOpen(true)}
+              className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 hover:bg-surface"
+            >
+              <Download size={15} /> Export selected columns
+            </button>
+            <button
               onClick={() =>
                 exportRows(selectedRows.length ? selectedRows.map((r) => r.original) : filtered)
               }
@@ -646,6 +665,8 @@ export function OffersList() {
         </div>
       )}
 
+      <SubmissionFormDialog offers={selectedRows.map((r) => r.original)} open={submissionOpen} onClose={() => setSubmissionOpen(false)} />
+      <ColumnPickerExportDialog offers={selectedRows.length ? selectedRows.map((r) => r.original) : filtered} open={colPickOpen} onClose={() => setColPickOpen(false)} />
       <HistoryDrawer
         offerUid={historyUid}
         offerName={String(historyOffer?.offerName ?? historyOffer?.offerId ?? '')}

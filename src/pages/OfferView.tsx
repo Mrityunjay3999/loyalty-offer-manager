@@ -7,6 +7,7 @@ import { PageHeader } from '@/components/PageHeader';
 import { EmptyState } from '@/components/EmptyState';
 import { StatusPill } from '@/components/StatusPill';
 import { ExcelGrid, type ExcelColumn } from '@/components/ExcelGrid';
+import { ColumnPickerExportDialog } from '@/components/ColumnPickerExportDialog';
 import { fields, fieldsByStep, STEP_ORDER } from '@/lib/dataLoaders';
 import { statusOf } from '@/lib/lifecycle';
 import { computedFieldValue, softLockDate } from '@/lib/calculations';
@@ -50,6 +51,7 @@ export function OfferView() {
   const [design, setDesign] = useState('');
   const [grouped, setGrouped] = useState('');
   const [detailUid, setDetailUid] = useState<string | null>(null);
+  const [colPickOpen, setColPickOpen] = useState(false);
 
   // A5/A4: exclude Draft and Cancelled.
   const base = useMemo(
@@ -182,12 +184,18 @@ export function OfferView() {
           getRowId={(o) => o._uid ?? String(o.offerId)}
           onRowClick={(o) => setDetailUid(o._uid ?? null)}
           toolbarRight={
-            <button onClick={exportCsv} className="inline-flex items-center gap-1 rounded border border-border px-2 py-0.5 text-xs hover:bg-surface">
-              <Download size={13} /> Export CSV
-            </button>
+            <>
+              <button onClick={() => setColPickOpen(true)} className="inline-flex items-center gap-1 rounded border border-border px-2 py-0.5 text-xs hover:bg-surface">
+                <Download size={13} /> Export selected columns
+              </button>
+              <button onClick={exportCsv} className="inline-flex items-center gap-1 rounded border border-border px-2 py-0.5 text-xs hover:bg-surface">
+                <Download size={13} /> Export CSV
+              </button>
+            </>
           }
         />
       )}
+      <ColumnPickerExportDialog offers={rows} open={colPickOpen} onClose={() => setColPickOpen(false)} />
 
       {/* Read-only detail */}
       <Dialog.Root open={detailUid !== null} onOpenChange={(o) => !o && setDetailUid(null)}>
