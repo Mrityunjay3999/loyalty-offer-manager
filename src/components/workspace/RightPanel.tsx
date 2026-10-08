@@ -1,7 +1,10 @@
 import { useState } from 'react';
-import { Calculator, Info, ListChecks, CheckCircle2, Circle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Calculator, Info, ListChecks, CheckCircle2, Circle, CalendarDays } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { ValidationSummary } from '@/components/ValidationSummary';
+import { TagPill } from '@/components/TagPill';
+import { toCalendarOffers, offersInRange } from '@/lib/calendar';
 import {
   fiscalWeek,
   softLockDate,
@@ -115,6 +118,8 @@ function StepContext({
   const categorySubCategory = useAppStore((s) => s.categorySubCategory);
   const offerSetupCombos = useAppStore((s) => s.offerSetupCombos);
   const dropdowns = useAppStore((s) => s.dropdowns);
+  const allOffers = useAppStore((s) => s.offers);
+  const navigate = useNavigate();
 
   if (step === '1. Request & Timing') {
     const sl = softLockDate(offer);
@@ -126,15 +131,44 @@ function StepContext({
       const d = Math.round((slDate.getTime() - today.getTime()) / 86_400_000);
       daysUntil = d >= 0 ? `${d} days` : `${Math.abs(d)} days ago`;
     }
+    const start = parseISO(offer.startDate);
+    const end = parseISO(offer.endDate);
+    let overlap: { n: number; b: number; t: number } | null = null;
+    if (start && end) {
+      const others = offersInRange(toCalendarOffers(allOffers), start, end, offer._uid);
+      overlap = {
+        n: others.length,
+        b: others.filter((o) => o.group === 'Broad').length,
+        t: others.filter((o) => o.group === 'Targeted').length,
+      };
+    }
     return (
-      <Card title="Soft lock & fiscal">
-        <dl className="space-y-1.5 text-sm">
-          <Row label="Planning month" value={startMonth(offer) ?? '—'} />
-          <Row label="Fiscal Week" value={fiscalWeek(offer)} />
-          <Row label="Soft Lock Date" value={sl} />
-          <Row label="Days until soft lock" value={daysUntil} />
-        </dl>
-      </Card>
+      <>
+        <Card title="Soft lock & fiscal">
+          <dl className="space-y-1.5 text-sm">
+            <Row label="Planning month" value={startMonth(offer) ?? '—'} />
+            <Row label="Fiscal Week" value={fiscalWeek(offer)} />
+            <Row label="Soft Lock Date" value={sl} />
+            <Row label="Days until soft lock" value={daysUntil} />
+          </dl>
+        </Card>
+        {overlap && (
+          <Card title="Calendar overlap">
+            <p className="text-xs text-ink">
+              {overlap.n} other offer{overlap.n === 1 ? '' : 's'} run during these dates
+              {' '}({overlap.b} Broad, {overlap.t} Targeted).
+            </p>
+            <button
+              onClick={() => navigate(`/calendar?offer=${offer._uid ?? ''}`)}
+              className="mt-1 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+            >
+              <CalendarDays size={12} /> View on calendar
+            </button>
+            <div className="mt-1.5"><TagPill kind="Phase 2" /></div>
+            <p className="mt-1 text-[11px] text-muted">Information only. This never blocks saving or submitting.</p>
+          </Card>
+        )}
+      </>
     );
   }
 

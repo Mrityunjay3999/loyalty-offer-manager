@@ -45,6 +45,15 @@ export function colourGroup(o: OfferRecord): ColourGroup {
   return 'Other';
 }
 
+export type ColourBy = 'group' | 'status';
+
+/** Deterministic colour for a status, used when "Colour by" = Status. */
+export function statusColour(status: string): string {
+  let h = 0;
+  for (let i = 0; i < status.length; i++) h = (h * 31 + status.charCodeAt(i)) >>> 0;
+  return `hsl(${h % 360} 52% 42%)`;
+}
+
 /** An offer with its parsed, midnight-normalised run window. */
 export interface CalendarOffer {
   o: OfferRecord;
@@ -129,6 +138,13 @@ export function countForDay(
   return c;
 }
 
+/** Calendar offers whose run window overlaps [start, end], optionally excluding one. */
+export function offersInRange(cos: CalendarOffer[], start: Date, end: Date, excludeUid?: string): CalendarOffer[] {
+  const s = midnight(start);
+  const e = midnight(end);
+  return cos.filter((co) => co.o._uid !== excludeUid && co.start <= e && co.end >= s);
+}
+
 /** Offers running on a given day, sorted by start date then name. */
 export function offersOnDay(
   cos: CalendarOffer[],
@@ -143,6 +159,37 @@ export function offersOnDay(
 /** Inclusive day count of an offer's run window (ignores early activation). */
 export function runLengthDays(co: CalendarOffer): number {
   return Math.round((+co.end - +co.start) / 86400000) + 1;
+}
+
+/** The colour-by bucket label for an offer (Broad/Targeted/N/A, or a status). */
+export function groupKey(co: CalendarOffer, by: ColourBy): string {
+  return by === 'group' ? GROUP_LABELS[co.group] : co.status;
+}
+/** The colour for an offer under the chosen colour-by mode. */
+export function colourFor(co: CalendarOffer, by: ColourBy): string {
+  return by === 'group' ? GROUP_COLOURS[co.group] : statusColour(co.status);
+}
+
+/** Per-bucket counts + colours for a set of offers, for the legend. */
+export function legendFor(cos: CalendarOffer[], by: ColourBy): Array<{ label: string; colour: string; count: number }> {
+  const order: string[] = [];
+  const map = new Map<string, { label: string; colour: string; count: number }>();
+  for (const co of cos) {
+    const label = groupKey(co, by);
+    if (!map.has(label)) {
+      map.set(label, { label, colour: colourFor(co, by), count: 0 });
+      order.push(label);
+    }
+    map.get(label)!.count += 1;
+  }
+  // Stable, friendly ordering for the Broad/Targeted/N/A case.
+  if (by === 'group') {
+    const rank: Record<string, number> = { Broad: 0, Targeted: 1, 'N/A': 2 };
+    order.sort((a, b) => (rank[a] ?? 9) - (rank[b] ?? 9));
+  } else {
+    order.sort();
+  }
+  return order.map((l) => map.get(l)!);
 }
 
 export interface PeriodSummary {

@@ -16,6 +16,7 @@ import {
   AlertTriangle,
   Clock,
   Lock,
+  CalendarDays,
 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { useToasts } from '@/store/useToasts';
@@ -430,6 +431,12 @@ export function OfferWorkspace() {
                 <Copy size={15} /> Copy
               </button>
             )}
+            <button
+              onClick={() => navigate(`/calendar?offer=${working._uid ?? ''}`)}
+              className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 hover:bg-surface"
+            >
+              <CalendarDays size={15} /> View on calendar
+            </button>
             <button
               onClick={() => setHistoryOpen(true)}
               className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 hover:bg-surface"
