@@ -26,6 +26,7 @@ interface Layout {
   sortDir?: 'asc' | 'desc';
   freeze: number;
   density: 'comfortable' | 'compact';
+  filters?: Record<string, string>; // per-column "contains" text
 }
 
 function loadLayout(key: string): Layout | null {
@@ -89,18 +90,30 @@ export function ExcelGrid({
   const rowH = layout.density === 'compact' ? 30 : 40;
 
   const sorted = useMemo(() => {
-    if (!layout.sortId) return rows;
+    // per-column "contains" filters first
+    const active = Object.entries(layout.filters ?? {}).filter(([, v]) => v.trim() !== '');
+    let out = rows;
+    if (active.length) {
+      out = rows.filter((o) =>
+        active.every(([id, q]) => {
+          const col = colById[id];
+          if (!col) return true;
+          return String(col.sortValue(o)).toLowerCase().includes(q.trim().toLowerCase());
+        }),
+      );
+    }
+    if (!layout.sortId) return out;
     const col = colById[layout.sortId];
-    if (!col) return rows;
+    if (!col) return out;
     const dir = layout.sortDir === 'desc' ? -1 : 1;
-    return [...rows].sort((a, b) => {
+    return [...out].sort((a, b) => {
       const av = col.sortValue(a);
       const bv = col.sortValue(b);
       if (av < bv) return -1 * dir;
       if (av > bv) return 1 * dir;
       return 0;
     });
-  }, [rows, layout.sortId, layout.sortDir, colById]);
+  }, [rows, layout.sortId, layout.sortDir, layout.filters, colById]);
 
   // Frozen-column left offsets.
   const lefts: number[] = [];
@@ -156,7 +169,7 @@ export function ExcelGrid({
           ))}
         </div>
         <button
-          onClick={() => update({ visible: defaultVisible, freeze: freezeDefault, density: 'compact', sortId: undefined, sortDir: undefined })}
+          onClick={() => update({ visible: defaultVisible, freeze: freezeDefault, density: 'compact', sortId: undefined, sortDir: undefined, filters: {} })}
           className="rounded border border-border px-2 py-0.5 text-xs hover:bg-surface"
         >
           Reset my view
@@ -182,6 +195,13 @@ export function ExcelGrid({
                     {c.excelCol && <span className="text-[9px] text-muted/70">{c.excelCol}</span>}
                     {layout.sortId === c.id && (layout.sortDir === 'desc' ? <ChevronDown size={11} /> : <ChevronUp size={11} />)}
                   </button>
+                  <input
+                    value={layout.filters?.[c.id] ?? ''}
+                    onChange={(e) => update({ filters: { ...(layout.filters ?? {}), [c.id]: e.target.value } })}
+                    onClick={(e) => e.stopPropagation()}
+                    placeholder="Filter…"
+                    className="mt-0.5 w-full rounded border border-border px-1 py-0.5 text-[10px] font-normal focus:border-primary focus:outline-none"
+                  />
                   <div className="mt-0.5 flex items-center gap-1">
                     {c.tag && <TagPill kind={c.tag} />}
                     {c.tooltip && (

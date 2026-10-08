@@ -29,7 +29,7 @@ import { StepNav, type StepInfo, type StepStatus } from '@/components/workspace/
 import { RightPanel } from '@/components/workspace/RightPanel';
 import { LifecycleBar, type ApplyArgs } from '@/components/workspace/LifecycleBar';
 import { GroupedOfferTab } from '@/components/workspace/GroupedOfferTab';
-import { InspireFormModal } from '@/components/InspireFormModal';
+import { SubmissionFormDialog } from '@/components/SubmissionFormDialog';
 import { PhaseBadge } from '@/components/PhaseBadge';
 import { TagPill } from '@/components/TagPill';
 import { isGroupedTabVisible } from '@/lib/visibility';
@@ -87,7 +87,7 @@ export function OfferWorkspace() {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [inspireForm, setInspireForm] = useState<'MFP' | 'RA' | null>(null);
+  const [submissionOpen, setSubmissionOpen] = useState(false);
 
   // Re-init working when the offer id changes.
   const loadedUid = useRef<string | undefined>(undefined);
@@ -458,11 +458,8 @@ export function OfferWorkspace() {
               </DropdownMenu.Trigger>
               <DropdownMenu.Portal>
                 <DropdownMenu.Content align="end" className="z-50 min-w-[230px] rounded-md border border-border bg-white py-1 shadow-lg">
-                  <DropdownMenu.Item onSelect={() => setInspireForm('MFP')} className="flex cursor-pointer items-center gap-2 px-3 py-1.5 outline-none hover:bg-surface">
-                    Generate Inspire submission form (MFP)
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item onSelect={() => setInspireForm('RA')} className="flex cursor-pointer items-center gap-2 px-3 py-1.5 outline-none hover:bg-surface">
-                    Generate Inspire submission form (RA)
+                  <DropdownMenu.Item onSelect={() => setSubmissionOpen(true)} className="flex cursor-pointer items-center gap-2 px-3 py-1.5 outline-none hover:bg-surface">
+                    Generate submission form
                   </DropdownMenu.Item>
                   {isDraft && can(role, 'deleteDraft') && (
                     <>
@@ -556,7 +553,7 @@ export function OfferWorkspace() {
               warningByField={warningByField}
               dropdowns={dropdowns}
               categorySubCategory={categorySubCategory}
-              onOpenInspire={setInspireForm}
+              onOpenSubmission={() => setSubmissionOpen(true)}
             />
           )}
         </div>
@@ -627,11 +624,7 @@ export function OfferWorkspace() {
         open={historyOpen}
         onOpenChange={setHistoryOpen}
       />
-      <InspireFormModal
-        offer={inspireForm ? working : null}
-        form={inspireForm}
-        onClose={() => setInspireForm(null)}
-      />
+      <SubmissionFormDialog offers={[working]} open={submissionOpen} onClose={() => setSubmissionOpen(false)} />
       <ConfirmDialog
         open={cancelOpen}
         title="Cancel offer"
@@ -687,7 +680,7 @@ function StepForm({
   warningByField,
   dropdowns,
   categorySubCategory,
-  onOpenInspire,
+  onOpenSubmission,
 }: {
   step: string;
   working: OfferRecord;
@@ -697,7 +690,7 @@ function StepForm({
   warningByField: Record<string, string>;
   dropdowns: Record<string, string[]>;
   categorySubCategory: import('@/lib/types').CategorySubCategory[];
-  onOpenInspire: (form: 'MFP' | 'RA') => void;
+  onOpenSubmission: () => void;
 }) {
   const stepFields = (fieldsByStep[step] ?? []).filter(
     (f) => f.control !== 'hidden' && isFieldVisible(f.id, working),
@@ -721,11 +714,8 @@ function StepForm({
         <div className="flex flex-wrap items-center gap-2">
           {step === '6. Content, Signage & SKUs' && (
             <>
-              <button onClick={() => onOpenInspire('MFP')} className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-sm hover:bg-surface">
-                Generate Inspire form (MFP) <PhaseBadge note="Phase 2 preview" />
-              </button>
-              <button onClick={() => onOpenInspire('RA')} className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-sm hover:bg-surface">
-                RA
+              <button onClick={onOpenSubmission} className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-sm hover:bg-surface">
+                Generate submission form <TagPill kind="MVP scope to confirm" />
               </button>
               <button disabled className={phase2Disabled} title="Integration approach to be decided">
                 Open SKU List Uploader <PhaseBadge />
