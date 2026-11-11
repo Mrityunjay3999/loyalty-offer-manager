@@ -128,3 +128,17 @@ describe('C3b coverage (R&F tab and Calendar main tab)', () => {
     for (const e of CALENDAR_BAND) expect(gridKeys.has(e.key)).toBe(true);
   });
 });
+
+describe('C6 How it is calculated', () => {
+  it('the 4 cards cover all 78 R&F columns exactly once, in Excel order within each card', async () => {
+    const { HOW_CARDS } = await import('@/components/rf/RfHowTab');
+    const all = HOW_CARDS.flatMap((c) => c.letters);
+    expect(all).toHaveLength(78);
+    expect(new Set(all).size).toBe(78);
+    const order = RF_REGISTRY.map((e) => e.letter);
+    for (const c of HOW_CARDS) {
+      const idx = c.letters.map((l) => order.indexOf(l));
+      expect(idx).toEqual([...idx].sort((a, b) => a - b));
+    }
+  });
+});
