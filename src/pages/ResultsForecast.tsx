@@ -1,511 +1,402 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState, type ReactNode } from 'react';
 import * as Tabs from '@radix-ui/react-tabs';
-import * as Dialog from '@radix-ui/react-dialog';
 import * as Tooltip from '@radix-ui/react-tooltip';
-import { Download, X, Sigma, Pencil } from 'lucide-react';
-import { useAppStore } from '@/store/useAppStore';
+import { Download } from 'lucide-react';
+import { useAppStore, isChangedSinceImport } from '@/store/useAppStore';
 import { useToasts } from '@/store/useToasts';
+import { importMetaOf } from '@/store/importedBase';
 import { PageHeader } from '@/components/PageHeader';
-import { PhaseBadge } from '@/components/PhaseBadge';
 import { EmptyState } from '@/components/EmptyState';
-import { StatusPill } from '@/components/StatusPill';
-import { TagPill, type TagKind } from '@/components/TagPill';
+import { MultiSelect } from '@/components/MultiSelect';
 import { ExcelGrid, type ExcelColumn } from '@/components/ExcelGrid';
-import { FieldRenderer } from '@/components/fields/FieldRenderer';
-import { fieldsByStep } from '@/lib/dataLoaders';
-import { statusOf, isLocked } from '@/lib/lifecycle';
-import { computeResultsForecast, inResultsForecast, type RfRow } from '@/lib/resultsForecast';
-import { forecastNeeded } from '@/lib/calculations';
+import { rfColumn, BAND_STYLE } from '@/components/rf/rfColumns';
+import { RfDetailDrawer } from '@/components/rf/RfDetailDrawer';
+import { RfHowTab } from '@/components/rf/RfHowTab';
+import { statusOf } from '@/lib/lifecycle';
+import { computeRfCells, EXCEL_EXPORT_DATE } from '@/lib/rfEngine';
+import { forecastNeeded, includeForResultsForecast } from '@/lib/calculations';
 import { fiscalYearOf } from '@/lib/offers';
 import { can } from '@/lib/permissions';
-import { formatDate, isNoValue } from '@/lib/format';
+import { todayISO } from '@/lib/format';
 import { toCsv, downloadCsv } from '@/lib/csv';
-import { optionsForField } from '@/lib/options';
-import type { OfferRecord, OfferValue } from '@/lib/types';
+import { REGISTRY, RF_REGISTRY, CALENDAR_BAND, type RegistryEntry } from '@/lib/forecastColumnRegistry';
+import { GRID_ENTRIES, RF_PRESETS, COMPLETED_OR_LATER, buildExportTable } from '@/lib/rfGrid';
+import { useImportReport } from '@/lib/importData';
+import type { OfferRecord } from '@/lib/types';
 
-type Kind = 'num' | 'cur' | 'pct' | 'pctNA' | 'text' | 'tbdnum' | 'tbdcur' | 'colour' | 'date' | 'status';
+type RowsMode = 'excel' | 'all';
+const SOURCES = ['Excel R&F tab + Metadata', 'Metadata only', 'Excel R&F tab only', 'Created in prototype'];
 
-function fmt(kind: Kind, v: unknown): string {
-  if (kind === 'text' || kind === 'date' || kind === 'colour' || kind === 'status') return String(v ?? '');
-  if (v === 'TBD') return 'TBD';
-  if (v === null || v === undefined || v === '') return kind === 'pctNA' ? 'Not available' : '';
-  const n = Number(v);
-  if (!Number.isFinite(n)) return '';
-  if (kind === 'cur' || kind === 'tbdcur') return `$${Math.round(n).toLocaleString()}`;
-  if (kind === 'pct' || kind === 'pctNA') return `${(n * 100).toFixed(n * 100 < 10 ? 1 : 0)}%`;
-  return Math.round(n).toLocaleString();
+interface Filters {
+  search: string;
+  fy: string;
+  status: string;
+  category: string;
+  sub: string[];
+  tier: string;
+  design: string;
+  markets: string[];
+  dash: string[];
+  colour: string;
+  source: string;
+  changed: boolean;
+  hasIssue: boolean;
+  resultsMissing: boolean;
+  forecastMissing: boolean;
+  fcstNeeded: boolean;
 }
-
-const COLOUR_CHIP: Record<string, string> = {
-  Pink: 'bg-pink-100 text-pink-700',
-  'Light green': 'bg-green-100 text-green-700',
-  'Dark Green': 'bg-green-700 text-white',
+const EMPTY: Filters = {
+  search: '', fy: '', status: '', category: '', sub: [], tier: '', design: '', markets: [], dash: [],
+  colour: '', source: '', changed: false, hasIssue: false, resultsMissing: false, forecastMissing: false, fcstNeeded: false,
 };
 
-// [rf key | offer field id, header, excel col, kind, tag, group]
-type Grp = 'basics' | 'RESULTS' | 'FORECAST' | 'WBR';
-interface Def { key: string; header: string; col: string; kind: Kind; tag: TagKind; grp: Grp; fromOffer?: boolean }
-
-const DEFS: Def[] = [
-  // basics
-  { key: 'buildStatus', header: 'Status', col: 'C', kind: 'status', tag: 'Dropdown', grp: 'basics', fromOffer: true },
-  { key: 'dashboardMonth', header: 'Dashboard Mo.', col: 'B', kind: 'text', tag: 'Typed', grp: 'basics', fromOffer: true },
-  { key: 'startDate', header: 'Start Date', col: 'D', kind: 'date', tag: 'Typed', grp: 'basics', fromOffer: true },
-  { key: 'endDate', header: 'End Date', col: 'E', kind: 'date', tag: 'Typed', grp: 'basics', fromOffer: true },
-  { key: 'numberOfDays', header: 'Promo Days', col: 'F', kind: 'num', tag: 'Calculated', grp: 'basics', fromOffer: true },
-  { key: 'category', header: 'Category', col: 'G', kind: 'text', tag: 'Dropdown', grp: 'basics', fromOffer: true },
-  { key: 'subCategory', header: 'Sub-Category', col: 'H', kind: 'text', tag: 'Dropdown', grp: 'basics', fromOffer: true },
-  { key: 'offerTiering', header: 'Tiering', col: 'I', kind: 'text', tag: 'Dropdown', grp: 'basics', fromOffer: true },
-  { key: 'country', header: 'Markets', col: 'K', kind: 'text', tag: 'Dropdown', grp: 'basics', fromOffer: true },
-  { key: 'offerDesign', header: 'Offer Design', col: 'L', kind: 'text', tag: 'Dropdown', grp: 'basics', fromOffer: true },
-  { key: 'multiplier', header: 'Multiplier', col: 'M', kind: 'text', tag: 'Dropdown', grp: 'basics', fromOffer: true },
-  { key: 'fixedPoints', header: 'Fixed pts', col: 'N', kind: 'num', tag: 'Typed', grp: 'basics', fromOffer: true },
-  // RESULTS (typed)
-  { key: 'audienceSize', header: 'Audience Size', col: 'O', kind: 'num', tag: 'Typed', grp: 'RESULTS', fromOffer: true },
-  { key: 'activations', header: 'Activations', col: 'P', kind: 'num', tag: 'Typed', grp: 'RESULTS', fromOffer: true },
-  { key: 'bonusedMembers', header: 'Bonused members', col: 'Q', kind: 'num', tag: 'Typed', grp: 'RESULTS', fromOffer: true },
-  { key: 'bonusPtsIssued', header: 'Bonus Pts Issued', col: 'R', kind: 'num', tag: 'Typed', grp: 'RESULTS', fromOffer: true },
-  // RESULTS (calculated)
-  { key: 'ltbpOutstanding', header: 'LTBP outstanding', col: 'S', kind: 'num', tag: 'Calculated', grp: 'RESULTS' },
-  { key: 'ltbpRemoved', header: 'LTBP removed', col: 'T', kind: 'num', tag: 'Calculated', grp: 'RESULTS' },
-  { key: 'bonusRate', header: 'Bonus rate', col: 'U', kind: 'pctNA', tag: 'Calculated', grp: 'RESULTS' },
-  { key: 'bonusedSales', header: 'Bonused sales', col: 'Y', kind: 'tbdcur', tag: 'Calculated', grp: 'RESULTS' },
-  { key: 'basePoints', header: 'Base points', col: 'Z', kind: 'tbdnum', tag: 'Calculated', grp: 'RESULTS' },
-  { key: 'basePointsRedeemable', header: 'Base pts redeemable $', col: 'AA', kind: 'tbdcur', tag: 'Calculated', grp: 'RESULTS' },
-  { key: 'bonusPointsRedeemable', header: 'Bonus pts redeemable $', col: 'AB', kind: 'cur', tag: 'Calculated', grp: 'RESULTS' },
-  { key: 'redemptionRateResults', header: 'Assumed redemption rate', col: 'AC', kind: 'pct', tag: 'Calculated', grp: 'RESULTS' },
-  { key: 'bonusRedeemableWithBreakage', header: 'Redeemable $ (breakage)', col: 'AD', kind: 'cur', tag: 'Calculated', grp: 'RESULTS' },
-  { key: 'spendPerBonusedMember', header: 'Spend / bonused member', col: 'AE', kind: 'tbdcur', tag: 'Calculated', grp: 'RESULTS' },
-  // FORECAST
-  { key: 'activationLow', header: 'Activation Low', col: 'AF', kind: 'num', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'activationHigh', header: 'Activation High', col: 'AG', kind: 'num', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'bonusRateLowIn', header: 'Bonus rate Low', col: 'AH', kind: 'pct', tag: 'Typed', grp: 'FORECAST' },
-  { key: 'bonusRateHighIn', header: 'Bonus rate High', col: 'AI', kind: 'pct', tag: 'Typed', grp: 'FORECAST' },
-  { key: 'avgSpendLowIn', header: 'Avg spend Low', col: 'AJ', kind: 'cur', tag: 'Typed', grp: 'FORECAST' },
-  { key: 'avgSpendHighIn', header: 'Avg spend High', col: 'AK', kind: 'cur', tag: 'Typed', grp: 'FORECAST' },
-  { key: 'activationAvg', header: 'Activation Avg', col: 'AL', kind: 'num', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'bonusRateAvg', header: 'Bonus rate Avg', col: 'AM', kind: 'pct', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'bonusedMembersLow', header: 'Bonused members Low', col: 'AN', kind: 'num', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'bonusedMembersHigh', header: 'Bonused members High', col: 'AO', kind: 'num', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'bonusedMembersAvg', header: 'Bonused members Avg', col: 'AP', kind: 'num', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'spendPerTxnAvg', header: 'Spend/txn Avg', col: 'AQ', kind: 'cur', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'bonusedSalesLow', header: 'Bonused sales Low', col: 'AR', kind: 'cur', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'bonusedSalesHigh', header: 'Bonused sales High', col: 'AS', kind: 'cur', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'bonusedSalesAvg', header: 'Bonused sales Avg', col: 'AT', kind: 'cur', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'basePointsLow', header: 'Base points Low', col: 'AU', kind: 'num', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'basePointsHigh', header: 'Base points High', col: 'AV', kind: 'num', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'basePointsAvg', header: 'Base points Avg', col: 'AW', kind: 'num', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'bonusPointsLow', header: 'Bonus points Low', col: 'AX', kind: 'num', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'bonusPointsHigh', header: 'Bonus points High', col: 'AY', kind: 'num', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'bonusPointsAvg', header: 'Bonus points Avg', col: 'AZ', kind: 'num', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'basePointsRedeemableLow', header: 'Base pts redeem $ Low', col: 'BA', kind: 'cur', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'basePointsRedeemableHigh', header: 'Base pts redeem $ High', col: 'BB', kind: 'cur', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'bonusPointsRedeemableLow', header: 'Bonus pts redeem $ Low', col: 'BC', kind: 'cur', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'bonusPointsRedeemableHigh', header: 'Bonus pts redeem $ High', col: 'BD', kind: 'cur', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'bonusPointsRedeemableAvg', header: 'Redeemable $MDs (100%)', col: 'BE', kind: 'cur', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'redemptionRateForecast', header: 'Fcst redemption rate', col: 'BF', kind: 'pct', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'bonusRedeemableLow', header: 'Redeemable $ breakage Low', col: 'BG', kind: 'cur', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'bonusRedeemableHigh', header: 'Redeemable $ breakage High', col: 'BH', kind: 'cur', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'bonusRedeemableAvg', header: '$MDs with breakage', col: 'BI', kind: 'cur', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'jbpLow', header: 'JBP Low', col: 'BJ', kind: 'cur', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'jbpHigh', header: 'JBP High', col: 'BK', kind: 'cur', tag: 'Calculated', grp: 'FORECAST' },
-  { key: 'jbpAvg', header: 'JBP Avg', col: 'BL', kind: 'cur', tag: 'Calculated', grp: 'FORECAST' },
-  // WBR
-  { key: 'wbrOfferPeriod', header: 'Offer Period', col: 'BM', kind: 'text', tag: 'Calculated', grp: 'WBR' },
-  { key: 'wbrFcstActivations', header: 'Fcst activations', col: 'BN', kind: 'text', tag: 'Calculated', grp: 'WBR' },
-  { key: 'wbrFcstBonused', header: 'Fcst bonused (rate)', col: 'BO', kind: 'text', tag: 'Calculated', grp: 'WBR' },
-  { key: 'wbrFcstSpend', header: 'Fcst spend/member', col: 'BP', kind: 'text', tag: 'Calculated', grp: 'WBR' },
-  { key: 'wbrFcstBonusPts', header: 'Fcst bonus pts', col: 'BQ', kind: 'text', tag: 'Calculated', grp: 'WBR' },
-  { key: 'wbrActActivations', header: 'Act activations', col: 'BR', kind: 'text', tag: 'Calculated', grp: 'WBR' },
-  { key: 'wbrActBonused', header: 'Act bonused (rate)', col: 'BS', kind: 'text', tag: 'Calculated', grp: 'WBR' },
-  { key: 'wbrActSpend', header: 'Act spend/member', col: 'BT', kind: 'text', tag: 'Calculated', grp: 'WBR' },
-  { key: 'wbrActBonusPts', header: 'Act bonus pts', col: 'BU', kind: 'text', tag: 'Calculated', grp: 'WBR' },
-  { key: 'wbrActBonusedSales', header: 'Act bonused sales', col: 'BV', kind: 'text', tag: 'Calculated', grp: 'WBR' },
-  { key: 'proratedPts', header: 'Prorated pts', col: 'BY', kind: 'num', tag: 'Calculated', grp: 'WBR' },
-  { key: 'colourCode', header: 'Colour code', col: 'BZ', kind: 'colour', tag: 'Calculated', grp: 'WBR' },
-];
-
-const COMPACT = new Set([
-  'buildStatus', 'dashboardMonth', 'startDate', 'endDate', 'numberOfDays', 'category', 'offerTiering',
-  'country', 'offerDesign', 'audienceSize', 'activations', 'bonusedMembers', 'bonusPtsIssued',
-  'activationAvg', 'bonusRateAvg', 'bonusedMembersAvg', 'bonusPointsAvg', 'bonusRedeemableAvg', 'colourCode',
-]);
-const GROUP_BG: Record<Grp, string> = {
-  basics: 'bg-white', RESULTS: 'bg-green-50', FORECAST: 'bg-blue-50', WBR: 'bg-amber-50',
-};
-
-function getVal(d: Def, o: OfferRecord, rf: RfRow): unknown {
-  if (d.fromOffer) return o[d.key];
-  return (rf as unknown as Record<string, unknown>)[d.key];
+/** ISO yyyy-MM-dd -> local midnight Date. */
+function isoToDate(iso: string): Date {
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(y, (m || 1) - 1, d || 1);
+}
+export function sourceOf(o: OfferRecord): string {
+  const m = importMetaOf(o._uid);
+  if (m) return m.source;
+  return o._demoSample ? 'Demo sample' : 'Created in prototype';
 }
 
 export function ResultsForecast() {
   const offers = useAppStore((s) => s.offers);
+  const offerDiffs = useAppStore((s) => s.offerDiffs);
   const role = useAppStore((s) => s.role);
   const userId = useAppStore((s) => s.currentUserId);
   const canForecast = can(role, 'enterForecast');
   const canResults = can(role, 'enterResults');
   const push = useToasts((s) => s.push);
+  const report = useImportReport();
 
-  const [search, setSearch] = useState('');
-  const [fy, setFy] = useState('');
-  const [status, setStatus] = useState('');
-  const [category, setCategory] = useState('');
-  const [tier, setTier] = useState('');
-  const [design, setDesign] = useState('');
-  const [colour, setColour] = useState('');
-  const [fcstNeeded, setFcstNeeded] = useState(false);
+  // C2.1 rows selector, remembered per user
+  const modeKey = `lom-rf-rows-${userId}`;
+  const [mode, setModeState] = useState<RowsMode>(() => {
+    try {
+      return localStorage.getItem(modeKey) === 'all' ? 'all' : 'excel';
+    } catch {
+      return 'excel';
+    }
+  });
+  const setMode = (m: RowsMode) => {
+    setModeState(m);
+    try {
+      localStorage.setItem(modeKey, m);
+    } catch {
+      /* ignore */
+    }
+  };
+  // C2.2 as-of date
+  const [asOfIso, setAsOfIso] = useState(todayISO());
+  const asOf = useMemo(() => isoToDate(asOfIso), [asOfIso]);
+
+  const [f, setF] = useState<Filters>(EMPTY);
+  const patch = (p: Partial<Filters>) => setF((x) => ({ ...x, ...p }));
   const [detailUid, setDetailUid] = useState<string | null>(null);
 
-  // B1: offers appear when includeForResultsForecast = Yes (excludes Draft, Cancelled, IMP only).
-  const base = useMemo(() => offers.filter(inResultsForecast), [offers]);
-  const rfByUid = useMemo(() => {
-    const m = new Map<string, RfRow>();
-    base.forEach((o) => m.set(o._uid!, computeResultsForecast(o)));
-    return m;
-  }, [base]);
+  // B2: only offers whose "Include for Results and Forecast?" is Yes.
+  const included = useMemo(() => offers.filter((o) => includeForResultsForecast(o) === 'Yes'), [offers]);
+  const excelRows = useMemo(
+    () => included.filter((o) => {
+      const m = importMetaOf(o._uid);
+      return m ? m.inExcelRfTab : true; // + offers created in the prototype
+    }),
+    [included],
+  );
+  const base = mode === 'all' ? included : excelRows;
 
   const opts = useMemo(() => {
     const d = (fn: (o: OfferRecord) => string) => [...new Set(base.map(fn).filter(Boolean))].sort();
     return {
-      fy: d(fiscalYearOf), status: d((o) => statusOf(o)), category: d((o) => String(o.category ?? '')),
-      tier: d((o) => String(o.offerTiering ?? '')), design: d((o) => String(o.offerDesign ?? '')),
+      fy: d((o) => fiscalYearOf(o) || importMetaOf(o._uid)?.fiscal?.fy || ''),
+      status: d((o) => statusOf(o)),
+      category: d((o) => String(o.category ?? '')),
+      sub: d((o) => String(o.subCategory ?? '')),
+      tier: d((o) => String(o.offerTiering ?? '')),
+      design: d((o) => String(o.offerDesign ?? '')),
+      markets: d((o) => String(o.country ?? '')),
+      dash: d((o) => String(o.dashboardMonth ?? '')),
     };
   }, [base]);
 
   const rows = useMemo(() => {
-    const q = search.trim().toLowerCase();
+    const q = f.search.trim().toLowerCase();
     return base.filter((o) => {
       if (q && !`${o.offerName ?? ''} ${o.offerId ?? ''}`.toLowerCase().includes(q)) return false;
-      if (fy && fiscalYearOf(o) !== fy) return false;
-      if (status && statusOf(o) !== status) return false;
-      if (category && o.category !== category) return false;
-      if (tier && o.offerTiering !== tier) return false;
-      if (design && o.offerDesign !== design) return false;
-      if (colour && (rfByUid.get(o._uid!)?.colourCode ?? '') !== colour) return false;
-      if (fcstNeeded && forecastNeeded(o) !== 'Yes') return false;
+      if (f.fy && (fiscalYearOf(o) || importMetaOf(o._uid)?.fiscal?.fy || '') !== f.fy) return false;
+      if (f.status && statusOf(o) !== f.status) return false;
+      if (f.category && o.category !== f.category) return false;
+      if (f.sub.length && !f.sub.includes(String(o.subCategory ?? ''))) return false;
+      if (f.tier && o.offerTiering !== f.tier) return false;
+      if (f.design && o.offerDesign !== f.design) return false;
+      if (f.markets.length && !f.markets.includes(String(o.country ?? ''))) return false;
+      if (f.dash.length && !f.dash.includes(String(o.dashboardMonth ?? ''))) return false;
+      if (f.source && sourceOf(o) !== f.source) return false;
+      if (f.changed && !isChangedSinceImport(o._uid, offerDiffs)) return false;
+      if (f.hasIssue && !(importMetaOf(o._uid)?.issues.length)) return false;
+      if (f.fcstNeeded && forecastNeeded(o) !== 'Yes') return false;
+      if (f.colour || f.resultsMissing || f.forecastMissing) {
+        const c = computeRfCells(o, asOf);
+        if (f.colour && c.BZ !== f.colour) return false;
+        if (f.resultsMissing && !(c.O === 0 && c.P === 0 && c.Q === 0 && c.R === 0 && COMPLETED_OR_LATER.has(statusOf(o)))) return false;
+        if (f.forecastMissing && !(c.AF === 0 && c.AG === 0)) return false;
+      }
       return true;
     });
-  }, [base, search, fy, status, category, tier, design, colour, fcstNeeded, rfByUid]);
+  }, [base, f, offerDiffs, asOf]);
 
-  const columns = useMemo<ExcelColumn[]>(() => {
-    const idCol: ExcelColumn = {
-      id: 'offerId', header: 'Offer ID', width: 90, group: 'basics', groupClass: GROUP_BG.basics,
-      tag: 'Auto-generated', excelCol: '(A)', tooltip: 'Replaces the hand-typed Ref Number (Excel column A).',
-      sortValue: (o) => Number(o.offerId) || 0, cell: (o) => String(o.offerId ?? ''),
-    };
-    const nameCol: ExcelColumn = {
-      id: 'offerName', header: 'Offer Name', width: 220, group: 'basics', groupClass: GROUP_BG.basics,
-      tag: 'Typed', excelCol: 'J', sortValue: (o) => String(o.offerName ?? ''),
-      cell: (o) => String(o.offerName ?? ''),
-    };
-    const numberOfDaysCol: ExcelColumn = {
-      id: 'numberOfDays', header: 'Promo Days', width: 90, group: 'basics', groupClass: GROUP_BG.basics,
-      tag: 'Calculated', excelCol: 'F', defaultVisible: true,
-      sortValue: (o) => { const s = new Date(String(o.startDate)); const e = new Date(String(o.endDate)); return isNoValue(o.startDate) || isNoValue(o.endDate) ? 0 : Math.round((+e - +s) / 86400000) + 1; },
-      cell: (o) => { if (isNoValue(o.startDate) || isNoValue(o.endDate)) return ''; const s = new Date(String(o.startDate)); const e = new Date(String(o.endDate)); return Math.round((+e - +s) / 86400000) + 1; },
-    };
-    const defCols: ExcelColumn[] = DEFS.filter((d) => d.key !== 'numberOfDays').map((d) => ({
-      id: d.key, header: d.header, width: d.grp === 'WBR' ? 130 : 120, group: d.grp, groupClass: GROUP_BG[d.grp],
-      tag: d.tag, excelCol: d.col, defaultVisible: COMPACT.has(d.key),
-      sortValue: (o) => { const rf = rfByUid.get(o._uid!)!; const v = getVal(d, o, rf); return typeof v === 'number' ? v : String(v ?? ''); },
-      cell: (o) => {
-        const rf = rfByUid.get(o._uid!)!;
-        if (d.key === 'buildStatus') return <StatusPill status={statusOf(o)} withTooltip={false} />;
-        const v = getVal(d, o, rf);
-        if (d.kind === 'colour') return v ? <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${COLOUR_CHIP[String(v)]}`}>{String(v)}</span> : '';
-        if (d.kind === 'date') return v ? formatDate(v) : '';
-        if (d.fromOffer && (d.kind === 'num')) return isNoValue(v) ? '' : Number(v).toLocaleString();
-        return fmt(d.kind, v) || (d.fromOffer && isNoValue(v) ? '' : fmt(d.kind, v));
-      },
-    }));
-    return [idCol, nameCol, numberOfDaysCol, ...defCols];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rfByUid]);
+  const issuesByOffer = useMemo(() => {
+    const m = new Map<number, string[]>();
+    for (const i of report?.issues ?? []) {
+      if (i.severity !== 'issue') continue;
+      for (const id of [i.offerId, ...(i.offerIds ?? [])]) {
+        if (id === null || id === undefined) continue;
+        if (!m.has(id)) m.set(id, []);
+        if (!m.get(id)!.includes(i.message)) m.get(id)!.push(i.message);
+      }
+    }
+    return m;
+  }, [report]);
 
-  function exportCsv() {
-    const headers = ['Offer ID', 'Offer Name', ...DEFS.filter((d) => COMPACT.has(d.key)).map((d) => d.header)];
-    const data = rows.map((o) => {
-      const rf = rfByUid.get(o._uid!)!;
-      return [o.offerId, o.offerName, ...DEFS.filter((d) => COMPACT.has(d.key)).map((d) => {
-        if (d.key === 'buildStatus') return statusOf(o);
-        const v = getVal(d, o, rf);
-        return d.kind === 'date' ? (v ? formatDate(v) : '') : fmt(d.kind, v);
-      })];
-    });
-    downloadCsv('results-forecast', toCsv(headers, data));
-    push(`Exported ${rows.length} rows.`, 'success');
+  const badges = useCallback(
+    (o: OfferRecord): ReactNode => {
+      const meta = importMetaOf(o._uid);
+      const out: ReactNode[] = [];
+      if (isChangedSinceImport(o._uid, offerDiffs)) {
+        out.push(<span key="c" className="shrink-0 rounded-full bg-amber-100 px-1.5 text-[10px] text-amber-800" title="Edited in the prototype. The Excel snapshot is unchanged.">Changed since import</span>);
+      }
+      if (meta?.issues.length) {
+        const msgs = typeof o.offerId === 'number' ? issuesByOffer.get(o.offerId) ?? [] : [];
+        out.push(<IssueBadge key="i" messages={msgs} />);
+      }
+      if (o._demoSample) out.push(<span key="d" className="shrink-0 rounded-full bg-slate-100 px-1.5 text-[10px] text-slate-600">Demo sample</span>);
+      if (mode === 'all' && meta?.source === 'Metadata only') {
+        out.push(<span key="m" className="shrink-0 rounded-full border border-slate-300 px-1.5 text-[10px] text-slate-600" title="In the Metadata file but not in the Excel Results and Forecast tab.">Metadata only</span>);
+      }
+      return out.length ? <>{out}</> : null;
+    },
+    [offerDiffs, issuesByOffer, mode],
+  );
+
+  const ctx = useMemo(() => ({ asOf, metaOf: importMetaOf, badges }), [asOf, badges]);
+  const gridColumns = useMemo<ExcelColumn[]>(() => GRID_ENTRIES.map((e) => rfColumn(e, ctx)), [ctx]);
+  const wbrEntries = useMemo(
+    () => ['A', 'J', 'C', 'B', 'BM', 'BN', 'BO', 'BP', 'BQ', 'BR', 'BS', 'BT', 'BU', 'BV', 'BW', 'BX', 'BY', 'BZ'].map((L) => RF_REGISTRY.find((e) => e.letter === L)!),
+    [],
+  );
+  const wbrColumns = useMemo<ExcelColumn[]>(() => wbrEntries.map((e) => rfColumn(e, ctx)), [wbrEntries, ctx]);
+
+  // Exports read exactly what the grid shows (visible columns, filtered + sorted rows).
+  const gridView = useRef<{ visible: string[]; rows: OfferRecord[] }>({ visible: [], rows: [] });
+  const wbrView = useRef<{ visible: string[]; rows: OfferRecord[] }>({ visible: [], rows: [] });
+  const onGridView = useCallback((v: { visible: string[]; rows: OfferRecord[] }) => (gridView.current = v), []);
+  const onWbrView = useCallback((v: { visible: string[]; rows: OfferRecord[] }) => (wbrView.current = v), []);
+  const byKey = useMemo(() => Object.fromEntries(REGISTRY.map((e) => [e.key, e])), []);
+
+  function exportView(view: { visible: string[]; rows: OfferRecord[] }, name: string) {
+    const entries = view.visible.map((k) => byKey[k]).filter(Boolean) as RegistryEntry[];
+    const t = buildExportTable(entries, view.rows, asOf, importMetaOf);
+    downloadCsv(name, toCsv(t.header, [t.letters, ...t.data]));
+    push(`Exported ${view.rows.length} rows x ${entries.length} columns.`, 'success');
+  }
+  function exportAllForecasting() {
+    const groups: Array<[string, RegistryEntry[]]> = [
+      ['Results and Forecast tab (A to BZ)', RF_REGISTRY],
+      ['CALENDAR (offer form)', CALENDAR_BAND],
+    ];
+    const g = groups.flatMap(([label, es]) => es.map(() => label));
+    const t = buildExportTable(groups.flatMap(([, es]) => es), gridView.current.rows, asOf, importMetaOf);
+    downloadCsv('all-forecasting-columns', toCsv(g, [t.header, t.letters, ...t.data]));
+    push(`Exported ${gridView.current.rows.length} offers x ${t.header.length} columns.`, 'success');
   }
 
   const detail = offers.find((o) => o._uid === detailUid);
+  const activeFilters = Object.entries(f).filter(([, v]) => (Array.isArray(v) ? v.length : v)).length;
 
   return (
     <div>
       <PageHeader title="Results & Forecast" count={rows.length}>
-        <PhaseBadge note="Interim calculation. The analytics team's forecast and results models will replace these formulas after MVP." />
+        <MvpBadge />
+        <span className="text-[11px] text-muted">Interim calculation. The analytics team's forecast and results models will replace these formulas after MVP.</span>
       </PageHeader>
-      <p className="mb-3 text-sm text-muted">
+      <p className="mb-2 text-sm text-muted">
         Calculated from each offer. Nothing is typed on this page. Forecast inputs and actual results
         are entered on the offer (Step 7 and Step 9).
       </p>
+      <p className="mb-3 text-[11px] text-muted">
+        Data: Excel exports of 11/11/2026. Results and Forecast tab (768 rows) and Metadata Master Sheet (2,423 offers). Imported into the prototype; edits made here do not change Excel.
+      </p>
+
+      {/* C2 header controls */}
+      <div className="mb-3 grid gap-3 rounded-lg border border-border bg-white p-3 lg:grid-cols-2">
+        <div>
+          <div className="inline-flex overflow-hidden rounded border border-border text-xs" role="radiogroup" aria-label="Rows">
+            <button role="radio" aria-checked={mode === 'excel'} onClick={() => setMode('excel')} className={`px-3 py-1 ${mode === 'excel' ? 'bg-primary text-white' : 'bg-white'}`}>
+              Same rows as Excel ({excelRows.length.toLocaleString()})
+            </button>
+            <button role="radio" aria-checked={mode === 'all'} onClick={() => setMode('all')} className={`px-3 py-1 ${mode === 'all' ? 'bg-primary text-white' : 'bg-white'}`}>
+              All included offers ({included.length.toLocaleString()})
+            </button>
+          </div>
+          <p className="mt-1 text-[11px] text-muted">
+            Excel only lists an offer in this tab after someone types its reference number. 260 offers starting on or after 1 Nov 2025 are in the Metadata file but have no row in the Excel tab. In the product every offer that meets the rule appears automatically.
+          </p>
+        </div>
+        <div>
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <label className="flex items-center gap-1">
+              As-of date
+              <input type="date" value={asOfIso} onChange={(e) => e.target.value && setAsOfIso(e.target.value)} className="rounded border border-border px-1.5 py-0.5" />
+            </label>
+            <button onClick={() => setAsOfIso(EXCEL_EXPORT_DATE)} className="rounded border border-border px-2 py-0.5 hover:bg-surface">
+              Use Excel export date (11/11/2026)
+            </button>
+          </div>
+          <p className="mt-1 text-[11px] text-muted">Prorated columns (BW to BZ) and Metadata prorated columns use this date.</p>
+        </div>
+      </div>
+
+      {/* Shared filters (Grid, WBR) */}
+      <div className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-white p-2">
+        <input className="min-w-[180px] flex-1 rounded border border-border px-2 py-1 text-sm" placeholder="Search name or Offer ID" value={f.search} onChange={(e) => patch({ search: e.target.value })} />
+        <Sel label="Fiscal year" value={f.fy} options={opts.fy} onChange={(v) => patch({ fy: v })} />
+        <Sel label="Status" value={f.status} options={opts.status} onChange={(v) => patch({ status: v })} />
+        <Sel label="Category" value={f.category} options={opts.category} onChange={(v) => patch({ category: v })} />
+        <MultiSelect label="Sub-Category" options={opts.sub} value={f.sub} onChange={(v) => patch({ sub: v })} />
+        <Sel label="Tier" value={f.tier} options={opts.tier} onChange={(v) => patch({ tier: v })} />
+        <Sel label="Offer Design" value={f.design} options={opts.design} onChange={(v) => patch({ design: v })} />
+        <MultiSelect label="Markets" options={opts.markets} value={f.markets} onChange={(v) => patch({ markets: v })} />
+        <MultiSelect label="Dashboard Mo." options={opts.dash} value={f.dash} onChange={(v) => patch({ dash: v })} />
+        <Sel label="Colour code" value={f.colour} options={['Pink', 'Light green', 'Dark Green']} onChange={(v) => patch({ colour: v })} />
+        <Sel label="Source" value={f.source} options={SOURCES} onChange={(v) => patch({ source: v })} />
+        <Check label="Forecast needed = Yes" checked={f.fcstNeeded} onChange={(v) => patch({ fcstNeeded: v })} />
+        <Check label="Changed since import" checked={f.changed} onChange={(v) => patch({ changed: v })} />
+        <Check label="Has data issue" checked={f.hasIssue} onChange={(v) => patch({ hasIssue: v })} />
+        <Check label="Results missing" checked={f.resultsMissing} onChange={(v) => patch({ resultsMissing: v })} title="Audience size, activations, bonused members and bonus points all 0, and status Completed or later." />
+        <Check label="Forecast missing" checked={f.forecastMissing} onChange={(v) => patch({ forecastMissing: v })} title="Activation Low and High both 0." />
+        {activeFilters > 0 && (
+          <button onClick={() => setF(EMPTY)} className="rounded border border-border px-2 py-1 text-xs hover:bg-surface">Clear filters ({activeFilters})</button>
+        )}
+        <div className="ml-auto flex items-center gap-1 text-[11px] text-muted">
+          {(['RESULTS', 'FORECAST', 'WBR', 'CALENDAR'] as const).map((b) => (
+            <span key={b} className="flex items-center gap-1">
+              <span className={`ml-1 inline-block h-3 w-3 rounded ${BAND_STYLE[b].legend}`} /> {b}
+            </span>
+          ))}
+        </div>
+      </div>
 
       <Tabs.Root defaultValue="grid">
-        <Tabs.List className="mb-4 flex gap-1 border-b border-border">
+        <Tabs.List className="mb-3 flex gap-1 border-b border-border">
           {[['grid', 'Grid'], ['wbr', 'WBR'], ['how', 'How it is calculated']].map(([v, l]) => (
-            <Tabs.Trigger key={v} value={v}
-              className="border-b-2 border-transparent px-3 py-2 text-sm text-muted data-[state=active]:border-primary data-[state=active]:font-medium data-[state=active]:text-primary">
+            <Tabs.Trigger key={v} value={v} className="border-b-2 border-transparent px-3 py-2 text-sm text-muted data-[state=active]:border-primary data-[state=active]:font-medium data-[state=active]:text-primary">
               {l}
             </Tabs.Trigger>
           ))}
         </Tabs.List>
 
         <Tabs.Content value="grid">
-          <div className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-white p-2">
-            <input className="min-w-[180px] flex-1 rounded border border-border px-2 py-1 text-sm" placeholder="Search name or Offer ID" value={search} onChange={(e) => setSearch(e.target.value)} />
-            <Sel label="Fiscal year" value={fy} options={opts.fy} onChange={setFy} />
-            <Sel label="Status" value={status} options={opts.status} onChange={setStatus} />
-            <Sel label="Category" value={category} options={opts.category} onChange={setCategory} />
-            <Sel label="Tier" value={tier} options={opts.tier} onChange={setTier} />
-            <Sel label="Offer Design" value={design} options={opts.design} onChange={setDesign} />
-            <Sel label="Colour code" value={colour} options={['Pink', 'Light green', 'Dark Green']} onChange={setColour} />
-            <label className="flex items-center gap-1 text-xs"><input type="checkbox" checked={fcstNeeded} onChange={(e) => setFcstNeeded(e.target.checked)} /> Forecast needed = Yes</label>
-            <div className="ml-2 flex items-center gap-1 text-[11px] text-muted">
-              <span className="inline-block h-3 w-3 rounded bg-green-50 ring-1 ring-green-200" /> RESULTS
-              <span className="ml-1 inline-block h-3 w-3 rounded bg-blue-50 ring-1 ring-blue-200" /> FORECAST
-              <span className="ml-1 inline-block h-3 w-3 rounded bg-amber-50 ring-1 ring-amber-200" /> WBR
-            </div>
-          </div>
           {rows.length === 0 ? (
             <EmptyState title="No offers match these filters." />
           ) : (
-            <ExcelGrid rows={rows} columns={columns} storageKey={`lom-rf-${userId}`} getRowId={(o) => o._uid!}
+            <ExcelGrid
+              rows={rows}
+              columns={gridColumns}
+              storageKey={`lom-rf-v3-${userId}`}
+              getRowId={(o) => o._uid!}
               onRowClick={(o) => setDetailUid(o._uid ?? null)}
-              toolbarRight={<button onClick={exportCsv} className="inline-flex items-center gap-1 rounded border border-border px-2 py-0.5 text-xs hover:bg-surface"><Download size={13} /> Export CSV</button>} />
+              presets={RF_PRESETS}
+              defaultPreset="Excel full (A to BZ)"
+              onView={onGridView}
+              toolbarRight={
+                <>
+                  <button onClick={() => exportView(gridView.current, 'results-forecast')} className="inline-flex items-center gap-1 rounded border border-border px-2 py-0.5 text-xs hover:bg-surface"><Download size={13} /> Export CSV</button>
+                  <button onClick={exportAllForecasting} className="inline-flex items-center gap-1 rounded border border-border px-2 py-0.5 text-xs hover:bg-surface"><Download size={13} /> Export all forecasting columns</button>
+                </>
+              }
+            />
           )}
         </Tabs.Content>
 
-        <Tabs.Content value="wbr"><WbrTab rows={base} rf={rfByUid} /></Tabs.Content>
-        <Tabs.Content value="how"><HowTab /></Tabs.Content>
+        <Tabs.Content value="wbr">
+          <p className="mb-2 text-[11px] text-muted">Prorated columns BW to BZ use the as-of date {asOf.toLocaleDateString('en-US')}.</p>
+          {rows.length === 0 ? (
+            <EmptyState title="No offers match these filters." />
+          ) : (
+            <ExcelGrid
+              rows={rows}
+              columns={wbrColumns}
+              storageKey={`lom-rfwbr-v3-${userId}`}
+              getRowId={(o) => o._uid!}
+              onRowClick={(o) => setDetailUid(o._uid ?? null)}
+              onView={onWbrView}
+              toolbarRight={<button onClick={() => exportView(wbrView.current, 'results-forecast-wbr')} className="inline-flex items-center gap-1 rounded border border-border px-2 py-0.5 text-xs hover:bg-surface"><Download size={13} /> Export CSV</button>}
+            />
+          )}
+        </Tabs.Content>
+
+        <Tabs.Content value="how">
+          <RfHowTab offers={base} asOf={asOf} />
+        </Tabs.Content>
       </Tabs.Root>
 
-      {/* Detail drawer */}
-      <Dialog.Root open={detailUid !== null} onOpenChange={(o) => !o && setDetailUid(null)}>
-        <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 z-40 bg-black/30" />
-          <Dialog.Content className="fixed right-0 top-0 z-50 flex h-full w-[92vw] max-w-3xl flex-col border-l border-border bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-border px-5 py-3">
-              <Dialog.Title className="flex items-center gap-2 text-base font-semibold text-ink">
-                {String(detail?.offerName ?? '')} {detail && <StatusPill status={statusOf(detail)} />}
-              </Dialog.Title>
-              <Dialog.Close asChild><button aria-label="Close" className="text-muted hover:text-ink"><X size={18} /></button></Dialog.Close>
-            </div>
-            {detail && (
-              <DetailBody
-                offer={detail}
-                canForecast={canForecast && !isLocked(statusOf(detail))}
-                canResults={canResults && !isLocked(statusOf(detail))}
-              />
+      <RfDetailDrawer offer={detail} asOf={asOf} canForecast={canForecast} canResults={canResults} onClose={() => setDetailUid(null)} />
+    </div>
+  );
+}
+
+function MvpBadge() {
+  return (
+    <Tooltip.Provider delayDuration={150}>
+      <Tooltip.Root>
+        <Tooltip.Trigger asChild>
+          <span tabIndex={0} className="cursor-help rounded-full border border-success bg-success/10 px-2 py-0.5 text-xs font-medium text-success">MVP</span>
+        </Tooltip.Trigger>
+        <Tooltip.Portal>
+          <Tooltip.Content side="bottom" className="z-50 max-w-[260px] rounded border border-border bg-white p-2 text-xs shadow-md">
+            The business confirmed Results & Forecast is in MVP.
+          </Tooltip.Content>
+        </Tooltip.Portal>
+      </Tooltip.Root>
+    </Tooltip.Provider>
+  );
+}
+
+function IssueBadge({ messages }: { messages: string[] }) {
+  return (
+    <Tooltip.Provider delayDuration={100}>
+      <Tooltip.Root>
+        <Tooltip.Trigger asChild>
+          <span className="shrink-0 cursor-help rounded-full bg-danger/10 px-1.5 text-[10px] text-danger">Data issue</span>
+        </Tooltip.Trigger>
+        <Tooltip.Portal>
+          <Tooltip.Content side="right" className="z-50 max-w-[360px] rounded border border-border bg-white p-2 text-[11px] shadow-md">
+            {messages.length ? (
+              <ul className="list-disc space-y-1 pl-4">{messages.map((m) => <li key={m}>{m}</li>)}</ul>
+            ) : (
+              'Data issue found on import.'
             )}
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
-    </div>
+          </Tooltip.Content>
+        </Tooltip.Portal>
+      </Tooltip.Root>
+    </Tooltip.Provider>
   );
 }
 
-
-function DetailBody({ offer, canForecast, canResults }: { offer: OfferRecord; canForecast: boolean; canResults: boolean }) {
-  const [panel, setPanel] = useState<null | 'forecast' | 'results'>(null);
-  const rf = computeResultsForecast(offer);
-  const W = rf.bonusPointCalc;
-
-  const fRows: Array<[string, string, string?]> = [
-    ['Activation Low', fmt('num', rf.activationLow), `${offer.activationByDayLow ?? '?'} × ${rf.wbrOfferPeriod ? '(total days)' : ''}`],
-    ['Bonused members Low', fmt('num', rf.bonusedMembersLow), `${fmt('num', rf.activationLow)} × ${fmt('pct', rf.bonusRateLowIn)}`],
-    ['Bonused sales Low', fmt('cur', rf.bonusedSalesLow)],
-    ['Bonus points Avg', fmt('num', rf.bonusPointsAvg)],
-    ['Redeemable $ (100%) Avg', fmt('cur', rf.bonusPointsRedeemableAvg)],
-    ['Redemption rate', fmt('pct', rf.redemptionRateForecast)],
-    ['$MDs with breakage', fmt('cur', rf.bonusRedeemableAvg)],
-    ['JBP Avg', fmt('cur', rf.jbpAvg)],
-  ];
-  const aRows: Array<[string, string, string?]> = [
-    ['Audience size', fmt('num', offer.audienceSize)],
-    ['Activations', fmt('num', offer.activations)],
-    ['Activation rate', offer.activations && offer.audienceSize ? fmt('pct', Number(offer.activations) / Number(offer.audienceSize)) : 'Not available'],
-    ['Bonused members', fmt('num', offer.bonusedMembers)],
-    ['Bonus rate', fmt('pctNA', rf.bonusRate)],
-    ['Bonus Pts Issued', fmt('num', offer.bonusPtsIssued)],
-    ['Bonused sales', fmt('tbdcur', rf.bonusedSales)],
-    ['Redeemable $ (breakage)', fmt('cur', rf.bonusRedeemableWithBreakage)],
-    ['Spend / bonused member', fmt('tbdcur', rf.spendPerBonusedMember), `Bonused sales ÷ bonused members (W = ${W ?? '?'})`],
-  ];
-
-  return (
-    <div className="flex-1 overflow-y-auto p-5">
-      {(canForecast || canResults) && (
-        <div className="mb-4 flex gap-2">
-          {canForecast && <button onClick={() => setPanel('forecast')} className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm hover:bg-surface"><Pencil size={14} /> Enter forecast</button>}
-          {canResults && <button onClick={() => setPanel('results')} className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm hover:bg-surface"><Pencil size={14} /> Enter results</button>}
-        </div>
-      )}
-      <div className="grid grid-cols-2 gap-4">
-        <DetailCol title="Forecast" rows={fRows} bg="bg-blue-50" />
-        <DetailCol title="Actuals" rows={aRows} bg="bg-green-50" />
-      </div>
-      <div className="mt-4 rounded-lg border border-border p-3 text-sm">
-        <h4 className="mb-1 font-semibold">WBR</h4>
-        <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs">
-          <span>Period: {rf.wbrOfferPeriod || '—'}</span>
-          <span>Fcst: {rf.wbrFcstActivations} / {rf.wbrFcstBonused} / {rf.wbrFcstBonusPts}</span>
-          <span>Act: {rf.wbrActActivations} / {rf.wbrActBonused} / {rf.wbrActBonusPts}</span>
-          <span>Colour: {rf.colourCode ? <span className={`rounded-full px-1.5 py-0.5 ${COLOUR_CHIP[rf.colourCode]}`}>{rf.colourCode}</span> : '—'}</span>
-        </div>
-      </div>
-      {panel && <InlineEditor offer={offer} kind={panel} onClose={() => setPanel(null)} />}
-    </div>
-  );
-}
-
-function DetailCol({ title, rows, bg }: { title: string; rows: Array<[string, string, string?]>; bg: string }) {
-  return (
-    <div className={`rounded-lg border border-border ${bg} p-3`}>
-      <h4 className="mb-2 font-semibold text-ink">{title}</h4>
-      <dl className="space-y-1 text-xs">
-        {rows.map(([label, val, fx]) => (
-          <div key={label} className="flex items-center justify-between gap-2 border-b border-border/40 py-0.5">
-            <dt className="flex items-center gap-1 text-muted">
-              {label}
-              {fx && (
-                <Tooltip.Provider delayDuration={100}>
-                  <Tooltip.Root>
-                    <Tooltip.Trigger asChild><button className="text-primary"><Sigma size={11} /></button></Tooltip.Trigger>
-                    <Tooltip.Portal><Tooltip.Content side="top" className="z-50 max-w-[300px] rounded border border-border bg-white p-2 text-[11px] text-ink shadow-md">{fx}</Tooltip.Content></Tooltip.Portal>
-                  </Tooltip.Root>
-                </Tooltip.Provider>
-              )}
-            </dt>
-            <dd className="text-right font-medium text-ink">{val || '—'}</dd>
-          </div>
-        ))}
-      </dl>
-    </div>
-  );
-}
-
-function InlineEditor({ offer, kind, onClose }: { offer: OfferRecord; kind: 'forecast' | 'results'; onClose: () => void }) {
-  const updateOffer = useAppStore((s) => s.updateOffer);
-  const addAudit = useAppStore((s) => s.addAudit);
-  const role = useAppStore((s) => s.role);
-  const dropdowns = useAppStore((s) => s.dropdowns);
-  const categorySubCategory = useAppStore((s) => s.categorySubCategory);
-  const push = useToasts((s) => s.push);
-  const [work, setWork] = useState<OfferRecord>(offer);
-
-  const stepFields = (fieldsByStep[kind === 'forecast' ? '7. Forecast' : '9. Results'] ?? [])
-    .filter((f) => f.control !== 'computed' && f.control !== 'hidden' && f.phase !== 'Phase 2');
-
-  function save() {
-    for (const f of stepFields) {
-      if (String(offer[f.id] ?? '') !== String(work[f.id] ?? '')) {
-        addAudit({ offerId: String(offer.offerId ?? ''), offerUid: offer._uid, user: role, action: 'field changed', fieldLabel: f.label, oldValue: (offer[f.id] as OfferValue) ?? null, newValue: (work[f.id] as OfferValue) ?? null });
-      }
-    }
-    updateOffer(offer._uid!, work);
-    push(`${kind === 'forecast' ? 'Forecast' : 'Results'} saved.`, 'success');
-    onClose();
-  }
-
-  return (
-    <div className="mt-4 rounded-lg border border-primary/40 bg-primary/5 p-3">
-      <div className="mb-2 flex items-center justify-between">
-        <h4 className="font-semibold">{kind === 'forecast' ? 'Enter forecast (Step 7)' : 'Enter results (Step 9)'}</h4>
-        <button onClick={onClose} className="text-muted hover:text-ink"><X size={16} /></button>
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        {stepFields.map((f) => (
-          <FieldRenderer key={f.id} field={f} value={work[f.id]} onChange={(v) => setWork((w) => ({ ...w, [f.id]: v }))}
-            options={optionsForField(f.id, f.optionsKey, dropdowns, categorySubCategory, work.category)} />
-        ))}
-      </div>
-      <div className="mt-3 flex justify-end gap-2">
-        <button onClick={onClose} className="rounded-md border border-border px-3 py-1.5 text-sm hover:bg-surface">Cancel</button>
-        <button onClick={save} className="rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-white hover:bg-primary/90">Save</button>
-      </div>
-    </div>
-  );
-}
-
-function WbrTab({ rows, rf }: { rows: OfferRecord[]; rf: Map<string, RfRow> }) {
-  if (rows.length === 0) return <EmptyState title="No offers to show." />;
-  const cols: Array<[string, (o: OfferRecord, r: RfRow) => string]> = [
-    ['Offer Name', (o) => String(o.offerName ?? '')],
-    ['Status', (o) => statusOf(o)],
-    ['Dashboard', (o) => String(o.dashboardMonth ?? '')],
-    ['Period', (_o, r) => r.wbrOfferPeriod],
-    ['Fcst activations', (_o, r) => r.wbrFcstActivations],
-    ['Fcst bonused', (_o, r) => r.wbrFcstBonused],
-    ['Fcst spend', (_o, r) => r.wbrFcstSpend],
-    ['Fcst bonus pts', (_o, r) => r.wbrFcstBonusPts],
-    ['Act activations', (_o, r) => r.wbrActActivations],
-    ['Act bonused', (_o, r) => r.wbrActBonused],
-    ['Act spend', (_o, r) => r.wbrActSpend],
-    ['Act bonus pts', (_o, r) => r.wbrActBonusPts],
-    ['Act bonused sales', (_o, r) => r.wbrActBonusedSales],
-    ['Colour', (_o, r) => r.colourCode],
-  ];
-  return (
-    <div className="overflow-x-auto rounded-lg border border-border bg-white">
-      <table className="w-full whitespace-nowrap text-left text-xs">
-        <thead className="border-b border-border bg-surface text-muted"><tr>{cols.map(([h]) => <th key={h} className="px-2 py-2 font-medium">{h}</th>)}</tr></thead>
-        <tbody>{rows.map((o) => { const r = rf.get(o._uid!)!; return (
-          <tr key={o._uid} className="border-b border-border last:border-0">{cols.map(([h, fn]) => {
-            const val = fn(o, r);
-            return <td key={h} className="px-2 py-1.5">{h === 'Colour' && val ? <span className={`rounded-full px-1.5 py-0.5 ${COLOUR_CHIP[val]}`}>{val}</span> : val || '—'}</td>;
-          })}</tr>
-        ); })}</tbody>
-      </table>
-    </div>
-  );
-}
-
-function HowTab() {
-  return (
-    <div className="space-y-4 text-sm">
-      <div className="rounded-lg border border-border bg-white p-4">
-        <h3 className="mb-1 font-semibold">Flow</h3>
-        <p className="text-muted">Offer form (Step 2, 3, 5, 7, 9) → Results &amp; Forecast → back to Step 7 (6 totals, Forecast needed) → WBR. Separately: Offer form → Databricks metadata (own formulas).</p>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <Card title="Inputs"><p className="text-muted">Typed and dropdown values from Steps 2, 3, 5, 7 and 9. Fixed numbers: 10 base pts per $, 2 $ per 1,000 pts, 1,000 points unit.</p></Card>
-        <Card title="Results formulas"><p className="text-muted">Bonus rate = members ÷ activations; Bonused sales (Multiplier) = pts ÷ W ÷ 10; redeemable $ = pts ÷ 1,000 × 2; breakage uses the forecast rate.</p></Card>
-        <Card title="Forecast formulas"><p className="text-muted">Activation = by-day × total days; bonused members = activation × rate; bonus points = base × W (or members × W); JBP = base + bonus redeemable.</p></Card>
-        <Card title="WBR text rules"><p className="text-muted">Thousands/M/B rounding exactly as the Excel tab (ROUND half away from zero); colour code Pink/Light green/Dark Green by prorated vs forecast range.</p></Card>
-      </div>
-      <div className="rounded-lg border border-warning/40 bg-warning/5 p-4">
-        <h3 className="mb-2 flex items-center gap-2 font-semibold">Same measure, 2 rules <TagPill kind="Confirm with business" /></h3>
-        <p className="mb-2 text-xs text-muted">Which rule the product keeps is a business decision.</p>
-        <table className="w-full text-left text-xs">
-          <thead className="text-muted"><tr><th className="py-1">Measure</th><th className="py-1">Results &amp; Forecast rule</th><th className="py-1">Metadata rule</th></tr></thead>
-          <tbody className="align-top">
-            <tr className="border-t border-border/50"><td className="py-1">Assumed redemption rate (actuals)</td><td className="py-1">100% for Points donations / Extra entries / LTBO; 88% from 1 Oct 2025; else 85%</td><td className="py-1">100% for LTBO or REDEMPTION; 88% from 1 Oct 2025; 85% from 1 Nov 2024; else 80%</td></tr>
-            <tr className="border-t border-border/50"><td className="py-1">Forecast bonus points Low/High</td><td className="py-1">Forced to 0 when Cancelled</td><td className="py-1">No Cancelled check</td></tr>
-            <tr className="border-t border-border/50"><td className="py-1">LTBP removed</td><td className="py-1">Only when lifecycle status is exactly Completed</td><td className="py-1">When the date-based Offer Status is Completed</td></tr>
-            <tr className="border-t border-border/50"><td className="py-1">Days elapsed / prorated</td><td className="py-1">Counts from Start Date</td><td className="py-1">Counts from Early Activation Date when present</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-function Card({ title, children }: { title: string; children: React.ReactNode }) {
-  return <div className="rounded-lg border border-border bg-white p-4"><h3 className="mb-1 font-semibold">{title}</h3>{children}</div>;
-}
 function Sel({ label, value, options, onChange }: { label: string; value: string; options: string[]; onChange: (v: string) => void }) {
   return (
-    <select className="rounded border border-border px-2 py-1 text-xs" value={value} onChange={(e) => onChange(e.target.value)} aria-label={label}>
+    <select className={`rounded border px-2 py-1 text-xs ${value ? 'border-primary text-primary' : 'border-border'}`} value={value} onChange={(e) => onChange(e.target.value)} aria-label={label}>
       <option value="">{label}: All</option>
       {options.map((o) => <option key={o} value={o}>{o}</option>)}
     </select>
+  );
+}
+function Check({ label, checked, onChange, title }: { label: string; checked: boolean; onChange: (v: boolean) => void; title?: string }) {
+  return (
+    <label className="flex items-center gap-1 text-xs" title={title}>
+      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} /> {label}
+    </label>
   );
 }

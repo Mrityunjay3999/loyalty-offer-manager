@@ -207,7 +207,87 @@ export const RF_REGISTRY: RegistryEntry[] = [
   }),
 ];
 
-export const REGISTRY: RegistryEntry[] = [...RF_REGISTRY];
+const cal = (
+  letter: string,
+  header: string,
+  tag: RegistryTag,
+  format: Fmt,
+  meaning: string,
+  extra: Partial<RegistryEntry> = {},
+): RegistryEntry => ({
+  key: `cal:${letter}`,
+  source: 'Calendar main tab',
+  letter,
+  header,
+  tab: 'grid',
+  band: 'CALENDAR',
+  tag,
+  format,
+  meaning,
+  ...extra,
+});
+
+/** Calendar main tab: the 18 forecast / results columns shown in the CALENDAR band. */
+export const CALENDAR_BAND: RegistryEntry[] = [
+  cal('DH', 'Fcst Date', 'Typed', 'date', 'Date the forecast was created.', { fieldId: 'forecastDate', inputSource: 'Source: Step 7, Fcst Date' }),
+  cal('DI', 'Forecast Created by', 'Typed', 'text', 'Who created the forecast.', { fieldId: 'forecastCreatedBy', inputSource: 'Source: Step 7, Forecast Created by' }),
+  cal('DZ', 'Forecast Notes', 'Dropdown', 'text', 'Forecast status / notes.', { fieldId: 'forecastStatus', inputSource: 'Source: Step 7, Forecast Status / Notes' }),
+  cal('DY', 'Forecast needed?', 'Calculated', 'text', 'Whether the offer still needs a forecast.', {
+    fieldId: 'forecastNeeded',
+    words: 'No for Activation Only - Internal Reward. Yes for MERCH, SERVICES, LOYALTY, DIGITAL, REDEMPTION or BENEFIT/BIRTHDAY when the low redeemable $ is 0 and the offer is not Cancelled.',
+  }),
+  cal('DJ', 'Total offer days including pre-activation', 'Calculated', 'int', 'Days from early activation (or start) to end.', { fieldId: 'totalOfferDays', words: 'End - Start + 1, or End - Early Activation Date + 1.' }),
+  cal('DK', 'Activation by day - Low', 'Typed', 'num2opt', 'Forecast activations per day, low case.', { fieldId: 'activationByDayLow', inputSource: 'Source: Step 7, Activation by day - Low' }),
+  cal('DL', 'Activation by day - High', 'Typed', 'num2opt', 'Forecast activations per day, high case.', { fieldId: 'activationByDayHigh', inputSource: 'Source: Step 7, Activation by day - High' }),
+  cal('DS', 'Bonused members - Low', 'Copy of R&F', 'num0', 'Pulled back from Results & Forecast column AN.', { fieldId: 'bonusedMembersLow', twinOf: 'rf:AN' }),
+  cal('DT', 'Bonused members - High', 'Copy of R&F', 'num0', 'Pulled back from Results & Forecast column AO.', { fieldId: 'bonusedMembersHigh', twinOf: 'rf:AO' }),
+  cal('DU', 'Bonused sales - Low', 'Copy of R&F', 'cur0', 'Pulled back from Results & Forecast column AR.', { fieldId: 'bonusedSalesLow', twinOf: 'rf:AR' }),
+  cal('DV', 'Bonused Sales - High', 'Copy of R&F', 'cur0', 'Pulled back from Results & Forecast column AS.', { fieldId: 'bonusedSalesHigh', twinOf: 'rf:AS' }),
+  cal('DW', 'Bonus points redeemable $ (w/ breakage if applicable) - Low', 'Copy of R&F', 'cur0', 'Pulled back from Results & Forecast column BG.', { fieldId: 'bonusRedeemableLow', twinOf: 'rf:BG' }),
+  cal('DX', 'Bonus points redeemable $ (w/ breakage if applicable) - High', 'Copy of R&F', 'cur0', 'Pulled back from Results & Forecast column BH.', { fieldId: 'bonusRedeemableHigh', twinOf: 'rf:BH' }),
+  cal('DC', 'Results Date Updated', 'Typed', 'text', 'When the results were last updated.', { fieldId: 'resultsDateUpdated', inputSource: 'Source: Step 9, Results Date Updated' }),
+  cal('CS', 'LOPD Actuals', 'Typed', 'text', 'LOPD actuals.', { fieldId: 'lopdActuals', inputSource: 'Source: Step 9, LOPD Actuals' }),
+  cal('CW', 'Include for Results and Forecast?', 'Calculated', 'text', 'Whether the offer appears in Results & Forecast.', {
+    fieldId: 'includeForResultsForecast',
+    words: 'Blank when the status is blank; No when Cancelled or Offer Design is IMP only; otherwise Yes.',
+  }),
+  cal('CX', 'Reference Results and Forecast? (retired)', 'Typed', 'int', 'The Excel ref number for the R&F row. Display only.', {
+    caveat: 'Retired. The Offer ID replaces it.',
+    hiddenByDefault: true,
+  }),
+  cal('CV', 'Reference number for Metadata file (retired)', 'Typed', 'int', 'The Excel ref number in the Metadata file. Display only.', {
+    caveat: 'Retired. The Offer ID replaces it.',
+    hiddenByDefault: true,
+  }),
+];
+
+/** Calendar main tab columns shown through their R&F twin (not a separate grid column). */
+export const CALENDAR_TWINS: RegistryEntry[] = [
+  ['CP', 'Dashboard Mo. (reporting)', 'rf:B'],
+  ['DD', 'Audience Size', 'rf:O'],
+  ['DE', 'Activations', 'rf:P'],
+  ['DF', 'Bonused members', 'rf:Q'],
+  ['DG', 'Bonus Pts Issued', 'rf:R'],
+  ['DM', 'Activation - Low', 'rf:AF'],
+  ['DN', 'Activation - High', 'rf:AG'],
+  ['DO', 'Bonus rate - Low', 'rf:AH'],
+  ['DP', 'Bonus rate - High', 'rf:AI'],
+  ['DQ', 'Avg Spend/txn - Low', 'rf:AJ'],
+  ['DR', 'Avg spend/txn - High', 'rf:AK'],
+].map(([letter, header, twin]) => ({
+  key: `cal:${letter}`,
+  source: 'Calendar main tab' as const,
+  letter,
+  header,
+  tab: 'grid' as const,
+  band: RF_REGISTRY.find((e) => e.key === twin)!.band,
+  tag: RF_REGISTRY.find((e) => e.key === twin)!.tag,
+  format: RF_REGISTRY.find((e) => e.key === twin)!.format,
+  meaning: `Shown through its R&F twin (${twin.slice(3)}).`,
+  twinOf: twin,
+}));
+
+export const REGISTRY: RegistryEntry[] = [...RF_REGISTRY, ...CALENDAR_BAND, ...CALENDAR_TWINS];
 
 export function registryFor(tab: RegistryTab): RegistryEntry[] {
   return REGISTRY.filter((e) => e.tab === tab);

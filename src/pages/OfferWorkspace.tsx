@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import {
   Copy,
@@ -85,7 +85,12 @@ export function OfferWorkspace() {
 
   const stored = offers.find((o) => o._uid === offerId);
   const [working, setWorking] = useState<OfferRecord>(stored ?? {});
-  const [step, setStep] = useState<string>(STEP_ORDER[0]);
+  // v3: "Open offer (Step 7 / Step 9)" links pass ?step=
+  const [searchParams] = useSearchParams();
+  const requestedStep = searchParams.get('step');
+  const [step, setStep] = useState<string>(
+    requestedStep && STEP_ORDER.includes(requestedStep) ? requestedStep : STEP_ORDER[0],
+  );
   const [saveState, setSaveState] = useState<SaveState>('saved');
   const [lastSavedAt, setLastSavedAt] = useState<string>('');
   const [historyOpen, setHistoryOpen] = useState(false);
