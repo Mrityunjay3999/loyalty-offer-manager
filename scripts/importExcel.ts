@@ -18,6 +18,10 @@ import {
   normHeader,
   isExcelError,
 } from '../src/lib/excelParse';
+import { computeRfCells } from '../src/lib/rfEngine';
+import { compareCell } from '../src/lib/excelFormat';
+import { RF_BY_LETTER } from '../src/lib/forecastColumnRegistry';
+import type { OfferRecord } from '../src/lib/types';
 
 const ROOT = process.cwd();
 const SRC = path.join(ROOT, 'data/source');
@@ -39,6 +43,7 @@ interface Issue {
     | 'new_category_pair'
     | 'duplicate_name'
     | 'failed_lookup'
+    | 'excel_formula_gap'
     | 'rounded_export';
   severity: 'issue' | 'info';
   offerId: number | null;
@@ -306,6 +311,99 @@ function rebuildForecast(
   return derived;
 }
 
+// ---------------------------------------------------------------- A4 refinement (R&F offers)
+// The export rounds bonused members (AN/AO) and sales (AR/AS) to whole numbers, so
+// AN / AF can miss the typed rate when AN is small. Excel's bonus points keep far
+// more precision: AX = AN x W (fixed designs) and AX = AR x X x W (Multiplier).
+// We try the A4 rule first plus these refined candidates, and keep the one that
+// reproduces the most of Excel's own displayed forecast cells.
+const SCORE_COLS = [
+  'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY',
+  'AZ', 'BA', 'BB', 'BC', 'BD', 'BE', 'BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BN', 'BO', 'BP', 'BQ',
+];
+type Pair = { rate: number | null; spend: number | null };
+function sideCandidates(
+  r: Row,
+  total: number | null,
+  L: { H: string; J: string; N: string; R: string; X: string },
+  W: number | null,
+  X: number,
+  isMult: boolean,
+): Pair[] {
+  const shownRate = num(cell(r, L.H));
+  const shownSpend = num(cell(r, L.J));
+  const shownN = num(cell(r, L.N));
+  const shownR = num(cell(r, L.R));
+  const bonusPts = num(cell(r, L.X));
+  const nCands = [shownN];
+  const rCands = [shownR];
+  if (W && W > 0 && bonusPts !== null && bonusPts > 0) {
+    if (isMult) rCands.push(bonusPts / (X * W));
+    else nCands.push(bonusPts / W);
+  }
+  const out: Pair[] = [];
+  for (const n of nCands) {
+    for (const s of rCands) {
+      const rate = total && total > 0 && n !== null ? n / total : shownRate;
+      const spend = n !== null && n > 0 && s !== null ? s / n : shownSpend;
+      out.push({ rate, spend });
+      if (shownSpend && shownSpend > 0 && s !== null && total && total > 0) {
+        out.push({ rate: s / shownSpend / total, spend: shownSpend });
+      }
+    }
+  }
+  out.push({ rate: shownRate, spend: shownSpend });
+  // de-duplicate (keep first = the A4 rule order)
+  const seen = new Set<string>();
+  return out.filter((p) => {
+    const k = `${p.rate}|${p.spend}`;
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+}
+function refineFromTotals(o: Offer, r: Row): boolean {
+  const cells = computeRfCells(o as OfferRecord, new Date(2026, 10, 11));
+  const W = typeof cells.W === 'number' ? cells.W : null;
+  const X = typeof o.basePtsPerDollar === 'number' ? o.basePtsPerDollar : 10;
+  const isMult = String(o.offerDesign ?? '').toLowerCase() === 'multiplier';
+  const low = sideCandidates(r, num(cell(r, 'AF')), { H: 'AH', J: 'AJ', N: 'AN', R: 'AR', X: 'AX' }, W, X, isMult);
+  const high = sideCandidates(r, num(cell(r, 'AG')), { H: 'AI', J: 'AK', N: 'AO', R: 'AS', X: 'AY' }, W, X, isMult);
+  const apply = (t: Offer, l: Pair, h: Pair) => {
+    const set = (id: string, v: number | null) => {
+      if (v === null || v === 0) delete t[id];
+      else t[id] = v;
+    };
+    set('bonusRateLow', l.rate);
+    set('avgSpendPerTxnLow', l.spend);
+    set('bonusRateHigh', h.rate);
+    set('avgSpendPerTxnHigh', h.spend);
+  };
+  const score = (t: Offer) => {
+    const c = computeRfCells(t as OfferRecord, new Date(2026, 10, 11)) as Record<string, unknown>;
+    let s = 0;
+    for (const L of SCORE_COLS) if (compareCell(cell(r, L), c[L] as never, RF_BY_LETTER[L].format).match) s++;
+    return s;
+  };
+  // Score the current (A4 rule) values first so a tie keeps them.
+  let best = score(o);
+  let bestPair: [Pair, Pair] | null = null;
+  for (const l of low) {
+    for (const h of high) {
+      const t: Offer = { ...o };
+      apply(t, l, h);
+      const s = score(t);
+      if (s > best) {
+        best = s;
+        bestPair = [l, h];
+      }
+    }
+  }
+  if (!bestPair) return false;
+  apply(o, bestPair[0], bestPair[1]);
+  return true;
+}
+
 // ---------------------------------------------------------------- build Metadata offers
 const offers: Offer[] = [];
 const byName = new Map<string, Offer[]>();
@@ -391,6 +489,28 @@ for (const [name, list] of byName) {
 // Metadata forecast columns used for history offers (A4 bracketed letters)
 const MD_FCST = { AF: 'CX', AG: 'CY', AH: 'CZ', AI: 'DA', AJ: 'DB', AK: 'DC', AN: 'DF', AO: 'DG', AR: 'DJ', AS: 'DK' };
 const RF_FCST = { AF: 'AF', AG: 'AG', AH: 'AH', AI: 'AI', AJ: 'AJ', AK: 'AK', AN: 'AN', AO: 'AO', AR: 'AR', AS: 'AS' };
+
+/** Excel rows where a calculated cell is blank although its inputs are present. */
+function checkFormulaGaps(o: Offer, r: Row, row: number) {
+  const D = parseExcelDate(cell(r, 'D'));
+  const E = parseExcelDate(cell(r, 'E'));
+  if (D && E && trim(cell(r, 'F')) === '') {
+    const id = addIssue({
+      type: 'excel_formula_gap',
+      severity: 'issue',
+      offerId: (o.offerId as number) ?? null,
+      offerName: String(o.offerName ?? ''),
+      file: 'R&F tab',
+      row,
+      column: 'F',
+      excelValue: '(blank)',
+      valueUsed: 'End - Start + 1',
+      message:
+        'Promo Days (column F) is blank in the Excel row although Start and End Date are set, so Excel\'s prorated columns BW to BZ use a blank. The prototype calculates Promo Days from the dates.',
+    });
+    imp(o).issues.push(id);
+  }
+}
 
 // ---------------------------------------------------------------- join R&F by name
 let matched = 0;
@@ -514,6 +634,8 @@ for (const { row, r } of rfData) {
 
   applyRfOverrides(o, r, row);
   i.derivedFields = rebuildForecast(o, r, RF_FCST);
+  refineFromTotals(o, r);
+  checkFormulaGaps(o, r, row);
   rfOffers.push(o);
 }
 
@@ -538,6 +660,8 @@ for (const { row, r } of rfOnly) {
     metadataOnlyValues: {},
   };
   imp(o).derivedFields = rebuildForecast(o, r, RF_FCST);
+  refineFromTotals(o, r);
+  checkFormulaGaps(o, r, row);
   const issueId = addIssue({
     type: 'rf_only',
     severity: 'issue',

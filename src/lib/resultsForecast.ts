@@ -10,6 +10,7 @@ import {
   redemptionRate,
   numberOfDays,
   includeForResultsForecast,
+  rfRoundTrip,
 } from './calculations';
 import { toNumber, parseISO } from './format';
 import type { OfferRecord } from './types';
@@ -305,32 +306,7 @@ export function inResultsForecast(o: OfferRecord): boolean {
   return includeForResultsForecast(o) === 'Yes';
 }
 
-/** B4: the 6 Step-7 round-trip totals (0 when the offer is not in the module). */
-export function roundTripTotals(o: OfferRecord): {
-  bonusedMembersLow: number;
-  bonusedMembersHigh: number;
-  bonusedSalesLow: number;
-  bonusedSalesHigh: number;
-  bonusRedeemableLow: number;
-  bonusRedeemableHigh: number;
-} {
-  if (!inResultsForecast(o)) {
-    return {
-      bonusedMembersLow: 0,
-      bonusedMembersHigh: 0,
-      bonusedSalesLow: 0,
-      bonusedSalesHigh: 0,
-      bonusRedeemableLow: 0,
-      bonusRedeemableHigh: 0,
-    };
-  }
-  const rf = computeResultsForecast(o);
-  return {
-    bonusedMembersLow: rf.bonusedMembersLow ?? 0,
-    bonusedMembersHigh: rf.bonusedMembersHigh ?? 0,
-    bonusedSalesLow: rf.bonusedSalesLow ?? 0,
-    bonusedSalesHigh: rf.bonusedSalesHigh ?? 0,
-    bonusRedeemableLow: rf.bonusRedeemableLow ?? 0,
-    bonusRedeemableHigh: rf.bonusRedeemableHigh ?? 0,
-  };
+/** B4: the 6 Step-7 round-trip totals (0 when the offer is not in the module). Delegates to the v3 engine. */
+export function roundTripTotals(o: OfferRecord) {
+  return rfRoundTrip(o);
 }

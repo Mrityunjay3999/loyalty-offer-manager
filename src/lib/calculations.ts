@@ -4,6 +4,7 @@
 import { format as fmtDate, addDays } from 'date-fns';
 import { reference, fieldsById } from './dataLoaders';
 import { isNoValue, toNumber, parseISO } from './format';
+import { computeRfCells, activationTotal } from './rfEngine';
 import type { OfferRecord, OfferValue } from './types';
 
 const C = reference.constants;
@@ -96,12 +97,40 @@ export function includeForMetadata(o: OfferRecord): 'Yes' | 'No' {
   return 'Yes';
 }
 
-export function includeForResultsForecast(o: OfferRecord): 'Yes' | 'No' {
-  // B1: No if Cancelled or Offer Design = "IMP only". Drafts/blank excluded.
-  if (isExcludedStatus(o) || o.buildStatus === 'Cancelled' || o.offerDesign === 'IMP only') {
-    return 'No';
-  }
+export function includeForResultsForecast(o: OfferRecord): 'Yes' | 'No' | '' {
+  // v3 B2 (Excel Calendar CW): "" when the status is blank (drafts count as blank),
+  // "No" when Cancelled or Offer Design = "IMP only" (Excel `=` ignores case), else "Yes".
+  if (isExcludedStatus(o)) return '';
+  if (String(o.buildStatus).toLowerCase() === 'cancelled') return 'No';
+  if (String(o.offerDesign ?? '').toLowerCase() === 'imp only') return 'No';
   return 'Yes';
+}
+
+/**
+ * v3 B4: the 6 totals the Calendar pulls back from Results & Forecast by Offer ID
+ * (R&F AN, AO, AR, AS, BG, BH). 0 when the offer is not included.
+ */
+export function rfRoundTrip(o: OfferRecord): {
+  bonusedMembersLow: number;
+  bonusedMembersHigh: number;
+  bonusedSalesLow: number;
+  bonusedSalesHigh: number;
+  bonusRedeemableLow: number;
+  bonusRedeemableHigh: number;
+} {
+  if (includeForResultsForecast(o) !== 'Yes') {
+    return { bonusedMembersLow: 0, bonusedMembersHigh: 0, bonusedSalesLow: 0, bonusedSalesHigh: 0, bonusRedeemableLow: 0, bonusRedeemableHigh: 0 };
+  }
+  const c = computeRfCells(o);
+  const n = (v: unknown) => (typeof v === 'number' ? v : 0);
+  return {
+    bonusedMembersLow: n(c.AN),
+    bonusedMembersHigh: n(c.AO),
+    bonusedSalesLow: n(c.AR),
+    bonusedSalesHigh: n(c.AS),
+    bonusRedeemableLow: n(c.BG),
+    bonusRedeemableHigh: n(c.BH),
+  };
 }
 
 export function startMonthNumber(o: OfferRecord): number | null {
@@ -139,16 +168,14 @@ export function activationHigh(o: OfferRecord): number | null {
 const FORECAST_CATEGORIES = ['merch', 'services', 'loyalty', 'digital', 'redemption'];
 
 export function forecastNeeded(o: OfferRecord): 'Yes' | 'No' {
-  if (o.offerDesign === 'Activation Only - Internal Reward') return 'No';
+  // v3 B4 (Calendar DY). Excel `=` ignores case.
+  if (String(o.offerDesign ?? '').toLowerCase() === 'activation only - internal reward') return 'No';
   const cat = String(o.category ?? '').toLowerCase();
-  // NOTE: Excel compares "Merch"/"Services" case-sensitively vs UPPER-case
-  // dropdown values; per spec 8.2/15.4 we implement case-insensitive.
   const catMatch =
     FORECAST_CATEGORIES.includes(cat) ||
     (cat === 'benefit' && String(o.subCategory ?? '').toLowerCase() === 'birthday');
-  const f = computeForecast(o);
-  const redeemableLow = f.bonusRedeemableLow ?? 0;
-  if (catMatch && redeemableLow === 0 && o.buildStatus !== 'Cancelled') return 'Yes';
+  const redeemableLow = rfRoundTrip(o).bonusRedeemableLow;
+  if (catMatch && redeemableLow === 0 && String(o.buildStatus ?? '').toLowerCase() !== 'cancelled') return 'Yes';
   return 'No';
 }
 
@@ -397,7 +424,6 @@ export function bonusPtsFromFixed(o: OfferRecord): number | null {
 // ---------------------------------------------------------------------------
 
 export function computedFieldValue(fieldId: string, o: OfferRecord): OfferValue | null {
-  const f = () => computeForecast(o);
   switch (fieldId) {
     case 'startMonth':
       return startMonth(o);
@@ -428,22 +454,17 @@ export function computedFieldValue(fieldId: string, o: OfferRecord): OfferValue 
     case 'totalOfferDays':
       return totalOfferDays(o);
     case 'activationLow':
-      return f().activationLow;
+      return isNoValue(o.activationByDayLow) ? null : activationTotal(o.activationByDayLow, o);
     case 'activationHigh':
-      return f().activationHigh;
-    // B4 round-trip totals: 0 when the offer is not in Results & Forecast.
+      return isNoValue(o.activationByDayHigh) ? null : activationTotal(o.activationByDayHigh, o);
+    // B4 round-trip totals from the R&F engine (AN, AO, AR, AS, BG, BH); 0 when not included.
     case 'bonusedMembersLow':
-      return includeForResultsForecast(o) === 'Yes' ? f().bonusedMembersLow : 0;
     case 'bonusedMembersHigh':
-      return includeForResultsForecast(o) === 'Yes' ? f().bonusedMembersHigh : 0;
     case 'bonusedSalesLow':
-      return includeForResultsForecast(o) === 'Yes' ? f().bonusedSalesLow : 0;
     case 'bonusedSalesHigh':
-      return includeForResultsForecast(o) === 'Yes' ? f().bonusedSalesHigh : 0;
     case 'bonusRedeemableLow':
-      return includeForResultsForecast(o) === 'Yes' ? f().bonusRedeemableLow : 0;
     case 'bonusRedeemableHigh':
-      return includeForResultsForecast(o) === 'Yes' ? f().bonusRedeemableHigh : 0;
+      return rfRoundTrip(o)[fieldId];
     // Retired in product — not implemented (shown as note in Data Dictionary).
     case 'metadataRefNumber':
     case 'resultsForecastRefNumber':

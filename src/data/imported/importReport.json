@@ -817,6 +817,19 @@
   },
   {
    "id": "ISS-0052",
+   "type": "excel_formula_gap",
+   "severity": "issue",
+   "offerId": 2390,
+   "offerName": "20261005_CANJBPOPENFARM_SELECT_5X",
+   "file": "R&F tab",
+   "row": 594,
+   "column": "F",
+   "excelValue": "(blank)",
+   "valueUsed": "End - Start + 1",
+   "message": "Promo Days (column F) is blank in the Excel row although Start and End Date are set, so Excel's prorated columns BW to BZ use a blank. The prototype calculates Promo Days from the dates."
+  },
+  {
+   "id": "ISS-0053",
    "type": "files_disagree",
    "severity": "issue",
    "offerId": 2135,
@@ -829,7 +842,7 @@
    "message": "Audience size: the R&F tab and the Metadata file differ. The import uses the R&F value when it is a number."
   },
   {
-   "id": "ISS-0053",
+   "id": "ISS-0054",
    "type": "text_in_number",
    "severity": "issue",
    "offerId": 2135,
@@ -842,7 +855,7 @@
    "message": "R&F column O should hold a number but holds the text \"20260713_FLASHSALEGCPROMO_IMPO\". The Metadata value (column BW) was kept."
   },
   {
-   "id": "ISS-0054",
+   "id": "ISS-0055",
    "type": "rf_only",
    "severity": "issue",
    "offerId": 2607,
@@ -855,7 +868,7 @@
    "message": "Offer ID created on import. This offer is not in the Metadata file, so its real Unique Offer ID was not shared."
   },
   {
-   "id": "ISS-0055",
+   "id": "ISS-0056",
    "type": "rf_only",
    "severity": "issue",
    "offerId": 2608,
@@ -868,7 +881,7 @@
    "message": "Offer ID created on import. This offer is not in the Metadata file, so its real Unique Offer ID was not shared."
   },
   {
-   "id": "ISS-0056",
+   "id": "ISS-0057",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1610,
@@ -881,7 +894,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0057",
+   "id": "ISS-0058",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1610,
@@ -894,7 +907,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0058",
+   "id": "ISS-0059",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2288,
@@ -907,7 +920,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0059",
+   "id": "ISS-0060",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2288,
@@ -916,37 +929,11 @@
    "row": 21,
    "column": "AI",
    "excelValue": "1%",
-   "valueUsed": "0.005996240601503759",
+   "valueUsed": "0.006",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0060",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2288,
-   "offerName": "20260626_CANJBPLITTERROBOT4_50000",
-   "file": "R&F tab",
-   "row": 21,
-   "column": "AK",
-   "excelValue": "900",
-   "valueUsed": "900.564263322884",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
    "id": "ISS-0061",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1519,
-   "offerName": "20260101_SALON_RWCT_JAN_5000",
-   "file": "R&F tab",
-   "row": 29,
-   "column": "AH",
-   "excelValue": "62%",
-   "valueUsed": "0.6199884958297383",
-   "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0062",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2056,
@@ -959,7 +946,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0063",
+   "id": "ISS-0062",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2056,
@@ -972,7 +959,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0064",
+   "id": "ISS-0063",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1614,
@@ -985,20 +972,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0065",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1614,
-   "offerName": "20260213_FEBMEMANNIV_1000",
-   "file": "R&F tab",
-   "row": 75,
-   "column": "AI",
-   "excelValue": "36%",
-   "valueUsed": "0.3601503759398496",
-   "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0066",
+   "id": "ISS-0064",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1778,
@@ -1011,7 +985,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0067",
+   "id": "ISS-0065",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1912,
@@ -1020,11 +994,11 @@
    "row": 86,
    "column": "AH",
    "excelValue": "1%",
-   "valueUsed": "0.007518518518518518",
+   "valueUsed": "0.0075",
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0068",
+   "id": "ISS-0066",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1912,
@@ -1037,20 +1011,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0069",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1912,
-   "offerName": "20260227_PTSBOOST_LITTERROBOT4_50000",
-   "file": "R&F tab",
-   "row": 86,
-   "column": "AJ",
-   "excelValue": "550",
-   "valueUsed": "548.6453201970444",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0070",
+   "id": "ISS-0067",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1912,
@@ -1063,7 +1024,7 @@
    "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0071",
+   "id": "ISS-0068",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2255,
@@ -1076,46 +1037,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0072",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1991,
-   "offerName": "20260803_TGT_AQMEDIAANDSUB_10X",
-   "file": "R&F tab",
-   "row": 93,
-   "column": "AI",
-   "excelValue": "12%",
-   "valueUsed": "0.12003968253968254",
-   "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0073",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1991,
-   "offerName": "20260803_TGT_AQMEDIAANDSUB_10X",
-   "file": "R&F tab",
-   "row": 93,
-   "column": "AK",
-   "excelValue": "20",
-   "valueUsed": "19.993388429752066",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0074",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1966,
-   "offerName": "20260803_TGT_BIRDFOOD_10X",
-   "file": "R&F tab",
-   "row": 98,
-   "column": "AH",
-   "excelValue": "6%",
-   "valueUsed": "0.060714285714285714",
-   "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0075",
+   "id": "ISS-0069",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1966,
@@ -1128,20 +1050,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0076",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1966,
-   "offerName": "20260803_TGT_BIRDFOOD_10X",
-   "file": "R&F tab",
-   "row": 98,
-   "column": "AJ",
-   "excelValue": "20",
-   "valueUsed": "19.764705882352942",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0077",
+   "id": "ISS-0070",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1966,
@@ -1154,7 +1063,7 @@
    "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0078",
+   "id": "ISS-0071",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1971,
@@ -1163,11 +1072,11 @@
    "row": 99,
    "column": "AH",
    "excelValue": "5%",
-   "valueUsed": "0.04981203007518797",
+   "valueUsed": "0.050009893153937474",
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0079",
+   "id": "ISS-0072",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1971,
@@ -1176,89 +1085,11 @@
    "row": 99,
    "column": "AI",
    "excelValue": "10%",
-   "valueUsed": "0.10034013605442177",
+   "valueUsed": "0.10000739426205264",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0080",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1971,
-   "offerName": "20260803_TGT_REPTILEDECOR_25_2500",
-   "file": "R&F tab",
-   "row": 99,
-   "column": "AJ",
-   "excelValue": "19",
-   "valueUsed": "19.07547169811321",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0081",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1971,
-   "offerName": "20260803_TGT_REPTILEDECOR_25_2500",
-   "file": "R&F tab",
-   "row": 99,
-   "column": "AK",
-   "excelValue": "23",
-   "valueUsed": "22.923728813559322",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0082",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1965,
-   "offerName": "20260803_TGT_SMALLANIMAL_25_5000",
-   "file": "R&F tab",
-   "row": 100,
-   "column": "AH",
-   "excelValue": "21%",
-   "valueUsed": "0.21031746031746032",
-   "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0083",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1965,
-   "offerName": "20260803_TGT_SMALLANIMAL_25_5000",
-   "file": "R&F tab",
-   "row": 100,
-   "column": "AI",
-   "excelValue": "26%",
-   "valueUsed": "0.2598214285714286",
-   "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0084",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1965,
-   "offerName": "20260803_TGT_SMALLANIMAL_25_5000",
-   "file": "R&F tab",
-   "row": 100,
-   "column": "AJ",
-   "excelValue": "30",
-   "valueUsed": "29.952830188679247",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0085",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1965,
-   "offerName": "20260803_TGT_SMALLANIMAL_25_5000",
-   "file": "R&F tab",
-   "row": 100,
-   "column": "AK",
-   "excelValue": "35",
-   "valueUsed": "35.02405498281787",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0086",
+   "id": "ISS-0073",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2515,
@@ -1271,7 +1102,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0087",
+   "id": "ISS-0074",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2433,
@@ -1284,7 +1115,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0088",
+   "id": "ISS-0075",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1798,
@@ -1297,7 +1128,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0089",
+   "id": "ISS-0076",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1798,
@@ -1310,7 +1141,7 @@
    "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0090",
+   "id": "ISS-0077",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1801,
@@ -1323,7 +1154,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0091",
+   "id": "ISS-0078",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1697,
@@ -1336,33 +1167,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0092",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2598,
-   "offerName": "20270125_CAN_FSDD_59_5000",
-   "file": "R&F tab",
-   "row": 161,
-   "column": "AI",
-   "excelValue": "13%",
-   "valueUsed": "0.1300172117039587",
-   "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0093",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2598,
-   "offerName": "20270125_CAN_FSDD_59_5000",
-   "file": "R&F tab",
-   "row": 161,
-   "column": "AK",
-   "excelValue": "62",
-   "valueUsed": "61.99179242785279",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0094",
+   "id": "ISS-0079",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2057,
@@ -1375,7 +1180,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0095",
+   "id": "ISS-0080",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2057,
@@ -1388,7 +1193,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0096",
+   "id": "ISS-0081",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1822,
@@ -1401,7 +1206,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0097",
+   "id": "ISS-0082",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2516,
@@ -1414,7 +1219,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0098",
+   "id": "ISS-0083",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2516,
@@ -1427,7 +1232,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0099",
+   "id": "ISS-0084",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2441,
@@ -1440,7 +1245,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0100",
+   "id": "ISS-0085",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2441,
@@ -1453,7 +1258,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0101",
+   "id": "ISS-0086",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2499,
@@ -1466,7 +1271,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0102",
+   "id": "ISS-0087",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2590,
@@ -1479,7 +1284,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0103",
+   "id": "ISS-0088",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2501,
@@ -1492,7 +1297,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0104",
+   "id": "ISS-0089",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2501,
@@ -1505,7 +1310,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0105",
+   "id": "ISS-0090",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2504,
@@ -1514,11 +1319,11 @@
    "row": 200,
    "column": "AH",
    "excelValue": "4%",
-   "valueUsed": "0.03500794912559618",
+   "valueUsed": "0.03500031796502385",
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0106",
+   "id": "ISS-0091",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2504,
@@ -1527,37 +1332,11 @@
    "row": 200,
    "column": "AI",
    "excelValue": "5%",
-   "valueUsed": "0.045006002400960386",
+   "valueUsed": "0.045",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0107",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2504,
-   "offerName": "20270212_REPTILEDECOR_25_2500",
-   "file": "R&F tab",
-   "row": 200,
-   "column": "AJ",
-   "excelValue": "25",
-   "valueUsed": "24.994550408719345",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0108",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2504,
-   "offerName": "20270212_REPTILEDECOR_25_2500",
-   "file": "R&F tab",
-   "row": 200,
-   "column": "AK",
-   "excelValue": "28",
-   "valueUsed": "27.99626567084556",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0109",
+   "id": "ISS-0092",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1497,
@@ -1570,7 +1349,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0110",
+   "id": "ISS-0093",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1824,
@@ -1583,7 +1362,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0111",
+   "id": "ISS-0094",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1824,
@@ -1596,7 +1375,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0112",
+   "id": "ISS-0095",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1713,
@@ -1609,7 +1388,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0113",
+   "id": "ISS-0096",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1713,
@@ -1622,7 +1401,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0114",
+   "id": "ISS-0097",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2094,
@@ -1631,11 +1410,11 @@
    "row": 215,
    "column": "AH",
    "excelValue": "75%",
-   "valueUsed": "0.7551020408163265",
+   "valueUsed": "0.7500927643784787",
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0115",
+   "id": "ISS-0098",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2094,
@@ -1644,37 +1423,11 @@
    "row": 215,
    "column": "AI",
    "excelValue": "82%",
-   "valueUsed": "0.8214285714285714",
+   "valueUsed": "0.8199735449735449",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0116",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2094,
-   "offerName": "20260511_ALLDOGCAT_20_5000",
-   "file": "R&F tab",
-   "row": 215,
-   "column": "AJ",
-   "excelValue": "55",
-   "valueUsed": "54.63513513513514",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0117",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2094,
-   "offerName": "20260511_ALLDOGCAT_20_5000",
-   "file": "R&F tab",
-   "row": 215,
-   "column": "AK",
-   "excelValue": "60",
-   "valueUsed": "59.893719806763286",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0118",
+   "id": "ISS-0099",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1627,
@@ -1687,7 +1440,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0119",
+   "id": "ISS-0100",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1627,
@@ -1700,7 +1453,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0120",
+   "id": "ISS-0101",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1627,
@@ -1713,7 +1466,7 @@
    "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0121",
+   "id": "ISS-0102",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1627,
@@ -1726,7 +1479,7 @@
    "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0122",
+   "id": "ISS-0103",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1503,
@@ -1739,7 +1492,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0123",
+   "id": "ISS-0104",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1526,
@@ -1752,7 +1505,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0124",
+   "id": "ISS-0105",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1526,
@@ -1765,7 +1518,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0125",
+   "id": "ISS-0106",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1526,
@@ -1778,7 +1531,7 @@
    "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0126",
+   "id": "ISS-0107",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1526,
@@ -1791,7 +1544,7 @@
    "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0127",
+   "id": "ISS-0108",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2289,
@@ -1800,11 +1553,11 @@
    "row": 242,
    "column": "AH",
    "excelValue": "0%",
-   "valueUsed": "0.0025185185185185185",
+   "valueUsed": "0.0025",
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0128",
+   "id": "ISS-0109",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2289,
@@ -1813,37 +1566,11 @@
    "row": 242,
    "column": "AI",
    "excelValue": "1%",
-   "valueUsed": "0.005015873015873016",
+   "valueUsed": "0.00500005772005772",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0129",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2289,
-   "offerName": "20261218_TRAININGPKG_10000",
-   "file": "R&F tab",
-   "row": 242,
-   "column": "AJ",
-   "excelValue": "200",
-   "valueUsed": "198.52941176470588",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0130",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2289,
-   "offerName": "20261218_TRAININGPKG_10000",
-   "file": "R&F tab",
-   "row": 242,
-   "column": "AK",
-   "excelValue": "275",
-   "valueUsed": "274.13291139240505",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0131",
+   "id": "ISS-0110",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2419,
@@ -1852,24 +1579,11 @@
    "row": 244,
    "column": "AI",
    "excelValue": "5%",
-   "valueUsed": "0.04500408163265306",
+   "valueUsed": "0.04500012368583797",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0132",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2419,
-   "offerName": "20261228_SHEBACATFOODTREAT_30_2500",
-   "file": "R&F tab",
-   "row": 244,
-   "column": "AK",
-   "excelValue": "33",
-   "valueUsed": "32.997097768909846",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0133",
+   "id": "ISS-0111",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2394,
@@ -1882,7 +1596,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0134",
+   "id": "ISS-0112",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2394,
@@ -1895,7 +1609,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0135",
+   "id": "ISS-0113",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2394,
@@ -1908,7 +1622,7 @@
    "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0136",
+   "id": "ISS-0114",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2394,
@@ -1921,7 +1635,7 @@
    "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0137",
+   "id": "ISS-0115",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2437,
@@ -1934,7 +1648,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0138",
+   "id": "ISS-0116",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2437,
@@ -1947,7 +1661,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0139",
+   "id": "ISS-0117",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2055,
@@ -1960,7 +1674,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0140",
+   "id": "ISS-0118",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2055,
@@ -1969,24 +1683,11 @@
    "row": 247,
    "column": "AI",
    "excelValue": "1%",
-   "valueUsed": "0.00503030303030303",
+   "valueUsed": "0.005",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0141",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2055,
-   "offerName": "20260423_CANJBPLITTERROBOT_75000",
-   "file": "R&F tab",
-   "row": 247,
-   "column": "AK",
-   "excelValue": "900",
-   "valueUsed": "894.5783132530121",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0142",
+   "id": "ISS-0119",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2277,
@@ -1999,7 +1700,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0143",
+   "id": "ISS-0120",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2277,
@@ -2012,7 +1713,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0144",
+   "id": "ISS-0121",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2277,
@@ -2025,59 +1726,7 @@
    "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0145",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2409,
-   "offerName": "20260727_DOGCATFOODTREAT_TGT_10X",
-   "file": "R&F tab",
-   "row": 288,
-   "column": "AH",
-   "excelValue": "25%",
-   "valueUsed": "0.2496894409937888",
-   "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0146",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2409,
-   "offerName": "20260727_DOGCATFOODTREAT_TGT_10X",
-   "file": "R&F tab",
-   "row": 288,
-   "column": "AI",
-   "excelValue": "30%",
-   "valueUsed": "0.30024213075060535",
-   "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0147",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2409,
-   "offerName": "20260727_DOGCATFOODTREAT_TGT_10X",
-   "file": "R&F tab",
-   "row": 288,
-   "column": "AJ",
-   "excelValue": "28",
-   "valueUsed": "28.034825870646767",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0148",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2409,
-   "offerName": "20260727_DOGCATFOODTREAT_TGT_10X",
-   "file": "R&F tab",
-   "row": 288,
-   "column": "AK",
-   "excelValue": "32",
-   "valueUsed": "31.974193548387095",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0149",
+   "id": "ISS-0122",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2194,
@@ -2086,11 +1735,11 @@
    "row": 289,
    "column": "AH",
    "excelValue": "0%",
-   "valueUsed": "0.0015066666666666666",
+   "valueUsed": "0.0015",
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0150",
+   "id": "ISS-0123",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2194,
@@ -2103,33 +1752,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0151",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2194,
-   "offerName": "20260601_AQ36GENSEMBLE_75000",
-   "file": "R&F tab",
-   "row": 289,
-   "column": "AJ",
-   "excelValue": "350",
-   "valueUsed": "348.4513274336283",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0152",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2020,
-   "offerName": "20260601_CANJBPMARSCATVPK_SELECT_5X",
-   "file": "R&F tab",
-   "row": 291,
-   "column": "AH",
-   "excelValue": "5%",
-   "valueUsed": "0.05002597402597403",
-   "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0153",
+   "id": "ISS-0124",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2020,
@@ -2138,37 +1761,11 @@
    "row": 291,
    "column": "AI",
    "excelValue": "7%",
-   "valueUsed": "0.07002197802197802",
+   "valueUsed": "0.070000666000666",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0154",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2020,
-   "offerName": "20260601_CANJBPMARSCATVPK_SELECT_5X",
-   "file": "R&F tab",
-   "row": 291,
-   "column": "AJ",
-   "excelValue": "26",
-   "valueUsed": "25.9865005192108",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0155",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2020,
-   "offerName": "20260601_CANJBPMARSCATVPK_SELECT_5X",
-   "file": "R&F tab",
-   "row": 291,
-   "column": "AK",
-   "excelValue": "33",
-   "valueUsed": "32.98995605775267",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0156",
+   "id": "ISS-0125",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2027,
@@ -2177,63 +1774,11 @@
    "row": 306,
    "column": "AH",
    "excelValue": "3%",
-   "valueUsed": "0.03003174603174603",
+   "valueUsed": "0.030002116402116405",
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0157",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2027,
-   "offerName": "20260601_CANJBPMRSMEYER_SELECT_5X",
-   "file": "R&F tab",
-   "row": 306,
-   "column": "AI",
-   "excelValue": "5%",
-   "valueUsed": "0.05002597402597403",
-   "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0158",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2027,
-   "offerName": "20260601_CANJBPMRSMEYER_SELECT_5X",
-   "file": "R&F tab",
-   "row": 306,
-   "column": "AJ",
-   "excelValue": "15",
-   "valueUsed": "14.985200845665961",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0159",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2027,
-   "offerName": "20260601_CANJBPMRSMEYER_SELECT_5X",
-   "file": "R&F tab",
-   "row": 306,
-   "column": "AK",
-   "excelValue": "20",
-   "valueUsed": "19.989615784008308",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0160",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2026,
-   "offerName": "20260601_CANJBPNESTLE_SELECT_5X",
-   "file": "R&F tab",
-   "row": 307,
-   "column": "AH",
-   "excelValue": "5%",
-   "valueUsed": "0.050019047619047616",
-   "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0161",
+   "id": "ISS-0126",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2026,
@@ -2242,63 +1787,11 @@
    "row": 307,
    "column": "AI",
    "excelValue": "7%",
-   "valueUsed": "0.07001680672268908",
+   "valueUsed": "0.07000112044817927",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0162",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2026,
-   "offerName": "20260601_CANJBPNESTLE_SELECT_5X",
-   "file": "R&F tab",
-   "row": 307,
-   "column": "AJ",
-   "excelValue": "10",
-   "valueUsed": "9.996191926884997",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0163",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2026,
-   "offerName": "20260601_CANJBPNESTLE_SELECT_5X",
-   "file": "R&F tab",
-   "row": 307,
-   "column": "AK",
-   "excelValue": "15",
-   "valueUsed": "14.99663946231397",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0164",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2022,
-   "offerName": "20260601_CANJBPNUTRIENCE_SELECT_5X",
-   "file": "R&F tab",
-   "row": 308,
-   "column": "AH",
-   "excelValue": "3%",
-   "valueUsed": "0.030025974025974025",
-   "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0165",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2022,
-   "offerName": "20260601_CANJBPNUTRIENCE_SELECT_5X",
-   "file": "R&F tab",
-   "row": 308,
-   "column": "AJ",
-   "excelValue": "58",
-   "valueUsed": "57.949826989619375",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0166",
+   "id": "ISS-0127",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2021,
@@ -2307,50 +1800,11 @@
    "row": 311,
    "column": "AH",
    "excelValue": "7%",
-   "valueUsed": "0.07002197802197802",
+   "valueUsed": "0.0700004676174889",
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0167",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2021,
-   "offerName": "20260601_CANJBPROYALCANIN_SELECT_5X",
-   "file": "R&F tab",
-   "row": 311,
-   "column": "AI",
-   "excelValue": "9%",
-   "valueUsed": "0.09001904761904762",
-   "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0168",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2021,
-   "offerName": "20260601_CANJBPROYALCANIN_SELECT_5X",
-   "file": "R&F tab",
-   "row": 311,
-   "column": "AJ",
-   "excelValue": "47",
-   "valueUsed": "46.98556183301946",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0169",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2021,
-   "offerName": "20260601_CANJBPROYALCANIN_SELECT_5X",
-   "file": "R&F tab",
-   "row": 311,
-   "column": "AK",
-   "excelValue": "52",
-   "valueUsed": "51.988997037663985",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0170",
+   "id": "ISS-0128",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2190,
@@ -2363,7 +1817,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0171",
+   "id": "ISS-0129",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2190,
@@ -2376,7 +1830,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0172",
+   "id": "ISS-0130",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1722,
@@ -2389,7 +1843,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0173",
+   "id": "ISS-0131",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1724,
@@ -2402,7 +1856,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0174",
+   "id": "ISS-0132",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1724,
@@ -2415,7 +1869,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0175",
+   "id": "ISS-0133",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1586,
@@ -2424,11 +1878,11 @@
    "row": 323,
    "column": "AH",
    "excelValue": "0%",
-   "valueUsed": "0.003012987012987013",
+   "valueUsed": "0.003000047225501771",
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0176",
+   "id": "ISS-0134",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1586,
@@ -2441,20 +1895,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0177",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1586,
-   "offerName": "20260706_PLAYANDSAVE10PACK_15000",
-   "file": "R&F tab",
-   "row": 323,
-   "column": "AJ",
-   "excelValue": "275",
-   "valueUsed": "273.8189655172414",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0178",
+   "id": "ISS-0135",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1585,
@@ -2463,11 +1904,11 @@
    "row": 324,
    "column": "AH",
    "excelValue": "0%",
-   "valueUsed": "0.003012987012987013",
+   "valueUsed": "0.003",
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0179",
+   "id": "ISS-0136",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1585,
@@ -2480,20 +1921,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0180",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1585,
-   "offerName": "20260706_PLAYANDSAVE20PACK_25000",
-   "file": "R&F tab",
-   "row": 324,
-   "column": "AJ",
-   "excelValue": "450",
-   "valueUsed": "448.0603448275862",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0181",
+   "id": "ISS-0137",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1587,
@@ -2502,11 +1930,11 @@
    "row": 325,
    "column": "AH",
    "excelValue": "0%",
-   "valueUsed": "0.003012987012987013",
+   "valueUsed": "0.003",
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0182",
+   "id": "ISS-0138",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1587,
@@ -2519,20 +1947,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0183",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1587,
-   "offerName": "20260706_PLAYANDSAVE5PACK_5000",
-   "file": "R&F tab",
-   "row": 325,
-   "column": "AJ",
-   "excelValue": "100",
-   "valueUsed": "99.56896551724138",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0184",
+   "id": "ISS-0139",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1849,
@@ -2545,7 +1960,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0185",
+   "id": "ISS-0140",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1850,
@@ -2554,50 +1969,11 @@
    "row": 330,
    "column": "AH",
    "excelValue": "43%",
-   "valueUsed": "0.42984126984126986",
+   "valueUsed": "0.4300063492063492",
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0186",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1850,
-   "offerName": "20260706_SALONSPL_CATFOODTREATTTOY_5X",
-   "file": "R&F tab",
-   "row": 330,
-   "column": "AJ",
-   "excelValue": "50",
-   "valueUsed": "50.019202363367796",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0187",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1851,
-   "offerName": "20260710_JULMEMANNIV_1000",
-   "file": "R&F tab",
-   "row": 331,
-   "column": "AH",
-   "excelValue": "39%",
-   "valueUsed": "0.3898496240601504",
-   "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0188",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1851,
-   "offerName": "20260710_JULMEMANNIV_1000",
-   "file": "R&F tab",
-   "row": 331,
-   "column": "AI",
-   "excelValue": "42%",
-   "valueUsed": "0.41993355481727573",
-   "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0189",
+   "id": "ISS-0141",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2295,
@@ -2610,7 +1986,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0190",
+   "id": "ISS-0142",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2295,
@@ -2623,7 +1999,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0191",
+   "id": "ISS-0143",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1721,
@@ -2636,7 +2012,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0192",
+   "id": "ISS-0144",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1721,
@@ -2649,7 +2025,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0193",
+   "id": "ISS-0145",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2195,
@@ -2658,11 +2034,11 @@
    "row": 343,
    "column": "AH",
    "excelValue": "0%",
-   "valueUsed": "0.0010476190476190477",
+   "valueUsed": "0.001",
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0194",
+   "id": "ISS-0146",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2195,
@@ -2675,20 +2051,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0195",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2195,
-   "offerName": "20260717_PTSBOOST_AQ75GENSEMBLE_25X",
-   "file": "R&F tab",
-   "row": 343,
-   "column": "AJ",
-   "excelValue": "750",
-   "valueUsed": "715.9090909090909",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0196",
+   "id": "ISS-0147",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2263,
@@ -2701,7 +2064,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0197",
+   "id": "ISS-0148",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2263,
@@ -2714,7 +2077,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0198",
+   "id": "ISS-0149",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2282,
@@ -2727,7 +2090,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0199",
+   "id": "ISS-0150",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1734,
@@ -2740,7 +2103,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0200",
+   "id": "ISS-0151",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2283,
@@ -2753,7 +2116,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0201",
+   "id": "ISS-0152",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2283,
@@ -2766,7 +2129,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0202",
+   "id": "ISS-0153",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1853,
@@ -2775,37 +2138,11 @@
    "row": 356,
    "column": "AH",
    "excelValue": "41%",
-   "valueUsed": "0.4100114285714286",
+   "valueUsed": "0.4100006722689076",
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0203",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1853,
-   "offerName": "20260728_AUGBIRTHDAY_4X",
-   "file": "R&F tab",
-   "row": 356,
-   "column": "AJ",
-   "excelValue": "17",
-   "valueUsed": "16.999554019400158",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0204",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1654,
-   "offerName": "20260801_SALON_RWCT_AUG_5000",
-   "file": "R&F tab",
-   "row": 364,
-   "column": "AH",
-   "excelValue": "62%",
-   "valueUsed": "0.6199835526315789",
-   "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0205",
+   "id": "ISS-0154",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2421,
@@ -2818,20 +2155,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0206",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2421,
-   "offerName": "20260801_PUPPYGUIDE_TEST_10000",
-   "file": "R&F tab",
-   "row": 367,
-   "column": "AI",
-   "excelValue": "72%",
-   "valueUsed": "0.7203947368421053",
-   "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0207",
+   "id": "ISS-0155",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2234,
@@ -2844,7 +2168,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0208",
+   "id": "ISS-0156",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2176,
@@ -2857,7 +2181,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0209",
+   "id": "ISS-0157",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1858,
@@ -2870,7 +2194,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0210",
+   "id": "ISS-0158",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1858,
@@ -2883,7 +2207,7 @@
    "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0211",
+   "id": "ISS-0159",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1924,
@@ -2896,7 +2220,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0212",
+   "id": "ISS-0160",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1924,
@@ -2909,59 +2233,7 @@
    "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0213",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1925,
-   "offerName": "20260803_FAL_SALONSPL_CATFOODTREATTTOY_5X",
-   "file": "R&F tab",
-   "row": 386,
-   "column": "AH",
-   "excelValue": "43%",
-   "valueUsed": "0.42993197278911566",
-   "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0214",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1925,
-   "offerName": "20260803_FAL_SALONSPL_CATFOODTREATTTOY_5X",
-   "file": "R&F tab",
-   "row": 386,
-   "column": "AI",
-   "excelValue": "48%",
-   "valueUsed": "0.47996289424860855",
-   "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0215",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1925,
-   "offerName": "20260803_FAL_SALONSPL_CATFOODTREATTTOY_5X",
-   "file": "R&F tab",
-   "row": 386,
-   "column": "AJ",
-   "excelValue": "50",
-   "valueUsed": "50.00791139240506",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0216",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1925,
-   "offerName": "20260803_FAL_SALONSPL_CATFOODTREATTTOY_5X",
-   "file": "R&F tab",
-   "row": 386,
-   "column": "AK",
-   "excelValue": "60",
-   "valueUsed": "60.0046385775029",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0217",
+   "id": "ISS-0161",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2296,
@@ -2974,7 +2246,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0218",
+   "id": "ISS-0162",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2296,
@@ -2987,7 +2259,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0219",
+   "id": "ISS-0163",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1857,
@@ -3000,7 +2272,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0220",
+   "id": "ISS-0164",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1857,
@@ -3013,7 +2285,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0221",
+   "id": "ISS-0165",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1944,
@@ -3026,7 +2298,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0222",
+   "id": "ISS-0166",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2286,
@@ -3039,20 +2311,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0223",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1693,
-   "offerName": "20260302_SADIETTREAT_15_2500",
-   "file": "R&F tab",
-   "row": 418,
-   "column": "AH",
-   "excelValue": "3%",
-   "valueUsed": "0.0300008000213339",
-   "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0224",
+   "id": "ISS-0167",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1693,
@@ -3061,37 +2320,11 @@
    "row": 418,
    "column": "AI",
    "excelValue": "5%",
-   "valueUsed": "0.050001111037041975",
+   "valueUsed": "0.05000004444148168",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0225",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1693,
-   "offerName": "20260302_SADIETTREAT_15_2500",
-   "file": "R&F tab",
-   "row": 418,
-   "column": "AJ",
-   "excelValue": "20",
-   "valueUsed": "19.999466666666667",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0226",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1693,
-   "offerName": "20260302_SADIETTREAT_15_2500",
-   "file": "R&F tab",
-   "row": 418,
-   "column": "AK",
-   "excelValue": "25",
-   "valueUsed": "24.99946671406986",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0227",
+   "id": "ISS-0168",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2397,
@@ -3104,7 +2337,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0228",
+   "id": "ISS-0169",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2397,
@@ -3117,20 +2350,7 @@
    "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0229",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1807,
-   "offerName": "20260330_CANJBPNESTLETREATS_5X",
-   "file": "R&F tab",
-   "row": 430,
-   "column": "AH",
-   "excelValue": "5%",
-   "valueUsed": "0.050019047619047616",
-   "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0230",
+   "id": "ISS-0170",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1807,
@@ -3139,37 +2359,11 @@
    "row": 430,
    "column": "AI",
    "excelValue": "7%",
-   "valueUsed": "0.07001680672268908",
+   "valueUsed": "0.07000112044817927",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0231",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1807,
-   "offerName": "20260330_CANJBPNESTLETREATS_5X",
-   "file": "R&F tab",
-   "row": 430,
-   "column": "AJ",
-   "excelValue": "10",
-   "valueUsed": "9.996191926884997",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0232",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1807,
-   "offerName": "20260330_CANJBPNESTLETREATS_5X",
-   "file": "R&F tab",
-   "row": 430,
-   "column": "AK",
-   "excelValue": "15",
-   "valueUsed": "14.99663946231397",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0233",
+   "id": "ISS-0171",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1711,
@@ -3182,7 +2376,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0234",
+   "id": "ISS-0172",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1711,
@@ -3195,7 +2389,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0235",
+   "id": "ISS-0173",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1743,
@@ -3208,20 +2402,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0236",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1660,
-   "offerName": "20260901_SALON_RWCT_SEP_5000",
-   "file": "R&F tab",
-   "row": 449,
-   "column": "AH",
-   "excelValue": "62%",
-   "valueUsed": "0.6199835526315789",
-   "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0237",
+   "id": "ISS-0174",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2466,
@@ -3234,7 +2415,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0238",
+   "id": "ISS-0175",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2297,
@@ -3247,7 +2428,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0239",
+   "id": "ISS-0176",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2297,
@@ -3260,7 +2441,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0240",
+   "id": "ISS-0177",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2177,
@@ -3269,11 +2450,11 @@
    "row": 457,
    "column": "AH",
    "excelValue": "0%",
-   "valueUsed": "0.002507936507936508",
+   "valueUsed": "0.0025000352733686067",
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0241",
+   "id": "ISS-0178",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2177,
@@ -3282,37 +2463,11 @@
    "row": 457,
    "column": "AI",
    "excelValue": "1%",
-   "valueUsed": "0.008005148005148005",
+   "valueUsed": "0.008",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0242",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2177,
-   "offerName": "20260907_TRAINING2PKG_15000",
-   "file": "R&F tab",
-   "row": 457,
-   "column": "AJ",
-   "excelValue": "225",
-   "valueUsed": "224.29113924050634",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0243",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2177,
-   "offerName": "20260907_TRAINING2PKG_15000",
-   "file": "R&F tab",
-   "row": 457,
-   "column": "AK",
-   "excelValue": "300",
-   "valueUsed": "299.80707395498393",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0244",
+   "id": "ISS-0179",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2178,
@@ -3325,7 +2480,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0245",
+   "id": "ISS-0180",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2178,
@@ -3334,24 +2489,11 @@
    "row": 458,
    "column": "AI",
    "excelValue": "1%",
-   "valueUsed": "0.0059974259974259975",
+   "valueUsed": "0.006",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0246",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2178,
-   "offerName": "20260907_TRAINING3PKG_20000",
-   "file": "R&F tab",
-   "row": 458,
-   "column": "AK",
-   "excelValue": "400",
-   "valueUsed": "400.17167381974247",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0247",
+   "id": "ISS-0181",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2085,
@@ -3364,7 +2506,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0248",
+   "id": "ISS-0182",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2085,
@@ -3377,20 +2519,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0249",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1865,
-   "offerName": "20260911_SEPMEMANNIV_1000",
-   "file": "R&F tab",
-   "row": 466,
-   "column": "AH",
-   "excelValue": "41%",
-   "valueUsed": "0.4099730458221024",
-   "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0250",
+   "id": "ISS-0183",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2370,
@@ -3399,24 +2528,11 @@
    "row": 477,
    "column": "AI",
    "excelValue": "85%",
-   "valueUsed": "0.8505050505050505",
+   "valueUsed": "0.8500049034029616",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0251",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2370,
-   "offerName": "20260921_GOODKARMA_100_15000",
-   "file": "R&F tab",
-   "row": 477,
-   "column": "AK",
-   "excelValue": "103",
-   "valueUsed": "102.93942992874109",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0252",
+   "id": "ISS-0184",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2599,
@@ -3429,7 +2545,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0253",
+   "id": "ISS-0185",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2599,
@@ -3442,7 +2558,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0254",
+   "id": "ISS-0186",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2592,
@@ -3455,7 +2571,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0255",
+   "id": "ISS-0187",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2592,
@@ -3464,24 +2580,11 @@
    "row": 487,
    "column": "AI",
    "excelValue": "0%",
-   "valueUsed": "0.0005020408163265306",
+   "valueUsed": "0.0005",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0256",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2592,
-   "offerName": "20260928_LITTERROBOTEVO_25000",
-   "file": "R&F tab",
-   "row": 487,
-   "column": "AK",
-   "excelValue": "600",
-   "valueUsed": "597.560975609756",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0257",
+   "id": "ISS-0188",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2118,
@@ -3494,7 +2597,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0258",
+   "id": "ISS-0189",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2118,
@@ -3507,7 +2610,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0259",
+   "id": "ISS-0190",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2115,
@@ -3520,7 +2623,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0260",
+   "id": "ISS-0191",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2115,
@@ -3533,7 +2636,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0261",
+   "id": "ISS-0192",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2116,
@@ -3546,7 +2649,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0262",
+   "id": "ISS-0193",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2116,
@@ -3559,7 +2662,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0263",
+   "id": "ISS-0194",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2117,
@@ -3572,7 +2675,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0264",
+   "id": "ISS-0195",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2117,
@@ -3585,7 +2688,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0265",
+   "id": "ISS-0196",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1665,
@@ -3598,7 +2701,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0266",
+   "id": "ISS-0197",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2467,
@@ -3611,7 +2714,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0267",
+   "id": "ISS-0198",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1716,
@@ -3624,7 +2727,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0268",
+   "id": "ISS-0199",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1716,
@@ -3637,7 +2740,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0269",
+   "id": "ISS-0200",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2310,
@@ -3646,11 +2749,11 @@
    "row": 508,
    "column": "AH",
    "excelValue": "0%",
-   "valueUsed": "0.002013888888888889",
+   "valueUsed": "0.002",
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0270",
+   "id": "ISS-0201",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2310,
@@ -3659,37 +2762,11 @@
    "row": 508,
    "column": "AI",
    "excelValue": "0%",
-   "valueUsed": "0.0030092592592592593",
+   "valueUsed": "0.003",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0271",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2310,
-   "offerName": "20261102_CANJBPLITTERROBOT_50000",
-   "file": "R&F tab",
-   "row": 508,
-   "column": "AJ",
-   "excelValue": "750",
-   "valueUsed": "744.8275862068965",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0272",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2310,
-   "offerName": "20261102_CANJBPLITTERROBOT_50000",
-   "file": "R&F tab",
-   "row": 508,
-   "column": "AK",
-   "excelValue": "1,000",
-   "valueUsed": "996.9230769230769",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0273",
+   "id": "ISS-0202",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2266,
@@ -3702,7 +2779,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0274",
+   "id": "ISS-0203",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2266,
@@ -3715,7 +2792,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0275",
+   "id": "ISS-0204",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2266,
@@ -3728,7 +2805,7 @@
    "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0276",
+   "id": "ISS-0205",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2266,
@@ -3741,7 +2818,7 @@
    "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0277",
+   "id": "ISS-0206",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2193,
@@ -3754,7 +2831,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0278",
+   "id": "ISS-0207",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2193,
@@ -3767,7 +2844,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0279",
+   "id": "ISS-0208",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2273,
@@ -3780,7 +2857,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0280",
+   "id": "ISS-0209",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2318,
@@ -3793,7 +2870,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0281",
+   "id": "ISS-0210",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2318,
@@ -3806,7 +2883,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0282",
+   "id": "ISS-0211",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2422,
@@ -3819,7 +2896,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0283",
+   "id": "ISS-0212",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2337,
@@ -3832,7 +2909,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0284",
+   "id": "ISS-0213",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2330,
@@ -3845,7 +2922,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0285",
+   "id": "ISS-0214",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1872,
@@ -3858,7 +2935,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0286",
+   "id": "ISS-0215",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1872,
@@ -3871,7 +2948,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0287",
+   "id": "ISS-0216",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2298,
@@ -3884,7 +2961,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0288",
+   "id": "ISS-0217",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2298,
@@ -3897,7 +2974,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0289",
+   "id": "ISS-0218",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1751,
@@ -3910,7 +2987,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0290",
+   "id": "ISS-0219",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2254,
@@ -3923,7 +3000,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0291",
+   "id": "ISS-0220",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2254,
@@ -3932,24 +3009,11 @@
    "row": 550,
    "column": "AI",
    "excelValue": "3%",
-   "valueUsed": "0.027505050505050505",
+   "valueUsed": "0.0275",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0292",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2254,
-   "offerName": "20261023_PTSBOOST_CRATESCARRIERS_25X",
-   "file": "R&F tab",
-   "row": 550,
-   "column": "AK",
-   "excelValue": "64",
-   "valueUsed": "63.98824825560044",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0293",
+   "id": "ISS-0221",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2468,
@@ -3962,7 +3026,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0294",
+   "id": "ISS-0222",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2353,
@@ -3975,7 +3039,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0295",
+   "id": "ISS-0223",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2507,
@@ -3988,7 +3052,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0296",
+   "id": "ISS-0224",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2507,
@@ -4001,7 +3065,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0297",
+   "id": "ISS-0225",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2507,
@@ -4014,7 +3078,7 @@
    "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0298",
+   "id": "ISS-0226",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2507,
@@ -4027,7 +3091,7 @@
    "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0299",
+   "id": "ISS-0227",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1880,
@@ -4040,7 +3104,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0300",
+   "id": "ISS-0228",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1880,
@@ -4053,7 +3117,7 @@
    "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0301",
+   "id": "ISS-0229",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2186,
@@ -4062,24 +3126,11 @@
    "row": 579,
    "column": "AH",
    "excelValue": "0%",
-   "valueUsed": "0.0010052910052910052",
+   "valueUsed": "0.001",
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0302",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2186,
-   "offerName": "20261102_WIN_SALONSPL_CATFOOD_20_10000",
-   "file": "R&F tab",
-   "row": 579,
-   "column": "AJ",
-   "excelValue": "64",
-   "valueUsed": "63.66315789473684",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0303",
+   "id": "ISS-0230",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2187,
@@ -4092,7 +3143,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0304",
+   "id": "ISS-0231",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2187,
@@ -4105,7 +3156,7 @@
    "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0305",
+   "id": "ISS-0232",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2413,
@@ -4118,7 +3169,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0306",
+   "id": "ISS-0233",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1882,
@@ -4131,7 +3182,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0307",
+   "id": "ISS-0234",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1882,
@@ -4144,7 +3195,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0308",
+   "id": "ISS-0235",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2274,
@@ -4157,7 +3208,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0309",
+   "id": "ISS-0236",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2274,
@@ -4170,7 +3221,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0310",
+   "id": "ISS-0237",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2391,
@@ -4183,7 +3234,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0311",
+   "id": "ISS-0238",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2391,
@@ -4196,7 +3247,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0312",
+   "id": "ISS-0239",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2474,
@@ -4209,7 +3260,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0313",
+   "id": "ISS-0240",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2474,
@@ -4222,7 +3273,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0314",
+   "id": "ISS-0241",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2474,
@@ -4235,7 +3286,7 @@
    "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0315",
+   "id": "ISS-0242",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2311,
@@ -4248,7 +3299,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0316",
+   "id": "ISS-0243",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2311,
@@ -4257,24 +3308,11 @@
    "row": 600,
    "column": "AI",
    "excelValue": "1%",
-   "valueUsed": "0.00703125",
+   "valueUsed": "0.006999999999999999",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0317",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2311,
-   "offerName": "20261126_CANJBPLITTERROBOT_75000",
-   "file": "R&F tab",
-   "row": 600,
-   "column": "AK",
-   "excelValue": "1,000",
-   "valueUsed": "995.5555555555555",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0318",
+   "id": "ISS-0244",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2309,
@@ -4287,7 +3325,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0319",
+   "id": "ISS-0245",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2275,
@@ -4300,7 +3338,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0320",
+   "id": "ISS-0246",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2275,
@@ -4313,7 +3351,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0321",
+   "id": "ISS-0247",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2371,
@@ -4326,7 +3364,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0322",
+   "id": "ISS-0248",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2371,
@@ -4339,7 +3377,7 @@
    "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0323",
+   "id": "ISS-0249",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2191,
@@ -4348,24 +3386,11 @@
    "row": 609,
    "column": "AH",
    "excelValue": "2%",
-   "valueUsed": "0.02001959960800784",
+   "valueUsed": "0.019998061577229994",
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0324",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2191,
-   "offerName": "20261013_AQAPIFOODWATERCARE_10X",
-   "file": "R&F tab",
-   "row": 609,
-   "column": "AJ",
-   "excelValue": "13",
-   "valueUsed": "12.986013986013987",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0325",
+   "id": "ISS-0250",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2364,
@@ -4378,7 +3403,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0326",
+   "id": "ISS-0251",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2364,
@@ -4391,7 +3416,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0327",
+   "id": "ISS-0252",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2478,
@@ -4404,7 +3429,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0328",
+   "id": "ISS-0253",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2366,
@@ -4417,7 +3442,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0329",
+   "id": "ISS-0254",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2366,
@@ -4430,7 +3455,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0330",
+   "id": "ISS-0255",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2360,
@@ -4443,7 +3468,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0331",
+   "id": "ISS-0256",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2360,
@@ -4452,24 +3477,11 @@
    "row": 630,
    "column": "AI",
    "excelValue": "3%",
-   "valueUsed": "0.027505050505050505",
+   "valueUsed": "0.0275",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0332",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2360,
-   "offerName": "20261204_PTSBOOST_CRATESCARRIERS_25X",
-   "file": "R&F tab",
-   "row": 630,
-   "column": "AK",
-   "excelValue": "64",
-   "valueUsed": "63.98824825560044",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0333",
+   "id": "ISS-0257",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2367,
@@ -4482,7 +3494,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0334",
+   "id": "ISS-0258",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2367,
@@ -4495,7 +3507,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0335",
+   "id": "ISS-0259",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1761,
@@ -4508,7 +3520,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0336",
+   "id": "ISS-0260",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1763,
@@ -4521,7 +3533,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0337",
+   "id": "ISS-0261",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2343,
@@ -4530,24 +3542,11 @@
    "row": 643,
    "column": "AH",
    "excelValue": "3%",
-   "valueUsed": "0.025020408163265305",
+   "valueUsed": "0.02500027210884354",
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0338",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2343,
-   "offerName": "20260831_CANJBPBLUEWILD_SELECT_5X",
-   "file": "R&F tab",
-   "row": 643,
-   "column": "AJ",
-   "excelValue": "75",
-   "valueUsed": "74.93964110929853",
-   "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0339",
+   "id": "ISS-0262",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2341,
@@ -4560,7 +3559,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0340",
+   "id": "ISS-0263",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2341,
@@ -4569,24 +3568,11 @@
    "row": 644,
    "column": "AI",
    "excelValue": "2%",
-   "valueUsed": "0.01502857142857143",
+   "valueUsed": "0.015",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0341",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2341,
-   "offerName": "20260831_CANJBPDOGCANIDAE_5X",
-   "file": "R&F tab",
-   "row": 644,
-   "column": "AK",
-   "excelValue": "60",
-   "valueUsed": "59.88593155893536",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0342",
+   "id": "ISS-0264",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2215,
@@ -4599,7 +3585,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0343",
+   "id": "ISS-0265",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2215,
@@ -4612,7 +3598,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0344",
+   "id": "ISS-0266",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2342,
@@ -4625,7 +3611,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0345",
+   "id": "ISS-0267",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2342,
@@ -4638,7 +3624,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0346",
+   "id": "ISS-0268",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2342,
@@ -4651,7 +3637,7 @@
    "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0347",
+   "id": "ISS-0269",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2342,
@@ -4664,7 +3650,7 @@
    "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0348",
+   "id": "ISS-0270",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2344,
@@ -4677,7 +3663,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0349",
+   "id": "ISS-0271",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2434,
@@ -4686,24 +3672,11 @@
    "row": 659,
    "column": "AI",
    "excelValue": "13%",
-   "valueUsed": "0.1250034843205575",
+   "valueUsed": "0.12500015149219815",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0350",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2434,
-   "offerName": "20261228_BIRDFOODTREAT_5X",
-   "file": "R&F tab",
-   "row": 659,
-   "column": "AK",
-   "excelValue": "23",
-   "valueUsed": "22.999386776675216",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0351",
+   "id": "ISS-0272",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2446,
@@ -4716,7 +3689,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0352",
+   "id": "ISS-0273",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2446,
@@ -4729,7 +3702,7 @@
    "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0353",
+   "id": "ISS-0274",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2142,
@@ -4742,7 +3715,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0354",
+   "id": "ISS-0275",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2142,
@@ -4755,7 +3728,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0355",
+   "id": "ISS-0276",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2139,
@@ -4768,7 +3741,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0356",
+   "id": "ISS-0277",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2139,
@@ -4781,7 +3754,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0357",
+   "id": "ISS-0278",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2140,
@@ -4794,7 +3767,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0358",
+   "id": "ISS-0279",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2140,
@@ -4807,7 +3780,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0359",
+   "id": "ISS-0280",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2141,
@@ -4820,7 +3793,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0360",
+   "id": "ISS-0281",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2141,
@@ -4833,7 +3806,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0361",
+   "id": "ISS-0282",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2219,
@@ -4842,11 +3815,11 @@
    "row": 670,
    "column": "AH",
    "excelValue": "75%",
-   "valueUsed": "0.7449766482024547",
+   "valueUsed": "0.745",
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0362",
+   "id": "ISS-0283",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2481,
@@ -4859,7 +3832,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0363",
+   "id": "ISS-0284",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2121,
@@ -4868,50 +3841,11 @@
    "row": 672,
    "column": "AI",
    "excelValue": "99%",
-   "valueUsed": "0.9900004806536891",
+   "valueUsed": "0.9900000050595125",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0364",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2121,
-   "offerName": "20270101_TRBESTIEBENICHOOSE_2X",
-   "file": "R&F tab",
-   "row": 672,
-   "column": "AK",
-   "excelValue": "95",
-   "valueUsed": "94.99995436219714",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0365",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2122,
-   "offerName": "20270101_TRVIPPBENICHOOSE_2X",
-   "file": "R&F tab",
-   "row": 673,
-   "column": "AI",
-   "excelValue": "99%",
-   "valueUsed": "0.9899996347031963",
-   "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0366",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2122,
-   "offerName": "20270101_TRVIPPBENICHOOSE_2X",
-   "file": "R&F tab",
-   "row": 673,
-   "column": "AK",
-   "excelValue": "105",
-   "valueUsed": "105.00003837462788",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0367",
+   "id": "ISS-0285",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 1893,
@@ -4924,20 +3858,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0368",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 1893,
-   "offerName": "20270108_JANMEMANNIV_1000",
-   "file": "R&F tab",
-   "row": 682,
-   "column": "AI",
-   "excelValue": "34%",
-   "valueUsed": "0.3398809523809524",
-   "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0369",
+   "id": "ISS-0286",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2395,
@@ -4950,7 +3871,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0370",
+   "id": "ISS-0287",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2395,
@@ -4963,7 +3884,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0371",
+   "id": "ISS-0288",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2395,
@@ -4976,7 +3897,7 @@
    "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0372",
+   "id": "ISS-0289",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2395,
@@ -4989,7 +3910,7 @@
    "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0373",
+   "id": "ISS-0290",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2511,
@@ -5002,7 +3923,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0374",
+   "id": "ISS-0291",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2512,
@@ -5015,7 +3936,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0375",
+   "id": "ISS-0292",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2512,
@@ -5028,7 +3949,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0376",
+   "id": "ISS-0293",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2404,
@@ -5041,7 +3962,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0377",
+   "id": "ISS-0294",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2405,
@@ -5054,7 +3975,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0378",
+   "id": "ISS-0295",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2405,
@@ -5067,7 +3988,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0379",
+   "id": "ISS-0296",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2406,
@@ -5080,7 +4001,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0380",
+   "id": "ISS-0297",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2585,
@@ -5093,7 +4014,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0381",
+   "id": "ISS-0298",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2585,
@@ -5106,7 +4027,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0382",
+   "id": "ISS-0299",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2475,
@@ -5119,7 +4040,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0383",
+   "id": "ISS-0300",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2267,
@@ -5132,7 +4053,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0384",
+   "id": "ISS-0301",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2361,
@@ -5145,7 +4066,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0385",
+   "id": "ISS-0302",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2361,
@@ -5158,7 +4079,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0386",
+   "id": "ISS-0303",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2442,
@@ -5171,7 +4092,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0387",
+   "id": "ISS-0304",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2442,
@@ -5184,7 +4105,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0388",
+   "id": "ISS-0305",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2326,
@@ -5197,7 +4118,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0389",
+   "id": "ISS-0306",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2326,
@@ -5206,24 +4127,11 @@
    "row": 709,
    "column": "AI",
    "excelValue": "1%",
-   "valueUsed": "0.007506172839506173",
+   "valueUsed": "0.007500046412327113",
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0390",
-   "type": "rounded_export",
-   "severity": "info",
-   "offerId": 2326,
-   "offerName": "20260908_PHARMACY_100_25000",
-   "file": "R&F tab",
-   "row": 709,
-   "column": "AK",
-   "excelValue": "133",
-   "valueUsed": "132.89144736842104",
-   "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
-  },
-  {
-   "id": "ISS-0391",
+   "id": "ISS-0307",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2484,
@@ -5236,7 +4144,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0392",
+   "id": "ISS-0308",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2077,
@@ -5249,7 +4157,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0393",
+   "id": "ISS-0309",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2077,
@@ -5262,7 +4170,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0394",
+   "id": "ISS-0310",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2077,
@@ -5275,7 +4183,7 @@
    "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0395",
+   "id": "ISS-0311",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2077,
@@ -5288,7 +4196,7 @@
    "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0396",
+   "id": "ISS-0312",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2581,
@@ -5301,7 +4209,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0397",
+   "id": "ISS-0313",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2589,
@@ -5314,7 +4222,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0398",
+   "id": "ISS-0314",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2589,
@@ -5327,7 +4235,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0399",
+   "id": "ISS-0315",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2396,
@@ -5340,7 +4248,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0400",
+   "id": "ISS-0316",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2396,
@@ -5353,7 +4261,7 @@
    "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0401",
+   "id": "ISS-0317",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2423,
@@ -5366,7 +4274,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0402",
+   "id": "ISS-0318",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2423,
@@ -5379,7 +4287,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0403",
+   "id": "ISS-0319",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2498,
@@ -5392,7 +4300,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0404",
+   "id": "ISS-0320",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2498,
@@ -5405,7 +4313,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0405",
+   "id": "ISS-0321",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2500,
@@ -5418,7 +4326,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0406",
+   "id": "ISS-0322",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2500,
@@ -5431,7 +4339,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0407",
+   "id": "ISS-0323",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2519,
@@ -5444,7 +4352,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0408",
+   "id": "ISS-0324",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2519,
@@ -5457,7 +4365,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0409",
+   "id": "ISS-0325",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2487,
@@ -5470,7 +4378,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0410",
+   "id": "ISS-0326",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2593,
@@ -5483,7 +4391,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0411",
+   "id": "ISS-0327",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2564,
@@ -5496,7 +4404,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0412",
+   "id": "ISS-0328",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2565,
@@ -5509,7 +4417,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0413",
+   "id": "ISS-0329",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2521,
@@ -5522,7 +4430,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0414",
+   "id": "ISS-0330",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2521,
@@ -5535,7 +4443,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0415",
+   "id": "ISS-0331",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2521,
@@ -5548,7 +4456,7 @@
    "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0416",
+   "id": "ISS-0332",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2521,
@@ -5561,7 +4469,7 @@
    "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0417",
+   "id": "ISS-0333",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2490,
@@ -5574,7 +4482,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0418",
+   "id": "ISS-0334",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2461,
@@ -5587,7 +4495,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0419",
+   "id": "ISS-0335",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2461,
@@ -5600,7 +4508,7 @@
    "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0420",
+   "id": "ISS-0336",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2462,
@@ -5613,7 +4521,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0421",
+   "id": "ISS-0337",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2462,
@@ -5626,7 +4534,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0422",
+   "id": "ISS-0338",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2463,
@@ -5639,7 +4547,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0423",
+   "id": "ISS-0339",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2540,
@@ -5652,7 +4560,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0424",
+   "id": "ISS-0340",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2540,
@@ -5665,7 +4573,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0425",
+   "id": "ISS-0341",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2493,
@@ -5678,7 +4586,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0426",
+   "id": "ISS-0342",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2399,
@@ -5691,7 +4599,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0427",
+   "id": "ISS-0343",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2399,
@@ -5704,7 +4612,7 @@
    "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0428",
+   "id": "ISS-0344",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2401,
@@ -5717,7 +4625,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0429",
+   "id": "ISS-0345",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2401,
@@ -5730,7 +4638,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0430",
+   "id": "ISS-0346",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2401,
@@ -5743,7 +4651,7 @@
    "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0431",
+   "id": "ISS-0347",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2401,
@@ -5756,7 +4664,7 @@
    "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0432",
+   "id": "ISS-0348",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2525,
@@ -5769,7 +4677,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0433",
+   "id": "ISS-0349",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2541,
@@ -5782,7 +4690,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0434",
+   "id": "ISS-0350",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2541,
@@ -5795,7 +4703,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0435",
+   "id": "ISS-0351",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2526,
@@ -5808,7 +4716,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0436",
+   "id": "ISS-0352",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2542,
@@ -5821,7 +4729,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0437",
+   "id": "ISS-0353",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2542,
@@ -5834,7 +4742,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0438",
+   "id": "ISS-0354",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2527,
@@ -5847,7 +4755,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0439",
+   "id": "ISS-0355",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2543,
@@ -5860,7 +4768,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0440",
+   "id": "ISS-0356",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2543,
@@ -5873,7 +4781,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0441",
+   "id": "ISS-0357",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2543,
@@ -5886,7 +4794,7 @@
    "message": "The export shows a rounded AK value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0442",
+   "id": "ISS-0358",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2403,
@@ -5899,7 +4807,7 @@
    "message": "The export shows a rounded AH value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0443",
+   "id": "ISS-0359",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2403,
@@ -5912,7 +4820,7 @@
    "message": "The export shows a rounded AJ value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0444",
+   "id": "ISS-0360",
    "type": "rounded_export",
    "severity": "info",
    "offerId": 2528,
@@ -5925,7 +4833,7 @@
    "message": "The export shows a rounded AI value. The exact input was rebuilt from the totals (A4)."
   },
   {
-   "id": "ISS-0445",
+   "id": "ISS-0361",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5938,7 +4846,7 @@
    "message": "Metadata row 2427 (Ref Nbr 1396): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0446",
+   "id": "ISS-0362",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5951,7 +4859,7 @@
    "message": "Metadata row 2428 (Ref Nbr 1397): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0447",
+   "id": "ISS-0363",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5964,7 +4872,7 @@
    "message": "Metadata row 2429 (Ref Nbr 1398): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0448",
+   "id": "ISS-0364",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5977,7 +4885,7 @@
    "message": "Metadata row 2430 (Ref Nbr 1399): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0449",
+   "id": "ISS-0365",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5990,7 +4898,7 @@
    "message": "Metadata row 2431 (Ref Nbr 1400): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0450",
+   "id": "ISS-0366",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6003,7 +4911,7 @@
    "message": "Metadata row 2432 (Ref Nbr 1401): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0451",
+   "id": "ISS-0367",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6016,7 +4924,7 @@
    "message": "Metadata row 2433 (Ref Nbr 1402): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0452",
+   "id": "ISS-0368",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6029,7 +4937,7 @@
    "message": "Metadata row 2434 (Ref Nbr 1403): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0453",
+   "id": "ISS-0369",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6042,7 +4950,7 @@
    "message": "Metadata row 2435 (Ref Nbr 1404): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0454",
+   "id": "ISS-0370",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6055,7 +4963,7 @@
    "message": "Metadata row 2436 (Ref Nbr 1405): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0455",
+   "id": "ISS-0371",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6068,7 +4976,7 @@
    "message": "Metadata row 2437 (Ref Nbr 1406): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0456",
+   "id": "ISS-0372",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6081,7 +4989,7 @@
    "message": "Metadata row 2438 (Ref Nbr 1407): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0457",
+   "id": "ISS-0373",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6094,7 +5002,7 @@
    "message": "Metadata row 2439 (Ref Nbr 1408): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0458",
+   "id": "ISS-0374",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6107,7 +5015,7 @@
    "message": "Metadata row 2440 (Ref Nbr 1409): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0459",
+   "id": "ISS-0375",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6120,7 +5028,7 @@
    "message": "Metadata row 2441 (Ref Nbr 1410): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0460",
+   "id": "ISS-0376",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6133,7 +5041,7 @@
    "message": "Metadata row 2442 (Ref Nbr 1411): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0461",
+   "id": "ISS-0377",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6146,7 +5054,7 @@
    "message": "Metadata row 2443 (Ref Nbr 1412): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0462",
+   "id": "ISS-0378",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6159,7 +5067,7 @@
    "message": "Metadata row 2444 (Ref Nbr 1413): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0463",
+   "id": "ISS-0379",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6172,7 +5080,7 @@
    "message": "Metadata row 2445 (Ref Nbr 1414): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0464",
+   "id": "ISS-0380",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6185,7 +5093,7 @@
    "message": "Metadata row 2446 (Ref Nbr 1415): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0465",
+   "id": "ISS-0381",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6198,7 +5106,7 @@
    "message": "Metadata row 2447 (Ref Nbr 1416): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0466",
+   "id": "ISS-0382",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6211,7 +5119,7 @@
    "message": "Metadata row 2448 (Ref Nbr 1417): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0467",
+   "id": "ISS-0383",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6224,7 +5132,7 @@
    "message": "Metadata row 2449 (Ref Nbr 1418): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0468",
+   "id": "ISS-0384",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6237,7 +5145,7 @@
    "message": "Metadata row 2450 (Ref Nbr 1419): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0469",
+   "id": "ISS-0385",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6250,7 +5158,7 @@
    "message": "Metadata row 2451 (Ref Nbr 1420): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0470",
+   "id": "ISS-0386",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6263,7 +5171,7 @@
    "message": "Metadata row 2452 (Ref Nbr 1421): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0471",
+   "id": "ISS-0387",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6276,7 +5184,7 @@
    "message": "Metadata row 2453 (Ref Nbr 1422): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0472",
+   "id": "ISS-0388",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6289,7 +5197,7 @@
    "message": "Metadata row 2454 (Ref Nbr 1423): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0473",
+   "id": "ISS-0389",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6302,7 +5210,7 @@
    "message": "Metadata row 2455 (Ref Nbr 1424): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0474",
+   "id": "ISS-0390",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6315,7 +5223,7 @@
    "message": "Metadata row 2456 (Ref Nbr 1425): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0475",
+   "id": "ISS-0391",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6328,7 +5236,7 @@
    "message": "Metadata row 2457 (Ref Nbr 1426): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0476",
+   "id": "ISS-0392",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6341,7 +5249,7 @@
    "message": "Metadata row 2458 (Ref Nbr 1427): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0477",
+   "id": "ISS-0393",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6354,7 +5262,7 @@
    "message": "Metadata row 2459 (Ref Nbr 1428): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0478",
+   "id": "ISS-0394",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6367,7 +5275,7 @@
    "message": "Metadata row 2460 (Ref Nbr 1429): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0479",
+   "id": "ISS-0395",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6380,7 +5288,7 @@
    "message": "Metadata row 2461 (Ref Nbr 1430): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0480",
+   "id": "ISS-0396",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6393,7 +5301,7 @@
    "message": "Metadata row 2462 (Ref Nbr 1431): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0481",
+   "id": "ISS-0397",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6406,7 +5314,7 @@
    "message": "Metadata row 2463 (Ref Nbr 1432): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0482",
+   "id": "ISS-0398",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6419,7 +5327,7 @@
    "message": "Metadata row 2464 (Ref Nbr 1433): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0483",
+   "id": "ISS-0399",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6432,7 +5340,7 @@
    "message": "Metadata row 2465 (Ref Nbr 1434): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0484",
+   "id": "ISS-0400",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6445,7 +5353,7 @@
    "message": "Metadata row 2466 (Ref Nbr 1435): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0485",
+   "id": "ISS-0401",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6458,7 +5366,7 @@
    "message": "Metadata row 2467 (Ref Nbr 1436): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0486",
+   "id": "ISS-0402",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6471,7 +5379,7 @@
    "message": "Metadata row 2468 (Ref Nbr 1437): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0487",
+   "id": "ISS-0403",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6484,7 +5392,7 @@
    "message": "Metadata row 2469 (Ref Nbr 1438): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0488",
+   "id": "ISS-0404",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6497,7 +5405,7 @@
    "message": "Metadata row 2470 (Ref Nbr 1439): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0489",
+   "id": "ISS-0405",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6510,7 +5418,7 @@
    "message": "Metadata row 2471 (Ref Nbr 1440): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0490",
+   "id": "ISS-0406",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6523,7 +5431,7 @@
    "message": "Metadata row 2472 (Ref Nbr 1441): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0491",
+   "id": "ISS-0407",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6536,7 +5444,7 @@
    "message": "Metadata row 2473 (Ref Nbr 1442): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0492",
+   "id": "ISS-0408",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6549,7 +5457,7 @@
    "message": "Metadata row 2474 (Ref Nbr 1443): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0493",
+   "id": "ISS-0409",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6562,7 +5470,7 @@
    "message": "Metadata row 2475 (Ref Nbr 1444): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0494",
+   "id": "ISS-0410",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6575,7 +5483,7 @@
    "message": "Metadata row 2476 (Ref Nbr 1445): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0495",
+   "id": "ISS-0411",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6588,7 +5496,7 @@
    "message": "Metadata row 2477 (Ref Nbr 1446): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0496",
+   "id": "ISS-0412",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6601,7 +5509,7 @@
    "message": "Metadata row 2478 (Ref Nbr 1447): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0497",
+   "id": "ISS-0413",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6614,7 +5522,7 @@
    "message": "Metadata row 2479 (Ref Nbr 1448): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0498",
+   "id": "ISS-0414",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6627,7 +5535,7 @@
    "message": "Metadata row 2480 (Ref Nbr 1449): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0499",
+   "id": "ISS-0415",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6640,7 +5548,7 @@
    "message": "Metadata row 2481 (Ref Nbr 1450): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0500",
+   "id": "ISS-0416",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6653,7 +5561,7 @@
    "message": "Metadata row 2482 (Ref Nbr 1451): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0501",
+   "id": "ISS-0417",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6666,7 +5574,7 @@
    "message": "Metadata row 2483 (Ref Nbr 1452): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0502",
+   "id": "ISS-0418",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6679,7 +5587,7 @@
    "message": "Metadata row 2484 (Ref Nbr 1453): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0503",
+   "id": "ISS-0419",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6692,7 +5600,7 @@
    "message": "Metadata row 2485 (Ref Nbr 1454): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0504",
+   "id": "ISS-0420",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6705,7 +5613,7 @@
    "message": "Metadata row 2486 (Ref Nbr 1455): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0505",
+   "id": "ISS-0421",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6718,7 +5626,7 @@
    "message": "Metadata row 2487 (Ref Nbr 1456): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0506",
+   "id": "ISS-0422",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6731,7 +5639,7 @@
    "message": "Metadata row 2488 (Ref Nbr 1457): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0507",
+   "id": "ISS-0423",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6744,7 +5652,7 @@
    "message": "Metadata row 2489 (Ref Nbr 1458): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0508",
+   "id": "ISS-0424",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6757,7 +5665,7 @@
    "message": "Metadata row 2490 (Ref Nbr 1459): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0509",
+   "id": "ISS-0425",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6770,7 +5678,7 @@
    "message": "Metadata row 2491 (Ref Nbr 1460): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0510",
+   "id": "ISS-0426",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6783,7 +5691,7 @@
    "message": "Metadata row 2492 (Ref Nbr 1461): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0511",
+   "id": "ISS-0427",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6796,7 +5704,7 @@
    "message": "Metadata row 2493 (Ref Nbr 1462): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0512",
+   "id": "ISS-0428",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6809,7 +5717,7 @@
    "message": "Metadata row 2494 (Ref Nbr 1463): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0513",
+   "id": "ISS-0429",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6822,7 +5730,7 @@
    "message": "Metadata row 2495 (Ref Nbr 1464): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0514",
+   "id": "ISS-0430",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6835,7 +5743,7 @@
    "message": "Metadata row 2496 (Ref Nbr 1465): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0515",
+   "id": "ISS-0431",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6848,7 +5756,7 @@
    "message": "Metadata row 2497 (Ref Nbr 1466): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0516",
+   "id": "ISS-0432",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6861,7 +5769,7 @@
    "message": "Metadata row 2498 (Ref Nbr 1467): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0517",
+   "id": "ISS-0433",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6874,7 +5782,7 @@
    "message": "Metadata row 2499 (Ref Nbr 1468): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0518",
+   "id": "ISS-0434",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6887,7 +5795,7 @@
    "message": "Metadata row 2500 (Ref Nbr 1469): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0519",
+   "id": "ISS-0435",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6900,7 +5808,7 @@
    "message": "Metadata row 2501 (Ref Nbr 1470): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0520",
+   "id": "ISS-0436",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6913,7 +5821,7 @@
    "message": "Metadata row 2502 (Ref Nbr 1471): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0521",
+   "id": "ISS-0437",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6926,7 +5834,7 @@
    "message": "Metadata row 2503 (Ref Nbr 1472): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0522",
+   "id": "ISS-0438",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6939,7 +5847,7 @@
    "message": "Metadata row 2504 (Ref Nbr 1473): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0523",
+   "id": "ISS-0439",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6952,7 +5860,7 @@
    "message": "Metadata row 2505 (Ref Nbr 1474): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0524",
+   "id": "ISS-0440",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6965,7 +5873,7 @@
    "message": "Metadata row 2506 (Ref Nbr 1475): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0525",
+   "id": "ISS-0441",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6978,7 +5886,7 @@
    "message": "Metadata row 2507 (Ref Nbr 1476): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0526",
+   "id": "ISS-0442",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6991,7 +5899,7 @@
    "message": "Metadata row 2508 (Ref Nbr 1477): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0527",
+   "id": "ISS-0443",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7004,7 +5912,7 @@
    "message": "Metadata row 2509 (Ref Nbr 1478): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0528",
+   "id": "ISS-0444",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7017,7 +5925,7 @@
    "message": "Metadata row 2510 (Ref Nbr 1479): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0529",
+   "id": "ISS-0445",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7030,7 +5938,7 @@
    "message": "Metadata row 2511 (Ref Nbr 1480): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0530",
+   "id": "ISS-0446",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7043,7 +5951,7 @@
    "message": "Metadata row 2512 (Ref Nbr 1481): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0531",
+   "id": "ISS-0447",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7056,7 +5964,7 @@
    "message": "Metadata row 2513 (Ref Nbr 1482): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0532",
+   "id": "ISS-0448",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7069,7 +5977,7 @@
    "message": "Metadata row 2514 (Ref Nbr 1483): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0533",
+   "id": "ISS-0449",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7082,7 +5990,7 @@
    "message": "Metadata row 2515 (Ref Nbr 1484): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0534",
+   "id": "ISS-0450",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7095,7 +6003,7 @@
    "message": "Metadata row 2516 (Ref Nbr 1485): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0535",
+   "id": "ISS-0451",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7108,7 +6016,7 @@
    "message": "Metadata row 2517 (Ref Nbr 1486): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0536",
+   "id": "ISS-0452",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7121,7 +6029,7 @@
    "message": "Metadata row 2518 (Ref Nbr 1487): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0537",
+   "id": "ISS-0453",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7134,7 +6042,7 @@
    "message": "Metadata row 2519 (Ref Nbr 1488): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0538",
+   "id": "ISS-0454",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7147,7 +6055,7 @@
    "message": "Metadata row 2520 (Ref Nbr 1489): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0539",
+   "id": "ISS-0455",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7160,7 +6068,7 @@
    "message": "Metadata row 2521 (Ref Nbr 1490): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0540",
+   "id": "ISS-0456",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7173,7 +6081,7 @@
    "message": "Metadata row 2522 (Ref Nbr 1491): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0541",
+   "id": "ISS-0457",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7186,7 +6094,7 @@
    "message": "Metadata row 2523 (Ref Nbr 1492): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0542",
+   "id": "ISS-0458",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7199,7 +6107,7 @@
    "message": "Metadata row 2524 (Ref Nbr 1493): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0543",
+   "id": "ISS-0459",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7212,7 +6120,7 @@
    "message": "Metadata row 2525 (Ref Nbr 1494): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0544",
+   "id": "ISS-0460",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7225,7 +6133,7 @@
    "message": "Metadata row 2526 (Ref Nbr 1495): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0545",
+   "id": "ISS-0461",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7238,7 +6146,7 @@
    "message": "Metadata row 2527 (Ref Nbr 1496): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0546",
+   "id": "ISS-0462",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7251,7 +6159,7 @@
    "message": "Metadata row 2528 (Ref Nbr 1497): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0547",
+   "id": "ISS-0463",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7264,7 +6172,7 @@
    "message": "Metadata row 2529 (Ref Nbr 1498): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0548",
+   "id": "ISS-0464",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7277,7 +6185,7 @@
    "message": "Metadata row 2530 (Ref Nbr 1499): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0549",
+   "id": "ISS-0465",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7290,7 +6198,7 @@
    "message": "Metadata row 2531 (Ref Nbr 1500): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0550",
+   "id": "ISS-0466",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7303,7 +6211,7 @@
    "message": "Metadata row 2532 (Ref Nbr 1501): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0551",
+   "id": "ISS-0467",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7316,7 +6224,7 @@
    "message": "Metadata row 2533 (Ref Nbr 1502): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0552",
+   "id": "ISS-0468",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7329,7 +6237,7 @@
    "message": "Metadata row 2534 (Ref Nbr 1503): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0553",
+   "id": "ISS-0469",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7342,7 +6250,7 @@
    "message": "Metadata row 2535 (Ref Nbr 1504): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0554",
+   "id": "ISS-0470",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7355,7 +6263,7 @@
    "message": "Metadata row 2536 (Ref Nbr 1505): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0555",
+   "id": "ISS-0471",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7368,7 +6276,7 @@
    "message": "Metadata row 2537 (Ref Nbr 1506): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0556",
+   "id": "ISS-0472",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7381,7 +6289,7 @@
    "message": "Metadata row 2538 (Ref Nbr 1507): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0557",
+   "id": "ISS-0473",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7394,7 +6302,7 @@
    "message": "Metadata row 2539 (Ref Nbr 1508): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0558",
+   "id": "ISS-0474",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7407,7 +6315,7 @@
    "message": "Metadata row 2540 (Ref Nbr 1509): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0559",
+   "id": "ISS-0475",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7420,7 +6328,7 @@
    "message": "Metadata row 2541 (Ref Nbr 1510): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0560",
+   "id": "ISS-0476",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7433,7 +6341,7 @@
    "message": "Metadata row 2542 (Ref Nbr 1511): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0561",
+   "id": "ISS-0477",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7446,7 +6354,7 @@
    "message": "Metadata row 2543 (Ref Nbr 1512): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0562",
+   "id": "ISS-0478",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7459,7 +6367,7 @@
    "message": "Metadata row 2544 (Ref Nbr 1513): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0563",
+   "id": "ISS-0479",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7472,7 +6380,7 @@
    "message": "Metadata row 2545 (Ref Nbr 1514): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0564",
+   "id": "ISS-0480",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7485,7 +6393,7 @@
    "message": "Metadata row 2546 (Ref Nbr 1515): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0565",
+   "id": "ISS-0481",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7498,7 +6406,7 @@
    "message": "Metadata row 2547 (Ref Nbr 1516): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0566",
+   "id": "ISS-0482",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7511,7 +6419,7 @@
    "message": "Metadata row 2548 (Ref Nbr 1517): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0567",
+   "id": "ISS-0483",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7524,7 +6432,7 @@
    "message": "Metadata row 2549 (Ref Nbr 1518): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0568",
+   "id": "ISS-0484",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7537,7 +6445,7 @@
    "message": "Metadata row 2550 (Ref Nbr 1519): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0569",
+   "id": "ISS-0485",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7550,7 +6458,7 @@
    "message": "Metadata row 2551 (Ref Nbr 1520): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0570",
+   "id": "ISS-0486",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7563,7 +6471,7 @@
    "message": "Metadata row 2552 (Ref Nbr 1521): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0571",
+   "id": "ISS-0487",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7576,7 +6484,7 @@
    "message": "Metadata row 2553 (Ref Nbr 1522): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0572",
+   "id": "ISS-0488",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7589,7 +6497,7 @@
    "message": "Metadata row 2554 (Ref Nbr 1523): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0573",
+   "id": "ISS-0489",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7602,7 +6510,7 @@
    "message": "Metadata row 2555 (Ref Nbr 1524): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0574",
+   "id": "ISS-0490",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7615,7 +6523,7 @@
    "message": "Metadata row 2556 (Ref Nbr 1525): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0575",
+   "id": "ISS-0491",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7628,7 +6536,7 @@
    "message": "Metadata row 2557 (Ref Nbr 1526): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0576",
+   "id": "ISS-0492",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7641,7 +6549,7 @@
    "message": "Metadata row 2558 (Ref Nbr 1527): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0577",
+   "id": "ISS-0493",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7654,7 +6562,7 @@
    "message": "Metadata row 2559 (Ref Nbr 1528): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0578",
+   "id": "ISS-0494",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7667,7 +6575,7 @@
    "message": "Metadata row 2560 (Ref Nbr 1529): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0579",
+   "id": "ISS-0495",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7680,7 +6588,7 @@
    "message": "Metadata row 2561 (Ref Nbr 1530): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0580",
+   "id": "ISS-0496",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7693,7 +6601,7 @@
    "message": "Metadata row 2562 (Ref Nbr 1531): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0581",
+   "id": "ISS-0497",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7706,7 +6614,7 @@
    "message": "Metadata row 2563 (Ref Nbr 1532): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0582",
+   "id": "ISS-0498",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7719,7 +6627,7 @@
    "message": "Metadata row 2564 (Ref Nbr 1533): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0583",
+   "id": "ISS-0499",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7732,7 +6640,7 @@
    "message": "Metadata row 2565 (Ref Nbr 1534): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0584",
+   "id": "ISS-0500",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7745,7 +6653,7 @@
    "message": "Metadata row 2566 (Ref Nbr 1535): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0585",
+   "id": "ISS-0501",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7758,7 +6666,7 @@
    "message": "Metadata row 2567 (Ref Nbr 1536): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0586",
+   "id": "ISS-0502",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7771,7 +6679,7 @@
    "message": "Metadata row 2568 (Ref Nbr 1537): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0587",
+   "id": "ISS-0503",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7784,7 +6692,7 @@
    "message": "Metadata row 2569 (Ref Nbr 1538): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0588",
+   "id": "ISS-0504",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7797,7 +6705,7 @@
    "message": "Metadata row 2570 (Ref Nbr 1539): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0589",
+   "id": "ISS-0505",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7810,7 +6718,7 @@
    "message": "Metadata row 2571 (Ref Nbr 1540): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0590",
+   "id": "ISS-0506",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7823,7 +6731,7 @@
    "message": "Metadata row 2572 (Ref Nbr 1541): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0591",
+   "id": "ISS-0507",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7836,7 +6744,7 @@
    "message": "Metadata row 2573 (Ref Nbr 1542): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0592",
+   "id": "ISS-0508",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7849,7 +6757,7 @@
    "message": "Metadata row 2574 (Ref Nbr 1543): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0593",
+   "id": "ISS-0509",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7862,7 +6770,7 @@
    "message": "Metadata row 2575 (Ref Nbr 1544): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0594",
+   "id": "ISS-0510",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7875,7 +6783,7 @@
    "message": "Metadata row 2576 (Ref Nbr 1545): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0595",
+   "id": "ISS-0511",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7888,7 +6796,7 @@
    "message": "Metadata row 2577 (Ref Nbr 1546): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0596",
+   "id": "ISS-0512",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7901,7 +6809,7 @@
    "message": "Metadata row 2578 (Ref Nbr 1547): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0597",
+   "id": "ISS-0513",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7914,7 +6822,7 @@
    "message": "Metadata row 2579 (Ref Nbr 1548): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0598",
+   "id": "ISS-0514",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7927,7 +6835,7 @@
    "message": "Metadata row 2580 (Ref Nbr 1549): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0599",
+   "id": "ISS-0515",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7940,7 +6848,7 @@
    "message": "Metadata row 2581 (Ref Nbr 1550): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0600",
+   "id": "ISS-0516",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7953,7 +6861,7 @@
    "message": "Metadata row 2582 (Ref Nbr 1551): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0601",
+   "id": "ISS-0517",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7966,7 +6874,7 @@
    "message": "Metadata row 2583 (Ref Nbr 1552): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0602",
+   "id": "ISS-0518",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7979,7 +6887,7 @@
    "message": "Metadata row 2584 (Ref Nbr 1553): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0603",
+   "id": "ISS-0519",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7992,7 +6900,7 @@
    "message": "Metadata row 2585 (Ref Nbr 1554): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0604",
+   "id": "ISS-0520",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8005,7 +6913,7 @@
    "message": "Metadata row 2586 (Ref Nbr 1555): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0605",
+   "id": "ISS-0521",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8018,7 +6926,7 @@
    "message": "Metadata row 2587 (Ref Nbr 1556): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0606",
+   "id": "ISS-0522",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8031,7 +6939,7 @@
    "message": "Metadata row 2588 (Ref Nbr 1557): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0607",
+   "id": "ISS-0523",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8044,7 +6952,7 @@
    "message": "Metadata row 2589 (Ref Nbr 1558): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0608",
+   "id": "ISS-0524",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8057,7 +6965,7 @@
    "message": "Metadata row 2590 (Ref Nbr 1559): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0609",
+   "id": "ISS-0525",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8070,7 +6978,7 @@
    "message": "Metadata row 2591 (Ref Nbr 1560): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0610",
+   "id": "ISS-0526",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8083,7 +6991,7 @@
    "message": "Metadata row 2592 (Ref Nbr 1561): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0611",
+   "id": "ISS-0527",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8096,7 +7004,7 @@
    "message": "Metadata row 2593 (Ref Nbr 1562): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0612",
+   "id": "ISS-0528",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8109,7 +7017,7 @@
    "message": "Metadata row 2594 (Ref Nbr 1563): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0613",
+   "id": "ISS-0529",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8122,7 +7030,7 @@
    "message": "Metadata row 2595 (Ref Nbr 1564): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0614",
+   "id": "ISS-0530",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8135,7 +7043,7 @@
    "message": "Metadata row 2596 (Ref Nbr 1565): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0615",
+   "id": "ISS-0531",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8148,7 +7056,7 @@
    "message": "Metadata row 2597 (Ref Nbr 1566): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0616",
+   "id": "ISS-0532",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8161,7 +7069,7 @@
    "message": "Metadata row 2598 (Ref Nbr 1567): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0617",
+   "id": "ISS-0533",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8174,7 +7082,7 @@
    "message": "Metadata row 2599 (Ref Nbr 1568): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0618",
+   "id": "ISS-0534",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8187,7 +7095,7 @@
    "message": "Metadata row 2600 (Ref Nbr 1569): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0619",
+   "id": "ISS-0535",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8200,7 +7108,7 @@
    "message": "Metadata row 2601 (Ref Nbr 1570): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0620",
+   "id": "ISS-0536",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8213,7 +7121,7 @@
    "message": "Metadata row 2602 (Ref Nbr 1571): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0621",
+   "id": "ISS-0537",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8226,7 +7134,7 @@
    "message": "Metadata row 2603 (Ref Nbr 1572): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0622",
+   "id": "ISS-0538",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8239,7 +7147,7 @@
    "message": "Metadata row 2604 (Ref Nbr 1573): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0623",
+   "id": "ISS-0539",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8252,7 +7160,7 @@
    "message": "Metadata row 2605 (Ref Nbr 1574): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0624",
+   "id": "ISS-0540",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8265,7 +7173,7 @@
    "message": "Metadata row 2606 (Ref Nbr 1575): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0625",
+   "id": "ISS-0541",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8278,7 +7186,7 @@
    "message": "Metadata row 2607 (Ref Nbr 1576): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0626",
+   "id": "ISS-0542",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -8291,7 +7199,7 @@
    "message": "Metadata row 2608 (Ref Nbr 1577): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0627",
+   "id": "ISS-0543",
    "type": "new_status",
    "severity": "issue",
    "offerId": null,
@@ -8339,7 +7247,7 @@
    ]
   },
   {
-   "id": "ISS-0628",
+   "id": "ISS-0544",
    "type": "new_status",
    "severity": "issue",
    "offerId": null,
@@ -8374,7 +7282,7 @@
    ]
   },
   {
-   "id": "ISS-0629",
+   "id": "ISS-0545",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -8392,7 +7300,7 @@
    ]
   },
   {
-   "id": "ISS-0630",
+   "id": "ISS-0546",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -8421,7 +7329,7 @@
    ]
   },
   {
-   "id": "ISS-0631",
+   "id": "ISS-0547",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -8459,7 +7367,7 @@
    ]
   },
   {
-   "id": "ISS-0632",
+   "id": "ISS-0548",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -8504,7 +7412,7 @@
    ]
   },
   {
-   "id": "ISS-0633",
+   "id": "ISS-0549",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -8531,7 +7439,7 @@
    ]
   },
   {
-   "id": "ISS-0634",
+   "id": "ISS-0550",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -8555,7 +7463,7 @@
    ]
   },
   {
-   "id": "ISS-0635",
+   "id": "ISS-0551",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -8578,7 +7486,7 @@
    ]
   },
   {
-   "id": "ISS-0636",
+   "id": "ISS-0552",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -8601,7 +7509,7 @@
    ]
   },
   {
-   "id": "ISS-0637",
+   "id": "ISS-0553",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -8618,7 +7526,7 @@
    ]
   },
   {
-   "id": "ISS-0638",
+   "id": "ISS-0554",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -8638,7 +7546,7 @@
    ]
   },
   {
-   "id": "ISS-0639",
+   "id": "ISS-0555",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -8654,7 +7562,7 @@
    ]
   },
   {
-   "id": "ISS-0640",
+   "id": "ISS-0556",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -8670,7 +7578,7 @@
    ]
   },
   {
-   "id": "ISS-0641",
+   "id": "ISS-0557",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
