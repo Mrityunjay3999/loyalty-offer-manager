@@ -18,6 +18,8 @@ export interface FieldRendererProps {
   options?: string[];
   error?: string;
   warning?: string;
+  /** v3: a per-offer badge beside the label, e.g. "Derived on import". */
+  badge?: { label: string; title: string };
 }
 
 export function FieldRenderer({
@@ -29,6 +31,7 @@ export function FieldRenderer({
   options = [],
   error,
   warning,
+  badge,
 }: FieldRendererProps) {
   if (field.control === 'hidden') return null;
 
@@ -271,7 +274,16 @@ export function FieldRenderer({
             In data dictionary, not in today’s calendar (confirm)
           </span>
         )}
-        {field.confirmWithBusiness && <TagPill kind="Confirm with business" />}
+        {field.fieldTag && <TagPill kind={field.fieldTag} />}
+        {field.confirmWithBusiness && <TagPill kind="Confirm with business" title={field.confirmNote} />}
+        {badge && (
+          <span
+            title={badge.title}
+            className="cursor-help rounded-full border border-purple-300 bg-purple-50 px-1.5 py-0.5 text-[11px] font-medium text-purple-700"
+          >
+            {badge.label}
+          </span>
+        )}
       </label>
 
       {renderControl()}

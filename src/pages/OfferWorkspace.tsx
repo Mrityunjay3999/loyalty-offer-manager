@@ -18,7 +18,9 @@ import {
   Lock,
   CalendarDays,
 } from 'lucide-react';
-import { useAppStore } from '@/store/useAppStore';
+import { useAppStore, isChangedSinceImport } from '@/store/useAppStore';
+import { importMetaOf } from '@/store/importedBase';
+import { isRequired } from '@/lib/dataLoaders';
 import { useToasts } from '@/store/useToasts';
 import { StatusPill } from '@/components/StatusPill';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
@@ -68,6 +70,7 @@ export function OfferWorkspace() {
   const changeStatus = useAppStore((s) => s.changeStatus);
   const nextOfferId = useAppStore((s) => s.nextOfferId);
   const feedState = useAppStore((s) => s.feedState);
+  const offerDiffs = useAppStore((s) => s.offerDiffs);
   const push = useToasts((s) => s.push);
 
   // Create a draft for /offers/new, then redirect to its uid.
@@ -106,10 +109,20 @@ export function OfferWorkspace() {
   const readOnly = !canEdit;
 
   // --- validation ---
-  const validation = useMemo(
-    () => validateOffer(working, { allOffers: offers, categorySubCategory }),
-    [working, offers, categorySubCategory],
-  );
+  const importMeta = importMetaOf(working._uid);
+  const changedSinceImport = isChangedSinceImport(working._uid, offerDiffs);
+  const validation = useMemo(() => {
+    const v = validateOffer(working, { allOffers: offers, categorySubCategory });
+    if (!importMeta) return v;
+    // v3 A6: missing required fields on an imported offer never block viewing; they
+    // show as warnings only once someone edits the offer.
+    const missing = (e: { fieldId: string }) => isRequired(e.fieldId) && isNoValue(working[e.fieldId]);
+    const edited = changedSinceImport || saveState === 'unsaved';
+    const asWarnings = edited
+      ? v.errors.filter(missing).map((e) => ({ ...e, message: `${e.message} Not in the shared Excel files; enter it on the offer.` }))
+      : [];
+    return { ...v, errors: v.errors.filter((e) => !missing(e)), warnings: [...v.warnings, ...asWarnings] };
+  }, [working, offers, categorySubCategory, importMeta, changedSinceImport, saveState]);
   const errorByField = useMemo(() => {
     const m: Record<string, string> = {};
     for (const e of validation.errors) if (!m[e.fieldId]) m[e.fieldId] = e.message;
@@ -390,6 +403,24 @@ export function OfferWorkspace() {
               </h1>
               <StatusPill status={status} />
               {locked && <TagPill kind="Locked" />}
+              {importMeta && (
+                <span
+                  title={`Source: ${importMeta.source}. Imported ${importMeta.importedOn}.${importMeta.excelRfRefNumber ? ` Excel R&F ref ${importMeta.excelRfRefNumber}.` : ''}`}
+                  className="cursor-help rounded-full border border-border px-2 py-0.5 text-[11px] text-muted"
+                >
+                  Imported from Excel
+                </span>
+              )}
+              {changedSinceImport && (
+                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-800" title="Edited in the prototype. The Excel snapshot is unchanged for comparison.">
+                  Changed since import
+                </span>
+              )}
+              {working._demoSample && (
+                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600" title="Demo sample kept to show the Cancelled behaviour. Not in the Excel files.">
+                  Demo sample
+                </span>
+              )}
             </div>
             <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
               <span className="inline-flex items-center gap-1.5">
@@ -811,6 +842,13 @@ function FieldCell({
   );
   const computedValue =
     field.control === 'computed' ? (computedFieldValue(field.id, working) as string | number | null) : undefined;
+  const derived = importMetaOf(working._uid)?.derivedFields.includes(field.id);
+  const badge =
+    derived && (field.id === 'activationByDayLow' || field.id === 'activationByDayHigh')
+      ? { label: 'Derived on import', title: 'The Excel files hold the total only. Activation by day = total ÷ total offer days.' }
+      : derived
+        ? { label: 'Derived on import', title: 'Rebuilt from the Excel totals because the export shows a rounded value.' }
+        : undefined;
 
   return (
     <FieldRenderer
@@ -826,6 +864,7 @@ function FieldCell({
       options={options}
       error={error}
       warning={warning}
+      badge={badge}
     />
   );
 }

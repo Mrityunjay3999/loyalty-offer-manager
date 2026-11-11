@@ -4,6 +4,8 @@ import {
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
+  getPaginationRowModel,
+  type PaginationState,
   flexRender,
   type ColumnDef,
   type SortingState,
@@ -141,6 +143,8 @@ export function OffersList() {
     search: searchParams.get('q') ?? '',
   });
   const [sorting, setSorting] = useState<SortingState>([]);
+  // v3: 2,425 imported offers -> page the table (filters, sort, select and export use all rows).
+  const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 100 });
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [cancelUid, setCancelUid] = useState<string | null>(null);
@@ -343,9 +347,12 @@ export function OffersList() {
   const table = useReactTable({
     data: filtered,
     columns,
-    state: { sorting, rowSelection, columnVisibility: effectiveVisibility },
+    state: { sorting, rowSelection, columnVisibility: effectiveVisibility, pagination },
     getRowId: (o) => o._uid ?? String(o.offerId),
     onSortingChange: setSorting,
+    onPaginationChange: setPagination,
+    autoResetPageIndex: true,
+    getPaginationRowModel: getPaginationRowModel(),
     onRowSelectionChange: setRowSelection,
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
@@ -613,6 +620,30 @@ export function OffersList() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+      {filtered.length > 0 && (
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
+          <span>
+            Showing {pagination.pageIndex * pagination.pageSize + 1} to{' '}
+            {Math.min((pagination.pageIndex + 1) * pagination.pageSize, filtered.length)} of {filtered.length.toLocaleString()} offers
+            {selectedRows.length > 0 && ` · ${selectedRows.length} selected`}
+          </span>
+          <div className="flex items-center gap-1.5">
+            <label className="flex items-center gap-1">
+              Rows per page
+              <select
+                className="rounded border border-border px-1.5 py-0.5"
+                value={pagination.pageSize}
+                onChange={(e) => setPagination({ pageIndex: 0, pageSize: Number(e.target.value) })}
+              >
+                {[50, 100, 250, 500].map((n) => <option key={n} value={n}>{n}</option>)}
+              </select>
+            </label>
+            <button disabled={!table.getCanPreviousPage()} onClick={() => table.previousPage()} className="rounded border border-border px-2 py-0.5 hover:bg-surface disabled:opacity-40">Previous</button>
+            <span>Page {pagination.pageIndex + 1} of {Math.max(1, table.getPageCount())}</span>
+            <button disabled={!table.getCanNextPage()} onClick={() => table.nextPage()} className="rounded border border-border px-2 py-0.5 hover:bg-surface disabled:opacity-40">Next</button>
+          </div>
         </div>
       )}
 

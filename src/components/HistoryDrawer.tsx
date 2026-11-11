@@ -3,7 +3,25 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 import { format } from 'date-fns';
 import { useAppStore } from '@/store/useAppStore';
-import type { AuditAction, OfferValue } from '@/lib/types';
+import { importMetaOf, baseOffer } from '@/store/importedBase';
+import type { AuditAction, AuditEntry, OfferValue } from '@/lib/types';
+
+/** v3 A6: imported offers start with 1 audit entry (computed, not stored). */
+function seedEntry(uid: string | null): AuditEntry | null {
+  if (!uid) return null;
+  const meta = importMetaOf(uid);
+  const b = baseOffer(uid);
+  if (!meta && !b?._demoSample) return null;
+  return {
+    id: `seed-${uid}`,
+    offerId: String(b?.offerId ?? ''),
+    offerUid: uid,
+    timestamp: meta ? '2026-11-11T09:00:00.000Z' : '2026-09-01T09:00:00.000Z',
+    user: meta ? 'Excel import' : 'Demo data',
+    action: 'imported',
+    comment: meta ? 'Imported from Excel (11/11/2026)' : 'Demo sample (not in the Excel files)',
+  };
+}
 
 const ACTION_LABEL: Record<AuditAction, string> = {
   created: 'Created',
@@ -36,16 +54,22 @@ export function HistoryDrawer({
   const auditLog = useAppStore((s) => s.auditLog);
   const [filter, setFilter] = useState<'all' | AuditAction>('all');
 
-  const entries = useMemo(() => {
+  const all = useMemo(() => {
     const list = auditLog.filter((e) => e.offerUid === offerUid);
-    return filter === 'all' ? list : list.filter((e) => e.action === filter);
-  }, [auditLog, offerUid, filter]);
+    const seed = seedEntry(offerUid);
+    return seed ? [...list, seed] : list; // newest first; the import is the oldest
+  }, [auditLog, offerUid]);
+
+  const entries = useMemo(
+    () => (filter === 'all' ? all : all.filter((e) => e.action === filter)),
+    [all, filter],
+  );
 
   const actionTypes = useMemo(() => {
     const set = new Set<AuditAction>();
-    auditLog.filter((e) => e.offerUid === offerUid).forEach((e) => set.add(e.action));
+    all.forEach((e) => set.add(e.action));
     return [...set];
-  }, [auditLog, offerUid]);
+  }, [all]);
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>

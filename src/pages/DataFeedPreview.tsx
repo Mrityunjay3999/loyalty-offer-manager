@@ -181,7 +181,11 @@ function TableView({ included, attrName, metricName, push }: { included: OfferRe
   const [tbl, setTbl] = useState<'attributes' | 'metrics'>('attributes');
   const cols = tbl === 'attributes' ? attributeColumns : metricColumns;
   const [fy, setFy] = useState('');
+  const [page, setPage] = useState(0);
+  const PAGE = 100;
   const rows = useMemo(() => included.filter((o) => !fy || fiscalYearOf(o) === fy), [included, fy]);
+  const pages = Math.max(1, Math.ceil(rows.length / PAGE));
+  const pageRows = rows.slice(page * PAGE, page * PAGE + PAGE);
   const fyOpts = [...new Set(included.map(fiscalYearOf).filter(Boolean))].sort();
 
   function exportCsv() {
@@ -199,8 +203,13 @@ function TableView({ included, attrName, metricName, push }: { included: OfferRe
             <button key={t} onClick={() => setTbl(t)} className={`px-2 py-1 ${tbl === t ? 'bg-primary text-white' : 'bg-white'}`}>{t === 'attributes' ? attrName : metricName}</button>
           ))}
         </div>
-        <select className="rounded border border-border px-2 py-1 text-xs" value={fy} onChange={(e) => setFy(e.target.value)}><option value="">Fiscal year: All</option>{fyOpts.map((y) => <option key={y} value={y}>{y}</option>)}</select>
-        <span className="text-xs text-muted">{rows.length} offers × {cols.length + 1} columns</span>
+        <select className="rounded border border-border px-2 py-1 text-xs" value={fy} onChange={(e) => { setFy(e.target.value); setPage(0); }}><option value="">Fiscal year: All</option>{fyOpts.map((y) => <option key={y} value={y}>{y}</option>)}</select>
+        <span className="text-xs text-muted">{rows.length.toLocaleString()} offers × {cols.length + 1} columns</span>
+        <span className="flex items-center gap-1 text-xs text-muted">
+          <button disabled={page === 0} onClick={() => setPage((p) => p - 1)} className="rounded border border-border px-1.5 hover:bg-surface disabled:opacity-40">Previous</button>
+          Page {page + 1} of {pages}
+          <button disabled={page >= pages - 1} onClick={() => setPage((p) => p + 1)} className="rounded border border-border px-1.5 hover:bg-surface disabled:opacity-40">Next</button>
+        </span>
         <button onClick={exportCsv} className="ml-auto inline-flex items-center gap-1 rounded border border-border px-2 py-0.5 text-xs hover:bg-surface"><Download size={13} /> Export CSV</button>
       </div>
       <div className="max-h-[62vh] overflow-auto rounded-lg border border-border bg-white">
@@ -212,7 +221,7 @@ function TableView({ included, attrName, metricName, push }: { included: OfferRe
             </tr>
           </thead>
           <tbody>
-            {rows.map((o) => (
+            {pageRows.map((o) => (
               <tr key={o._uid} className="border-b border-border/40">
                 <td className="sticky left-0 z-10 border-r border-border bg-white px-2 py-1 font-mono tabular-nums">{String(o.offerId ?? '')}</td>
                 {cols.map((m) => { const v = columnValue(m, o); return <td key={m.datalakeColumn} className="whitespace-nowrap border-r border-border/30 px-2 py-1">{formatByDatatype(m.datatype, v.text, v.captured)}</td>; })}

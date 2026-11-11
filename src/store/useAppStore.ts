@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import {
-  freshSampleOffers,
   dropdowns as seedDropdowns,
   reference,
   checklistFields,
@@ -9,9 +8,10 @@ import {
 } from '@/lib/dataLoaders';
 import { todayISO } from '@/lib/format';
 import { computeNextOfferId } from '@/lib/offerId';
-import { includedOffers, offerExceptions } from '@/lib/feed';
+import { includedOffers, offerExceptions, setFeedExemption } from '@/lib/feed';
 import { buildDefaultMatrix, registerMatrixAccessor, capabilityMeta } from '@/lib/permissions';
 import databricksTablesJson from '@/data/databricksTables.json';
+import { getBase, baseOffer, isBaseUid, loadBaseData, importedOfferIds } from './importedBase';
 import usersJson from '@/data/users.json';
 import type {
   OfferRecord,
@@ -33,27 +33,14 @@ import type {
   ChangeLogEntry,
 } from '@/lib/types';
 
-export const STORAGE_KEY = 'lom-prototype-v2';
-const V1_KEY = 'lom-prototype-v1';
+export const STORAGE_KEY = 'lom-prototype-v3';
+const V2_KEY = 'lom-prototype-v2';
 
 let idCounter = 0;
 /** Small monotonic id generator (prototype-only; no crypto needed). */
 export function nextId(prefix = 'id'): string {
   idCounter += 1;
   return `${prefix}-${Date.now().toString(36)}-${idCounter}`;
-}
-
-/** One "Imported from Loyalty Calendar" audit entry per seed offer (section 7.6). */
-function seedAuditLog(offers: OfferRecord[]): AuditEntry[] {
-  return offers.map((o) => ({
-    id: nextId('audit'),
-    offerId: String(o.offerId ?? ''),
-    offerUid: o._uid,
-    timestamp: new Date('2026-09-01T09:00:00').toISOString(),
-    user: 'Admin' as Role,
-    action: 'imported',
-    comment: 'Imported from Loyalty Calendar',
-  }));
 }
 
 /** Editable reference tables seeded from reference.json. Large static lookups
@@ -89,7 +76,18 @@ function seedEditableReference(): EditableReference {
 }
 
 export interface AppState extends EditableReference {
+  /** Merged offers (imported base + diffs + prototype-created). Not persisted. */
   offers: OfferRecord[];
+  /** v3 A7: per-offer edits to imported offers (keyed by _uid). Persisted. */
+  offerDiffs: Record<string, Partial<OfferRecord>>;
+  /** v3 A7: offers created in the prototype. Persisted. */
+  createdOffers: OfferRecord[];
+  /** Imported offers removed in the prototype (rare; drafts only). Persisted. */
+  deletedUids: string[];
+  /** True once the imported base has loaded. Not persisted. */
+  baseLoaded: boolean;
+  /** Notes from the v2 -> v3 migration (e.g. re-assigned Offer IDs). */
+  migrationLog: string[];
   auditLog: AuditEntry[];
   role: Role;
   savedViews: SavedView[];
@@ -118,6 +116,8 @@ export interface AppState extends EditableReference {
   /** Internal: append a user/permission change-log entry. */
   _logUserChange: (type: 'user' | 'permission', what: string, oldValue?: string, newValue?: string) => void;
   resetDemoData: () => void;
+  /** Load the imported base (once) and merge it with the stored diffs. */
+  loadBase: () => Promise<void>;
   addAudit: (entry: Omit<AuditEntry, 'id' | 'timestamp'> & { timestamp?: string }) => void;
   createDraft: () => string; // returns new _uid
   updateOffer: (uid: string, patch: Partial<OfferRecord>) => void;
@@ -147,6 +147,11 @@ const CHECKLIST_FIELD_IDS = checklistFields.map((f) => f.id);
 
 type AppData = EditableReference & {
   offers: OfferRecord[];
+  offerDiffs: Record<string, Partial<OfferRecord>>;
+  createdOffers: OfferRecord[];
+  deletedUids: string[];
+  baseLoaded: boolean;
+  migrationLog: string[];
   auditLog: AuditEntry[];
   role: Role;
   savedViews: SavedView[];
@@ -212,14 +217,54 @@ function isLastActiveAdmin(users: User[], id: string): boolean {
   return activeAdmins.length === 1 && activeAdmins[0].id === id;
 }
 
+type OfferSlices = Pick<AppData, 'createdOffers' | 'offerDiffs' | 'deletedUids'>;
+
+/** Merge the imported base with the stored diffs and the prototype-created offers. */
+export function mergeOffers(s: OfferSlices): OfferRecord[] {
+  const deleted = new Set(s.deletedUids);
+  const merged: OfferRecord[] = [...s.createdOffers];
+  for (const b of getBase()) {
+    const uid = b._uid as string;
+    if (deleted.has(uid)) continue;
+    const d = s.offerDiffs[uid];
+    merged.push(d ? { ...b, ...d } : b); // unchanged offers keep their identity (memo)
+  }
+  return merged;
+}
+
+const isBlank = (v: unknown) => v === undefined || v === null || v === '';
+const sameValue = (a: unknown, b: unknown) => a === b || (isBlank(a) && isBlank(b));
+
+/** v3 A7: true when an imported offer was edited in the prototype. */
+export function isChangedSinceImport(uid: string | undefined, diffs: Record<string, Partial<OfferRecord>>): boolean {
+  if (!uid) return false;
+  const d = diffs[uid];
+  return !!d && Object.keys(d).some((k) => k !== '_updatedAt');
+}
+
+/**
+ * v3 A6: imported offers do not create approval tasks. An offer is in the
+ * Approvals queue only when it was created in the prototype, or its status was
+ * changed in the prototype.
+ */
+export function submittedInPrototype(o: OfferRecord, diffs: Record<string, Partial<OfferRecord>>): boolean {
+  if (!isBaseUid(o._uid)) return true;
+  const d = diffs[o._uid as string];
+  return !!d && 'buildStatus' in d;
+}
+
 function initialState(): AppData {
-  const offers = freshSampleOffers();
+  const slices: OfferSlices = { createdOffers: [], offerDiffs: {}, deletedUids: [] };
+  const offers = mergeOffers(slices);
   const users = seedUsers();
   const currentUserId = DEFAULT_USER_ID;
   const role = users.find((u) => u.id === currentUserId)?.role ?? 'Offer Team Editor';
   return {
     offers,
-    auditLog: seedAuditLog(offers),
+    ...slices,
+    baseLoaded: getBase().length > 0,
+    migrationLog: [],
+    auditLog: [],
     role,
     savedViews: [],
     feedLog: [],
@@ -238,36 +283,42 @@ function initialState(): AppData {
   };
 }
 
-/** Best-effort v1 -> v2 migration (ground rule 8): keep offers + audit log,
- *  drop the removed "Offer due date" value. Runs once, before the store reads
- *  storage. Fresh seed is used if anything is missing. */
-function migrateV1ToV2(): void {
+/**
+ * v3 A7 migration from v2: keep offers created in the prototype, the audit log
+ * and saved views (plus users, permissions and reference edits); drop the v2
+ * seed copies of offers that now come from the import. Offer ID collisions with
+ * the import are fixed when the base loads (see loadBase).
+ */
+function migrateV2ToV3(): void {
   try {
     if (typeof localStorage === 'undefined') return;
-    if (localStorage.getItem(STORAGE_KEY)) return; // already on v2
-    const raw = localStorage.getItem(V1_KEY);
+    if (localStorage.getItem(STORAGE_KEY)) return; // already on v3
+    const raw = localStorage.getItem(V2_KEY);
     if (!raw) return;
-    const v1 = JSON.parse(raw);
-    const v1offers = v1?.state?.offers;
-    const v1audit = v1?.state?.auditLog;
-    const seeded = initialState();
-    const offers = Array.isArray(v1offers) && v1offers.length
-      ? v1offers.map((o: OfferRecord) => {
-          const c = { ...o };
-          delete (c as Record<string, unknown>).offerDueDate;
-          return c;
-        })
-      : seeded.offers;
-    const auditLog = Array.isArray(v1audit) && v1audit.length ? v1audit : seeded.auditLog;
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({ state: { ...seeded, offers, auditLog }, version: 2 }),
+    const v2 = JSON.parse(raw)?.state ?? {};
+    const { offers: v2offers, ...rest } = v2 as { offers?: OfferRecord[] } & Record<string, unknown>;
+    const createdOffers = (Array.isArray(v2offers) ? v2offers : []).filter(
+      (o) => !String(o._uid ?? '').startsWith('seed-'),
     );
+    const auditLog = (Array.isArray(rest.auditLog) ? (rest.auditLog as AuditEntry[]) : []).filter(
+      (a) => a.action !== 'imported',
+    );
+    const state = {
+      ...rest,
+      createdOffers,
+      offerDiffs: {},
+      deletedUids: [],
+      auditLog,
+      groupedChildren: {},
+      feedState: {},
+      migrationLog: [`Migrated from v2: kept ${createdOffers.length} prototype-created offer(s).`],
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ state, version: 3 }));
   } catch {
     /* ignore — fall back to fresh seed */
   }
 }
-migrateV1ToV2();
+migrateV2ToV3();
 
 export const useAppStore = create<AppState>()(
   persist(
@@ -369,8 +420,44 @@ export const useAppStore = create<AppState>()(
         })),
 
       resetDemoData: () => {
-        // Rebuild every seeded slice from the source JSON, keeping the current user.
-        set((state) => ({ ...initialState(), currentUserId: state.currentUserId, role: state.role }));
+        // Rebuild every seeded slice, keeping the current user. Clears all diffs and
+        // prototype-created offers and returns to the imported seed (A7).
+        set((state) => {
+          const fresh = initialState();
+          return {
+            ...fresh,
+            groupedChildren: seedGroupedChildren(getBase()),
+            currentUserId: state.currentUserId,
+            role: state.role,
+          };
+        });
+      },
+
+      loadBase: async () => {
+        await loadBaseData();
+        const s = get();
+        // Offer ID collisions between kept prototype offers and the import (A7).
+        const ids = importedOfferIds();
+        const log: string[] = [];
+        let next = computeNextOfferId([...getBase(), ...s.createdOffers]);
+        const createdOffers = s.createdOffers.map((o) => {
+          if (typeof o.offerId === 'number' && ids.has(o.offerId)) {
+            log.push(`Offer "${String(o.offerName ?? '')}" had Offer ID ${o.offerId}, which an imported offer uses. New Offer ID: ${next}.`);
+            return { ...o, offerId: next++ };
+          }
+          return o;
+        });
+        // Child promotions: keep entries whose offer exists, seed the documented samples.
+        const uids = new Set([...createdOffers, ...getBase()].map((o) => o._uid));
+        const kept = Object.fromEntries(Object.entries(s.groupedChildren).filter(([uid]) => uids.has(uid)));
+        const groupedChildren = { ...seedGroupedChildren(getBase()), ...kept };
+        set({
+          createdOffers,
+          groupedChildren,
+          migrationLog: [...s.migrationLog, ...log],
+          baseLoaded: true,
+          offers: mergeOffers({ ...s, createdOffers }),
+        });
       },
 
       addAudit: (entry) =>
@@ -394,20 +481,47 @@ export const useAppStore = create<AppState>()(
           _updatedAt: new Date().toISOString(),
           buildStatus: 'Draft',
         };
-        set((s) => ({ offers: [offer, ...s.offers] }));
+        set((s) => {
+          const createdOffers = [offer, ...s.createdOffers];
+          return { createdOffers, offers: mergeOffers({ ...s, createdOffers }) };
+        });
         get().addAudit({ offerId: '', offerUid: uid, user: get().role, action: 'created', comment: 'New draft created' });
         return uid;
       },
 
       updateOffer: (uid, patch) =>
-        set((s) => ({
-          offers: s.offers.map((o) =>
-            o._uid === uid ? { ...o, ...patch, _updatedAt: new Date().toISOString() } : o,
-          ),
-        })),
+        set((s) => {
+          const now = new Date().toISOString();
+          const b = baseOffer(uid);
+          if (b) {
+            // Imported offer: store only the fields that differ from the import (A7).
+            const next: Partial<OfferRecord> = { ...(s.offerDiffs[uid] ?? {}) };
+            delete next._updatedAt;
+            for (const [k, v] of Object.entries(patch)) {
+              if (k === '_updatedAt') continue;
+              if (sameValue(b[k], v)) delete next[k];
+              else next[k] = v;
+            }
+            const offerDiffs = { ...s.offerDiffs };
+            if (Object.keys(next).length) offerDiffs[uid] = { ...next, _updatedAt: now };
+            else delete offerDiffs[uid];
+            return { offerDiffs, offers: mergeOffers({ ...s, offerDiffs }) };
+          }
+          const createdOffers = s.createdOffers.map((o) =>
+            o._uid === uid ? { ...o, ...patch, _updatedAt: now } : o,
+          );
+          return { createdOffers, offers: mergeOffers({ ...s, createdOffers }) };
+        }),
 
       deleteOffer: (uid) =>
-        set((s) => ({ offers: s.offers.filter((o) => o._uid !== uid) })),
+        set((s) => {
+          if (isBaseUid(uid)) {
+            const deletedUids = [...s.deletedUids, uid];
+            return { deletedUids, offers: mergeOffers({ ...s, deletedUids }) };
+          }
+          const createdOffers = s.createdOffers.filter((o) => o._uid !== uid);
+          return { createdOffers, offers: mergeOffers({ ...s, createdOffers }) };
+        }),
 
       copyOffer: (uid) => {
         const src = get().offers.find((o) => o._uid === uid);
@@ -417,13 +531,17 @@ export const useAppStore = create<AppState>()(
         copy._uid = newUid;
         copy._updatedAt = new Date().toISOString();
         delete copy._sampleReason;
+        delete copy._demoSample;
         copy.offerId = ''; // blank per 11.2
         copy.offerName = `COPY OF ${src.offerName ?? ''}`.trim();
         copy.buildStatus = 'Draft';
         for (const id of CHECKLIST_FIELD_IDS) copy[id] = ''; // checklist reset
         for (const id of RESULT_FIELD_IDS) copy[id] = ''; // results cleared
         // forecast kept (not touched)
-        set((s) => ({ offers: [copy, ...s.offers] }));
+        set((s) => {
+          const createdOffers = [copy, ...s.createdOffers];
+          return { createdOffers, offers: mergeOffers({ ...s, createdOffers }) };
+        });
         const role = get().role;
         get().addAudit({
           offerId: String(src.offerId ?? ''),
@@ -560,7 +678,15 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: STORAGE_KEY,
-      version: 2,
+      version: 3,
+      // v3 A7: never persist the merged offers (2,425 imported records); only the
+      // diffs, prototype-created offers, views and settings.
+      partialize: (s) => {
+        const { offers: _offers, baseLoaded: _loaded, ...rest } = s;
+        void _offers;
+        void _loaded;
+        return rest;
+      },
       // Older persisted state (before Part 2) lacks users/permissions/currentUserId.
       // The default shallow merge keeps those fresh slices; here we only reconcile
       // the active role with the current user so can() stays correct.
@@ -581,3 +707,54 @@ export const useAppStore = create<AppState>()(
 
 // Let can()/whoCan() read the live, editable matrix without a circular import.
 registerMatrixAccessor(() => useAppStore.getState().permissions);
+// v3 A6: unchanged imported offers are not validated at load (see feed.ts).
+setFeedExemption((o) => isBaseUid(o._uid) && !isChangedSinceImport(o._uid, useAppStore.getState().offerDiffs));
+
+// Storage is synchronous, so hydration is done here: rebuild the merged offers
+// from the stored slices (the imported base joins in when loadBase resolves).
+/**
+ * v3 A5: make sure the statuses and category pairs found in the imported data
+ * are in the (possibly older, persisted) reference lists. Additive only, so any
+ * Admin edits are kept.
+ */
+function withImportedReference(s: AppState): Partial<AppState> {
+  const status = [...(s.dropdowns.status ?? [])];
+  for (const v of seedDropdowns.status ?? []) {
+    if (status.includes(v)) continue;
+    const at = (seedDropdowns.status ?? []).indexOf(v);
+    const prev = (seedDropdowns.status ?? [])[at - 1];
+    const i = prev ? status.indexOf(prev) : -1;
+    status.splice(i >= 0 ? i + 1 : status.length, 0, v);
+  }
+  const lifecycle = [...s.lifecycle];
+  for (const row of reference.lifecycle) {
+    if (lifecycle.some((l) => l.status === row.status)) continue;
+    const at = reference.lifecycle.indexOf(row);
+    const prev = reference.lifecycle[at - 1]?.status;
+    const i = lifecycle.findIndex((l) => l.status === prev);
+    lifecycle.splice(i >= 0 ? i + 1 : lifecycle.length, 0, { ...row });
+  }
+  const pairs = [...s.categorySubCategory];
+  for (const p of reference.categorySubCategory) {
+    if (!pairs.some((x) => x.category === p.category && x.subCategory === p.subCategory)) pairs.push({ ...p });
+  }
+  return { dropdowns: { ...s.dropdowns, status }, lifecycle, categorySubCategory: pairs };
+}
+
+useAppStore.setState((s) => ({
+  ...withImportedReference(s),
+  createdOffers: s.createdOffers ?? [],
+  offerDiffs: s.offerDiffs ?? {},
+  deletedUids: s.deletedUids ?? [],
+  migrationLog: s.migrationLog ?? [],
+  offers: mergeOffers({
+    createdOffers: s.createdOffers ?? [],
+    offerDiffs: s.offerDiffs ?? {},
+    deletedUids: s.deletedUids ?? [],
+  }),
+}));
+
+/** Load the imported base once (app start, tests). */
+export function ensureBaseLoaded(): Promise<void> {
+  return useAppStore.getState().baseLoaded ? Promise.resolve() : useAppStore.getState().loadBase();
+}

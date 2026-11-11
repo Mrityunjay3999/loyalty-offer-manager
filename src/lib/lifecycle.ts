@@ -17,6 +17,8 @@ export const MAIN_PATH: string[] = [
   'Proposed',
   'Planning Phase',
   'Approved / Build Phase',
+  'Initial QA', // v3 A5: found in imported data
+  'Ready to Go', // v3 A5: found in imported data
   'Pending MD',
   'Audited / Ready to go',
   'Live',
@@ -40,6 +42,8 @@ const PILL: Record<string, string> = {
   Proposed: 'bg-warning/15 text-warning',
   'Planning Phase': 'bg-blue-100 text-blue-700',
   'Approved / Build Phase': 'bg-indigo-100 text-indigo-700',
+  'Initial QA': 'border border-dashed border-indigo-400 bg-white text-indigo-700',
+  'Ready to Go': 'border border-dashed border-primary bg-white text-primary',
   'Pending MD': 'bg-warning/15 text-warning',
   'Audited / Ready to go': 'bg-primary/15 text-primary',
   Live: 'bg-success/15 text-success',
@@ -61,6 +65,8 @@ const PRE_AUDIT = new Set([
   'Proposed',
   'Planning Phase',
   'Approved / Build Phase',
+  'Initial QA',
+  'Ready to Go',
   'Pending MD',
 ]);
 
@@ -212,7 +218,20 @@ export const TRANSITIONS: Transition[] = [
     },
   },
   {
+    // v3 A5: statuses found in the imported data, placed after Approved / Build Phase.
     from: ['Approved / Build Phase'],
+    to: 'Initial QA',
+    label: 'Mark initial QA',
+    cap: 'changeStatus',
+  },
+  {
+    from: ['Initial QA'],
+    to: 'Ready to Go',
+    label: 'Mark ready to go',
+    cap: 'changeStatus',
+  },
+  {
+    from: ['Approved / Build Phase', 'Initial QA', 'Ready to Go'],
     to: 'Pending MD',
     label: 'Mark pending member descriptor',
     cap: 'changeStatus',
@@ -227,7 +246,7 @@ export const TRANSITIONS: Transition[] = [
           },
   },
   {
-    from: ['Approved / Build Phase', 'Pending MD'],
+    from: ['Approved / Build Phase', 'Initial QA', 'Ready to Go', 'Pending MD'],
     to: 'Audited / Ready to go',
     label: 'Mark audited and ready',
     cap: 'changeStatus',

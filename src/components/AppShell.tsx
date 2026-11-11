@@ -16,7 +16,7 @@ import {
   Users,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { useAppStore } from '@/store/useAppStore';
+import { useAppStore, submittedInPrototype } from '@/store/useAppStore';
 import { can } from '@/lib/permissions';
 import { useToasts } from '@/store/useToasts';
 import { SignInAs } from './SignInAs';
@@ -53,6 +53,7 @@ const NAV: NavItemX[] = [
 export function AppShell() {
   const navigate = useNavigate();
   const offers = useAppStore((s) => s.offers);
+  const offerDiffs = useAppStore((s) => s.offerDiffs);
   const role = useAppStore((s) => s.role);
   const permissions = useAppStore((s) => s.permissions); // subscribe so nav reacts to matrix edits
   const resetDemoData = useAppStore((s) => s.resetDemoData);
@@ -62,7 +63,8 @@ export function AppShell() {
 
   const approvalsCount = offers.filter(
     (o) =>
-      o.buildStatus === 'Proposed' || o.buildStatus === 'Pending SteerCo Approval',
+      (o.buildStatus === 'Proposed' || o.buildStatus === 'Pending SteerCo Approval') &&
+      submittedInPrototype(o, offerDiffs),
   ).length;
 
   function submitSearch(e: React.FormEvent) {

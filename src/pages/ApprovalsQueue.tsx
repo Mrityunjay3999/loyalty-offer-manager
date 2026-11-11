@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Clock, Check, Undo2, ExternalLink } from 'lucide-react';
-import { useAppStore } from '@/store/useAppStore';
+import { useAppStore, submittedInPrototype } from '@/store/useAppStore';
 import { useToasts } from '@/store/useToasts';
 import { PageHeader } from '@/components/PageHeader';
 import { EmptyState } from '@/components/EmptyState';
@@ -43,6 +43,7 @@ function forecastEntered(o: OfferRecord): boolean {
 export function ApprovalsQueue() {
   const navigate = useNavigate();
   const offers = useAppStore((s) => s.offers);
+  const offerDiffs = useAppStore((s) => s.offerDiffs);
   const auditLog = useAppStore((s) => s.auditLog);
   const role = useAppStore((s) => s.role);
   const updateOffer = useAppStore((s) => s.updateOffer);
@@ -53,9 +54,13 @@ export function ApprovalsQueue() {
   const [returnUid, setReturnUid] = useState<string | null>(null);
   const canApprove = can(role, 'approve');
 
+  // v3 A6: imported offers do not create approval tasks; only offers submitted in the prototype appear.
   const queue = useMemo(
-    () => offers.filter((o) => APPROVAL_STATUSES.includes(String(o.buildStatus))),
-    [offers],
+    () =>
+      offers.filter(
+        (o) => APPROVAL_STATUSES.includes(String(o.buildStatus)) && submittedInPrototype(o, offerDiffs),
+      ),
+    [offers, offerDiffs],
   );
 
   function approve(o: OfferRecord) {
@@ -89,7 +94,10 @@ export function ApprovalsQueue() {
       )}
 
       {queue.length === 0 ? (
-        <EmptyState title="Nothing awaiting approval." message="Offers in Proposed or Pending SteerCo Approval appear here." />
+        <EmptyState
+          title="Nothing awaiting approval."
+          message="Offers submitted in the prototype as Proposed or Pending SteerCo Approval appear here. Offers imported from Excel do not create approval tasks."
+        />
       ) : (
         <div className="overflow-x-auto rounded-lg border border-border bg-white">
           <table className="w-full whitespace-nowrap text-left text-sm">

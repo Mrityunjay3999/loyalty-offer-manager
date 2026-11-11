@@ -36,8 +36,26 @@ function RequireEdit({ children }: { children: ReactElement }) {
   return <RequireCap cap="openEditArea">{children}</RequireCap>;
 }
 
+/** v3 A7: wait for the imported base (2,425 offers, loaded lazily) before routing. */
+function BaseGate({ children }: { children: ReactElement }) {
+  const loaded = useAppStore((s) => s.baseLoaded);
+  const loadBase = useAppStore((s) => s.loadBase);
+  useEffect(() => {
+    if (!loaded) void loadBase();
+  }, [loaded, loadBase]);
+  if (!loaded) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-surface text-sm text-muted">
+        Loading the imported offers from the Excel exports of 11/11/2026…
+      </div>
+    );
+  }
+  return children;
+}
+
 export default function App() {
   return (
+    <BaseGate>
     <HashRouter>
       <Routes>
         <Route element={<AppShell />}>
@@ -59,5 +77,6 @@ export default function App() {
       </Routes>
       <Toasts />
     </HashRouter>
+    </BaseGate>
   );
 }

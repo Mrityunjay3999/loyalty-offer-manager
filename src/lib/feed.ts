@@ -47,11 +47,20 @@ export interface FeedException {
   rule: string;
 }
 
+// v3 A6: imported offers unchanged since import reflect the Excel files the
+// business already loads, so validation-at-load applies to them only once they
+// are edited in the prototype. The store registers the rule (no store import here).
+let exemptFromValidation: (o: OfferRecord) => boolean = () => false;
+export function setFeedExemption(fn: (o: OfferRecord) => boolean): void {
+  exemptFromValidation = fn;
+}
+
 /** C5: validation-at-load exceptions for one included offer. */
 export function offerExceptions(
   o: OfferRecord,
   categorySubCategory: CategorySubCategory[],
 ): FeedException[] {
+  if (exemptFromValidation(o)) return [];
   const out: FeedException[] = [];
   const ex = (fieldId: string, rule: string) =>
     out.push({

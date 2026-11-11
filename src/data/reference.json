@@ -336,6 +336,97 @@
       "subCategory": "TRAINING",
       "isNew": false,
       "example": null
+    },
+    {
+      "category": "IMPO",
+      "subCategory": "SALON CERT",
+      "isNew": false,
+      "example": null,
+      "foundInImport": true
+    },
+    {
+      "category": "BENEFIT",
+      "subCategory": "ADOPTVIPP",
+      "isNew": false,
+      "example": null,
+      "foundInImport": true
+    },
+    {
+      "category": "EVENT",
+      "subCategory": "EVENTRSVP",
+      "isNew": false,
+      "example": null,
+      "foundInImport": true
+    },
+    {
+      "category": "POINTS BOOST",
+      "subCategory": "HARDGOODS",
+      "isNew": false,
+      "example": null,
+      "foundInImport": true
+    },
+    {
+      "category": "EVENT",
+      "subCategory": "BIRTHDAYRSVP",
+      "isNew": false,
+      "example": null,
+      "foundInImport": true
+    },
+    {
+      "category": "LOYALTY",
+      "subCategory": "TIER EVENT",
+      "isNew": false,
+      "example": null,
+      "foundInImport": true
+    },
+    {
+      "category": "MERCH",
+      "subCategory": "MERCH-SERVICE",
+      "isNew": false,
+      "example": null,
+      "foundInImport": true
+    },
+    {
+      "category": "POINTS BOOST",
+      "subCategory": "SPECIALTY",
+      "isNew": false,
+      "example": null,
+      "foundInImport": true
+    },
+    {
+      "category": "LOYALTY",
+      "subCategory": "TEST",
+      "isNew": false,
+      "example": null,
+      "foundInImport": true
+    },
+    {
+      "category": "CHARITIES",
+      "subCategory": "GOOD KARMA",
+      "isNew": false,
+      "example": null,
+      "foundInImport": true
+    },
+    {
+      "category": "POINTS BOOST",
+      "subCategory": "CONSUMABLES",
+      "isNew": false,
+      "example": null,
+      "foundInImport": true
+    },
+    {
+      "category": "SERVICES",
+      "subCategory": "SERVICES",
+      "isNew": false,
+      "example": null,
+      "foundInImport": true
+    },
+    {
+      "category": "DIGITAL",
+      "subCategory": "ALL MERCH",
+      "isNew": false,
+      "example": null,
+      "foundInImport": true
     }
   ],
   "offerSetupCombos": [
@@ -513,6 +604,20 @@
       "definition": "Offer submitted to Capillary; build in progress.",
       "documented": true,
       "confirmed": true
+    },
+    {
+      "status": "Initial QA",
+      "definition": "Found in imported data. Used by 33 offers in the Excel files (26 in the Results and Forecast tab). Definition to be confirmed with the business.",
+      "documented": false,
+      "confirmed": false,
+      "foundInImport": true
+    },
+    {
+      "status": "Ready to Go",
+      "definition": "Found in imported data. Used by 20 offers in the Excel files (18 in the Results and Forecast tab). Is it the same as 'Audited / Ready to go'? To be confirmed with the business.",
+      "documented": false,
+      "confirmed": false,
+      "foundInImport": true
     },
     {
       "status": "Pending MD",
@@ -22317,7 +22422,7 @@
         "Bonused Members": 17,
         "Bonus Pts Issued": 85000,
         "Bonused members (unique)": null,
-        "Bonus Rate": 0.00004422085455500814,
+        "Bonus Rate": 4.422085455500814e-05,
         "Redemption Conversion \n(After 04/02/2024, 1000 pts = $2)": 2,
         "Bonus point calculation": 5000,
         "Base Pts per $\n(After 04/02/2024, 10 points per $1)": 10,
