@@ -12,7 +12,20 @@ export function countryIncludes(country: OfferValue | undefined, token: 'US' | '
   return s(country).includes(token);
 }
 
+/** v3 D2: more than 1 division flag is Yes (Metadata EH "Multiple Divisions"). */
+function multipleDivisionsYes(o: OfferRecord): boolean {
+  const flags = ['hardgoodsOffer', 'consumablesOffer', 'specialtyOffer', 'servicesOffer', 'charitiesOffer'];
+  return flags.filter((id) => o[id] === 'Yes').length > 1;
+}
+const hasValue = (v: OfferValue | undefined) => s(v) !== '' && s(v) !== 'N/A';
+
 const RULES: Record<string, (o: OfferRecord) => boolean> = {
+  earlyActivationCount: (o) => hasValue(o.earlyActivationDate),
+  divisionShareHG: multipleDivisionsYes,
+  divisionShareCONS: multipleDivisionsYes,
+  divisionShareSPEC: multipleDivisionsYes,
+  divisionShareSVCS: multipleDivisionsYes,
+  divisionShareCharities: multipleDivisionsYes,
   canActivationDescriptor: (o) => countryIncludes(o.country, 'CAN'),
   canActivationDescriptorLength: (o) => countryIncludes(o.country, 'CAN'),
   disclaimerCAN: (o) => countryIncludes(o.country, 'CAN'),
@@ -47,6 +60,12 @@ const RULES: Record<string, (o: OfferRecord) => boolean> = {
 
 /** Human-readable reason a field is hidden (for the "value kept" toast). */
 const REASONS: Record<string, string> = {
+  earlyActivationCount: 'Early Activation Date is empty',
+  divisionShareHG: 'Multiple Divisions is not Yes',
+  divisionShareCONS: 'Multiple Divisions is not Yes',
+  divisionShareSPEC: 'Multiple Divisions is not Yes',
+  divisionShareSVCS: 'Multiple Divisions is not Yes',
+  divisionShareCharities: 'Multiple Divisions is not Yes',
   canActivationDescriptor: 'Country does not include CAN',
   canActivationDescriptorLength: 'Country does not include CAN',
   disclaimerCAN: 'Country does not include CAN',

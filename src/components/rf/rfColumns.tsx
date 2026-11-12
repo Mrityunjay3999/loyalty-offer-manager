@@ -8,6 +8,7 @@ import { formatXVal } from '@/lib/excelFormat';
 import type { Band, RegistryEntry } from '@/lib/forecastColumnRegistry';
 import { gridValue, NOT_IN_SHARED_FILES } from '@/lib/rfGrid';
 import { statusOf } from '@/lib/lifecycle';
+import { fiscalLookup } from '@/lib/calculations';
 import type { ImportMeta, OfferRecord } from '@/lib/types';
 
 export const BAND_STYLE: Record<Band, { label: string; header: string; band: string; legend: string }> = {
@@ -114,6 +115,7 @@ export function rfColumn(e: RegistryEntry, ctx: RfColumnCtx): ExcelColumn {
         ),
     tooltip: columnTooltip(e, twinNote),
     caveat: e.caveat,
+    subHeader: e.databricks,
     width: widthFor(e),
     sortValue: (o) => {
       const v = value(o);
@@ -134,6 +136,18 @@ export function rfColumn(e: RegistryEntry, ctx: RfColumnCtx): ExcelColumn {
       const t = formatXVal(v, e.format);
       if (e.letter === 'BZ' && e.source === 'R&F tab') {
         return t ? <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${COLOUR_CHIP[t] ?? ''}`}>{t}</span> : '';
+      }
+      if (e.source === 'Metadata') {
+        // FC has no IFERROR in Excel (#VALUE! in 374 rows): show "Not available".
+        if (isErr(v)) return <span className="italic text-muted" title={`Excel shows ${v.error} here.`}>Not available</span>;
+        if (['D', 'E', 'F'].includes(e.letter) && t !== '' && !fiscalLookup(o)) {
+          return (
+            <span className="flex items-center gap-1">
+              {t}
+              <span className="rounded-full border border-slate-300 px-1 text-[9px] text-slate-500" title="The fiscal calendar has no row for this date; the value comes from the Metadata file.">From Metadata</span>
+            </span>
+          );
+        }
       }
       if (t === '' && NOT_IN_SHARED_FILES.has(e.key) && ctx.metaOf(o._uid)) {
         return (

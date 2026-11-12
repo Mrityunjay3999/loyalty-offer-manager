@@ -22,6 +22,7 @@ import { toCsv, downloadCsv } from '@/lib/csv';
 import { REGISTRY, RF_REGISTRY, CALENDAR_BAND, type RegistryEntry } from '@/lib/forecastColumnRegistry';
 import { GRID_ENTRIES, RF_PRESETS, COMPLETED_OR_LATER, buildExportTable } from '@/lib/rfGrid';
 import { useImportReport } from '@/lib/importData';
+import { MD_VIEW_ORDER } from '@/lib/mdRegistry';
 import type { OfferRecord } from '@/lib/types';
 
 type RowsMode = 'excel' | 'all';
@@ -187,10 +188,27 @@ export function ResultsForecast() {
     [],
   );
   const wbrColumns = useMemo<ExcelColumn[]>(() => wbrEntries.map((e) => rfColumn(e, ctx)), [wbrEntries, ctx]);
+  // D1 Metadata view: Offer ID and Promotion Name pinned, then BASICS and BW..FC in Metadata order.
+  const mdEntries = useMemo(() => {
+    const first = ['B', 'O'].map((L) => MD_VIEW_ORDER.find((e) => e.letter === L)!);
+    return [...first, ...MD_VIEW_ORDER.filter((e) => !['B', 'O'].includes(e.letter))];
+  }, []);
+  const mdColumns = useMemo<ExcelColumn[]>(() => mdEntries.map((e) => rfColumn(e, ctx)), [mdEntries, ctx]);
+  const mdPresets = useMemo(() => {
+    const keysOf = (pred: (b: string) => boolean) => mdEntries.filter((e) => ['B', 'O'].includes(e.letter) || pred(e.band)).map((e) => e.key);
+    return [
+      { name: 'All Metadata columns (BW to FC)', visible: mdEntries.map((e) => e.key) },
+      { name: 'Results (BW to CV)', visible: keysOf((b) => b === 'MD_BASICS' || b === 'MD_RESULTS') },
+      { name: 'Forecast (CW to EA)', visible: keysOf((b) => b === 'MD_BASICS' || b === 'MD_FORECAST') },
+      { name: 'Divisions and prorated', visible: keysOf((b) => b === 'MD_MULTI' || b === 'MD_PRORATED' || b === 'MD_OTHER') },
+    ];
+  }, [mdEntries]);
 
   // Exports read exactly what the grid shows (visible columns, filtered + sorted rows).
   const gridView = useRef<{ visible: string[]; rows: OfferRecord[] }>({ visible: [], rows: [] });
   const wbrView = useRef<{ visible: string[]; rows: OfferRecord[] }>({ visible: [], rows: [] });
+  const mdView = useRef<{ visible: string[]; rows: OfferRecord[] }>({ visible: [], rows: [] });
+  const onMdView = useCallback((v: { visible: string[]; rows: OfferRecord[] }) => (mdView.current = v), []);
   const onGridView = useCallback((v: { visible: string[]; rows: OfferRecord[] }) => (gridView.current = v), []);
   const onWbrView = useCallback((v: { visible: string[]; rows: OfferRecord[] }) => (wbrView.current = v), []);
   const byKey = useMemo(() => Object.fromEntries(REGISTRY.map((e) => [e.key, e])), []);
@@ -205,11 +223,12 @@ export function ResultsForecast() {
     const groups: Array<[string, RegistryEntry[]]> = [
       ['Results and Forecast tab (A to BZ)', RF_REGISTRY],
       ['CALENDAR (offer form)', CALENDAR_BAND],
+      ['Metadata Master Sheet (BASICS, BW to FC)', MD_VIEW_ORDER],
     ];
     const g = groups.flatMap(([label, es]) => es.map(() => label));
-    const t = buildExportTable(groups.flatMap(([, es]) => es), gridView.current.rows, asOf, importMetaOf);
+    const t = buildExportTable(groups.flatMap(([, es]) => es), rows, asOf, importMetaOf);
     downloadCsv('all-forecasting-columns', toCsv(g, [t.header, t.letters, ...t.data]));
-    push(`Exported ${gridView.current.rows.length} offers x ${t.header.length} columns.`, 'success');
+    push(`Exported ${rows.length} offers x ${t.header.length} columns.`, 'success');
   }
 
   const detail = offers.find((o) => o._uid === detailUid);
@@ -290,7 +309,7 @@ export function ResultsForecast() {
 
       <Tabs.Root defaultValue="grid">
         <Tabs.List className="mb-3 flex gap-1 border-b border-border">
-          {[['grid', 'Grid'], ['wbr', 'WBR'], ['how', 'How it is calculated']].map(([v, l]) => (
+          {[['grid', 'Grid'], ['wbr', 'WBR'], ['metadata', 'Metadata view'], ['how', 'How it is calculated']].map(([v, l]) => (
             <Tabs.Trigger key={v} value={v} className="border-b-2 border-transparent px-3 py-2 text-sm text-muted data-[state=active]:border-primary data-[state=active]:font-medium data-[state=active]:text-primary">
               {l}
             </Tabs.Trigger>
@@ -333,6 +352,37 @@ export function ResultsForecast() {
               onRowClick={(o) => setDetailUid(o._uid ?? null)}
               onView={onWbrView}
               toolbarRight={<button onClick={() => exportView(wbrView.current, 'results-forecast-wbr')} className="inline-flex items-center gap-1 rounded border border-border px-2 py-0.5 text-xs hover:bg-surface"><Download size={13} /> Export CSV</button>}
+            />
+          )}
+        </Tabs.Content>
+
+        <Tabs.Content value="metadata">
+          <p className="mb-2 text-[11px] text-muted">
+            Every Metadata Master Sheet column from BW to FC (85) with the Metadata file's own logic, plus the 18 BASICS inputs. Grey text under each header is the Databricks column. Prorated columns use the as-of date {asOf.toLocaleDateString('en-US')}.
+          </p>
+          <div className="mb-2 flex flex-wrap items-center gap-2 text-[11px] text-muted">
+            {(['MD_BASICS', 'MD_RESULTS', 'MD_FORECAST', 'MD_OTHER', 'MD_MULTI', 'MD_PRORATED'] as const).map((b) => (
+              <span key={b} className="flex items-center gap-1"><span className={`inline-block h-3 w-3 rounded ${BAND_STYLE[b].legend}`} /> {BAND_STYLE[b].label}</span>
+            ))}
+          </div>
+          {rows.length === 0 ? (
+            <EmptyState title="No offers match these filters." />
+          ) : (
+            <ExcelGrid
+              rows={rows}
+              columns={mdColumns}
+              storageKey={`lom-rfmd-v3-${userId}`}
+              getRowId={(o) => o._uid!}
+              onRowClick={(o) => setDetailUid(o._uid ?? null)}
+              presets={mdPresets}
+              defaultPreset="All Metadata columns (BW to FC)"
+              onView={onMdView}
+              toolbarRight={
+                <>
+                  <button onClick={() => exportView(mdView.current, 'metadata-view')} className="inline-flex items-center gap-1 rounded border border-border px-2 py-0.5 text-xs hover:bg-surface"><Download size={13} /> Export CSV</button>
+                  <button onClick={exportAllForecasting} className="inline-flex items-center gap-1 rounded border border-border px-2 py-0.5 text-xs hover:bg-surface"><Download size={13} /> Export all forecasting columns</button>
+                </>
+              }
             />
           )}
         </Tabs.Content>

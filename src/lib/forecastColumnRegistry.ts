@@ -3,6 +3,7 @@
 // so a column cannot appear in one place and be missing from another.
 import type { TagKind } from '@/components/TagPill';
 import type { Fmt } from './excelFormat';
+import { MD_REGISTRY } from './mdRegistry';
 
 export type RegistrySource = 'R&F tab' | 'Calendar main tab' | 'Metadata';
 export type RegistryTab = 'grid' | 'metadata';
@@ -50,6 +51,8 @@ export interface RegistryEntry {
   twinOf?: string;
   /** Hidden by default in every preset. */
   hiddenByDefault?: boolean;
+  /** Metadata: the Databricks column name from metadataFields.json. */
+  databricks?: string;
 }
 
 const rf = (
@@ -287,7 +290,7 @@ export const CALENDAR_TWINS: RegistryEntry[] = [
   twinOf: twin,
 }));
 
-export const REGISTRY: RegistryEntry[] = [...RF_REGISTRY, ...CALENDAR_BAND, ...CALENDAR_TWINS];
+export const REGISTRY: RegistryEntry[] = [...RF_REGISTRY, ...CALENDAR_BAND, ...CALENDAR_TWINS, ...MD_REGISTRY];
 
 export function registryFor(tab: RegistryTab): RegistryEntry[] {
   return REGISTRY.filter((e) => e.tab === tab);

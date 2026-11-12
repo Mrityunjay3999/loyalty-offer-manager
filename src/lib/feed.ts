@@ -3,6 +3,12 @@
 import { metadataFields, requiredFieldIds, fieldsById, dropdowns } from './dataLoaders';
 import { includeForMetadata, resolveCalendarFieldValue } from './calculations';
 import { isNoValue, parseISO } from './format';
+import { computeMdCells } from './mdEngine';
+import { MD_REGISTRY } from './mdRegistry';
+import { MD_HEADERS } from './mdHeaders';
+import { colIndex } from './excelParse';
+import { isErr, serialToIso } from './excel';
+import { importMetaOf } from '@/store/importedBase';
 import type { MetadataField, OfferRecord, CategorySubCategory } from './types';
 
 export type FeedTable = 'attributes' | 'metrics' | 'notLoaded';
@@ -148,7 +154,42 @@ export function formatByDatatype(datatype: string, raw: string, captured: boolea
 }
 
 /** The resolved display value + source descriptor for a metadata column (C5). */
+// v3 D4: metadataFields entries that are Master Sheet columns BW..FC use the
+// Metadata engine (the same calc functions as the Metadata view).
+const BW = colIndex('BW');
+const FC = colIndex('FC');
+const LETTER_BY_FIELD = new Map<number, string>(
+  Object.entries(MD_HEADERS)
+    .filter(([L, h]) => h.metadataFieldIndex !== null && colIndex(L) >= BW && colIndex(L) <= FC)
+    .map(([L, h]) => [h.metadataFieldIndex as number, L]),
+);
+const MD_BY_LETTER = Object.fromEntries(MD_REGISTRY.map((e) => [e.letter, e]));
+
+/** The Metadata Master Sheet letter of a metadataFields entry, when it is in BW..FC. */
+export function metadataLetterOf(m: MetadataField): string | undefined {
+  return LETTER_BY_FIELD.get(metadataFields.indexOf(m));
+}
+
 export function columnValue(m: MetadataField, o: OfferRecord) {
+  const L = metadataLetterOf(m);
+  if (L && MD_BY_LETTER[L]) {
+    const e = MD_BY_LETTER[L];
+    if (L === 'FB') {
+      return { text: 'Not captured in the calendar form', captured: false, source: 'Not captured: empty in Excel (Confirm with business)' };
+    }
+    const v = computeMdCells(o, new Date(), importMetaOf(o._uid))[L];
+    const f = e.fieldId ? fieldsById[e.fieldId] : undefined;
+    const source = f ? `Offer form: ${f.label}${f.step ? ` (${f.step})` : ''}` : `Calculated: Metadata ${L}`;
+    let text: string;
+    if (isErr(v)) text = 'Not available';
+    else if (typeof v === 'number') text = e.format === 'date' ? serialToIso(v) : String(v);
+    else text = v === '' && f ? 'Not entered' : v;
+    return { text, captured: true, source };
+  }
+  return legacyColumnValue(m, o);
+}
+
+function legacyColumnValue(m: MetadataField, o: OfferRecord) {
   const resolved = resolveCalendarFieldValue(m.calendarFieldId, o);
   let source: string;
   if (!m.calendarFieldId) source = 'Not captured';

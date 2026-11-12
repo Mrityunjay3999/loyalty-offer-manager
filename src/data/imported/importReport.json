@@ -4834,6 +4834,292 @@
   },
   {
    "id": "ISS-0361",
+   "type": "excel_error_cells",
+   "severity": "issue",
+   "offerId": 316,
+   "offerName": "20230424_MMWKLNGDBLPO_IMPO",
+   "file": "Metadata",
+   "row": 319,
+   "column": "CD, CE",
+   "excelValue": "#VALUE!",
+   "valueUsed": "(calculated from the offer)",
+   "message": "The Metadata row shows Excel errors in 2 column(s) (CD, CE). The prototype calculates them from the offer."
+  },
+  {
+   "id": "ISS-0362",
+   "type": "excel_error_cells",
+   "severity": "issue",
+   "offerId": 403,
+   "offerName": "20230717_COMP_GO_BEND_3X_1307",
+   "file": "Metadata",
+   "row": 406,
+   "column": "CL",
+   "excelValue": "#VALUE!",
+   "valueUsed": "(calculated from the offer)",
+   "message": "The Metadata row shows Excel errors in 1 column(s) (CL). The prototype calculates them from the offer."
+  },
+  {
+   "id": "ISS-0363",
+   "type": "excel_error_cells",
+   "severity": "issue",
+   "offerId": 404,
+   "offerName": "20230717_COMP_GO_BOYNTONBEACH_3X_3097",
+   "file": "Metadata",
+   "row": 407,
+   "column": "CL",
+   "excelValue": "#VALUE!",
+   "valueUsed": "(calculated from the offer)",
+   "message": "The Metadata row shows Excel errors in 1 column(s) (CL). The prototype calculates them from the offer."
+  },
+  {
+   "id": "ISS-0364",
+   "type": "excel_error_cells",
+   "severity": "issue",
+   "offerId": 406,
+   "offerName": "20230717_COMP_GO_KENNEWICK_3X_398",
+   "file": "Metadata",
+   "row": 409,
+   "column": "CL",
+   "excelValue": "#VALUE!",
+   "valueUsed": "(calculated from the offer)",
+   "message": "The Metadata row shows Excel errors in 1 column(s) (CL). The prototype calculates them from the offer."
+  },
+  {
+   "id": "ISS-0365",
+   "type": "excel_error_cells",
+   "severity": "issue",
+   "offerId": 569,
+   "offerName": "20231218_COMPGO_RAINBOW_3X_0146 - Not Launching",
+   "file": "Metadata",
+   "row": 572,
+   "column": "CL",
+   "excelValue": "#VALUE!",
+   "valueUsed": "(calculated from the offer)",
+   "message": "The Metadata row shows Excel errors in 1 column(s) (CL). The prototype calculates them from the offer."
+  },
+  {
+   "id": "ISS-0366",
+   "type": "excel_error_cells",
+   "severity": "issue",
+   "offerId": 570,
+   "offerName": "20231218_COMPGO_SDECAT_3X_0152 - Not Launching",
+   "file": "Metadata",
+   "row": 573,
+   "column": "CL",
+   "excelValue": "#VALUE!",
+   "valueUsed": "(calculated from the offer)",
+   "message": "The Metadata row shows Excel errors in 1 column(s) (CL). The prototype calculates them from the offer."
+  },
+  {
+   "id": "ISS-0367",
+   "type": "excel_error_cells",
+   "severity": "issue",
+   "offerId": 657,
+   "offerName": "20240402_TRDONATIONS_2X",
+   "file": "Metadata",
+   "row": 660,
+   "column": "BW, BX, BY, BZ, CC, CL",
+   "excelValue": "#N/A",
+   "valueUsed": "(calculated from the offer)",
+   "message": "The Metadata row shows Excel errors in 6 column(s) (BW, BX, BY, BZ, CC, CL). The prototype calculates them from the offer."
+  },
+  {
+   "id": "ISS-0368",
+   "type": "excel_error_cells",
+   "severity": "issue",
+   "offerId": 663,
+   "offerName": "20240402_TRLOCKEDBESTIE_2X",
+   "file": "Metadata",
+   "row": 666,
+   "column": "CL",
+   "excelValue": "#VALUE!",
+   "valueUsed": "(calculated from the offer)",
+   "message": "The Metadata row shows Excel errors in 1 column(s) (CL). The prototype calculates them from the offer."
+  },
+  {
+   "id": "ISS-0369",
+   "type": "excel_error_cells",
+   "severity": "issue",
+   "offerId": 664,
+   "offerName": "20240402_TRLOCKEDVIPP_2X",
+   "file": "Metadata",
+   "row": 667,
+   "column": "CL",
+   "excelValue": "#VALUE!",
+   "valueUsed": "(calculated from the offer)",
+   "message": "The Metadata row shows Excel errors in 1 column(s) (CL). The prototype calculates them from the offer."
+  },
+  {
+   "id": "ISS-0370",
+   "type": "excel_error_cells",
+   "severity": "issue",
+   "offerId": 687,
+   "offerName": "20240415_TRLBESTIEVIPPREDEEMREPEAT_VARIES",
+   "file": "Metadata",
+   "row": 690,
+   "column": "CD, CE",
+   "excelValue": "#VALUE!",
+   "valueUsed": "(calculated from the offer)",
+   "message": "The Metadata row shows Excel errors in 2 column(s) (CD, CE). The prototype calculates them from the offer."
+  },
+  {
+   "id": "ISS-0371",
+   "type": "excel_error_cells",
+   "severity": "issue",
+   "offerId": 853,
+   "offerName": "20240905_REPLENISHMENTCAT_3X",
+   "file": "Metadata",
+   "row": 856,
+   "column": "CL",
+   "excelValue": "#REF!",
+   "valueUsed": "(calculated from the offer)",
+   "message": "The Metadata row shows Excel errors in 1 column(s) (CL). The prototype calculates them from the offer."
+  },
+  {
+   "id": "ISS-0372",
+   "type": "excel_error_cells",
+   "severity": "issue",
+   "offerId": 1002,
+   "offerName": "20250101_TRBESTIEBENICHOOSE_2X",
+   "file": "Metadata",
+   "row": 1005,
+   "column": "BW, BX, BY, BZ, CC, CL, EJ",
+   "excelValue": "#N/A",
+   "valueUsed": "(calculated from the offer)",
+   "message": "The Metadata row shows Excel errors in 7 column(s) (BW, BX, BY, BZ, CC, CL, ...). The prototype calculates them from the offer."
+  },
+  {
+   "id": "ISS-0373",
+   "type": "excel_error_cells",
+   "severity": "issue",
+   "offerId": 1003,
+   "offerName": "20250101_TRLOCKEDBESTIE_2X",
+   "file": "Metadata",
+   "row": 1006,
+   "column": "EJ",
+   "excelValue": "#VALUE!",
+   "valueUsed": "(calculated from the offer)",
+   "message": "The Metadata row shows Excel errors in 1 column(s) (EJ). The prototype calculates them from the offer."
+  },
+  {
+   "id": "ISS-0374",
+   "type": "excel_error_cells",
+   "severity": "issue",
+   "offerId": 1004,
+   "offerName": "20250101_TRLOCKEDVIPP_2X",
+   "file": "Metadata",
+   "row": 1007,
+   "column": "EJ",
+   "excelValue": "#VALUE!",
+   "valueUsed": "(calculated from the offer)",
+   "message": "The Metadata row shows Excel errors in 1 column(s) (EJ). The prototype calculates them from the offer."
+  },
+  {
+   "id": "ISS-0375",
+   "type": "excel_error_cells",
+   "severity": "issue",
+   "offerId": 1005,
+   "offerName": "20250101_TRVIPPBENICHOOSE_2X",
+   "file": "Metadata",
+   "row": 1008,
+   "column": "BW, BX, BY, BZ, CC, CL, EJ",
+   "excelValue": "#N/A",
+   "valueUsed": "(calculated from the offer)",
+   "message": "The Metadata row shows Excel errors in 7 column(s) (BW, BX, BY, BZ, CC, CL, ...). The prototype calculates them from the offer."
+  },
+  {
+   "id": "ISS-0376",
+   "type": "excel_error_cells",
+   "severity": "issue",
+   "offerId": 1073,
+   "offerName": "20250301_AUTOSHIPRRINFO_IMPO",
+   "file": "Metadata",
+   "row": 1076,
+   "column": "EJ",
+   "excelValue": "#VALUE!",
+   "valueUsed": "(calculated from the offer)",
+   "message": "The Metadata row shows Excel errors in 1 column(s) (EJ). The prototype calculates them from the offer."
+  },
+  {
+   "id": "ISS-0377",
+   "type": "excel_error_cells",
+   "severity": "issue",
+   "offerId": 1081,
+   "offerName": "20250324_CANNAWDONATE_1000",
+   "file": "Metadata",
+   "row": 1084,
+   "column": "DI, DJ, DK, DL, DM, DN, DO, DS, DT",
+   "excelValue": "#DIV/0!",
+   "valueUsed": "(calculated from the offer)",
+   "message": "The Metadata row shows Excel errors in 9 column(s) (DI, DJ, DK, DL, DM, DN, ...). The prototype calculates them from the offer."
+  },
+  {
+   "id": "ISS-0378",
+   "type": "excel_error_cells",
+   "severity": "issue",
+   "offerId": 1120,
+   "offerName": "20250501_TRGENTRY_1000",
+   "file": "Metadata",
+   "row": 1123,
+   "column": "CX, CY, CZ, DA, DB, DC, DF, DG, DH, DI, DJ, DK, DL, DM, DN, DO, DS, DT",
+   "excelValue": "#N/A",
+   "valueUsed": "(calculated from the offer)",
+   "message": "The Metadata row shows Excel errors in 18 column(s) (CX, CY, CZ, DA, DB, DC, ...). The prototype calculates them from the offer."
+  },
+  {
+   "id": "ISS-0379",
+   "type": "excel_error_cells",
+   "severity": "issue",
+   "offerId": 1555,
+   "offerName": "20260201_ADOPTFEB_VIPP",
+   "file": "Metadata",
+   "row": 1554,
+   "column": "DI, DJ, DK, DL, DM, DN, DO, DS, DT",
+   "excelValue": "#DIV/0!",
+   "valueUsed": "(calculated from the offer)",
+   "message": "The Metadata row shows Excel errors in 9 column(s) (DI, DJ, DK, DL, DM, DN, ...). The prototype calculates them from the offer."
+  },
+  {
+   "id": "ISS-0380",
+   "type": "excel_formula_gap",
+   "severity": "issue",
+   "offerId": 291,
+   "offerName": "20230401_MMTSGBONUSENTRIES_IMPO",
+   "file": "Metadata",
+   "row": 294,
+   "column": "CJ",
+   "excelValue": "100",
+   "valueUsed": "N/A (from AE)",
+   "message": "Metadata column CJ shows 100 although its formula gives \"N/A\" for this row (AE is \"N/A\"), so CT and CU differ too. The prototype follows the formula."
+  },
+  {
+   "id": "ISS-0381",
+   "type": "excel_formula_gap",
+   "severity": "issue",
+   "offerId": 1016,
+   "offerName": "20250117_TRSGINAPPPURCHASEENTRIES_100",
+   "file": "Metadata",
+   "row": 1019,
+   "column": "CJ",
+   "excelValue": "0",
+   "valueUsed": "N/A (from AE)",
+   "message": "Metadata column CJ shows 0 although its formula gives \"N/A\" for this row (AE is \"N/A\"), so CT and CU differ too. The prototype follows the formula."
+  },
+  {
+   "id": "ISS-0382",
+   "type": "excel_formula_gap",
+   "severity": "issue",
+   "offerId": 1121,
+   "offerName": "20250501_AFDMTRSGGROOMING_100",
+   "file": "Metadata",
+   "row": 1124,
+   "column": "CJ",
+   "excelValue": "0",
+   "valueUsed": "N/A (from AE)",
+   "message": "Metadata column CJ shows 0 although its formula gives \"N/A\" for this row (AE is \"N/A\"), so CT and CU differ too. The prototype follows the formula."
+  },
+  {
+   "id": "ISS-0383",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -4846,7 +5132,7 @@
    "message": "Metadata row 2427 (Ref Nbr 1396): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0362",
+   "id": "ISS-0384",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -4859,7 +5145,7 @@
    "message": "Metadata row 2428 (Ref Nbr 1397): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0363",
+   "id": "ISS-0385",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -4872,7 +5158,7 @@
    "message": "Metadata row 2429 (Ref Nbr 1398): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0364",
+   "id": "ISS-0386",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -4885,7 +5171,7 @@
    "message": "Metadata row 2430 (Ref Nbr 1399): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0365",
+   "id": "ISS-0387",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -4898,7 +5184,7 @@
    "message": "Metadata row 2431 (Ref Nbr 1400): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0366",
+   "id": "ISS-0388",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -4911,7 +5197,7 @@
    "message": "Metadata row 2432 (Ref Nbr 1401): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0367",
+   "id": "ISS-0389",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -4924,7 +5210,7 @@
    "message": "Metadata row 2433 (Ref Nbr 1402): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0368",
+   "id": "ISS-0390",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -4937,7 +5223,7 @@
    "message": "Metadata row 2434 (Ref Nbr 1403): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0369",
+   "id": "ISS-0391",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -4950,7 +5236,7 @@
    "message": "Metadata row 2435 (Ref Nbr 1404): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0370",
+   "id": "ISS-0392",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -4963,7 +5249,7 @@
    "message": "Metadata row 2436 (Ref Nbr 1405): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0371",
+   "id": "ISS-0393",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -4976,7 +5262,7 @@
    "message": "Metadata row 2437 (Ref Nbr 1406): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0372",
+   "id": "ISS-0394",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -4989,7 +5275,7 @@
    "message": "Metadata row 2438 (Ref Nbr 1407): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0373",
+   "id": "ISS-0395",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5002,7 +5288,7 @@
    "message": "Metadata row 2439 (Ref Nbr 1408): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0374",
+   "id": "ISS-0396",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5015,7 +5301,7 @@
    "message": "Metadata row 2440 (Ref Nbr 1409): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0375",
+   "id": "ISS-0397",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5028,7 +5314,7 @@
    "message": "Metadata row 2441 (Ref Nbr 1410): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0376",
+   "id": "ISS-0398",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5041,7 +5327,7 @@
    "message": "Metadata row 2442 (Ref Nbr 1411): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0377",
+   "id": "ISS-0399",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5054,7 +5340,7 @@
    "message": "Metadata row 2443 (Ref Nbr 1412): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0378",
+   "id": "ISS-0400",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5067,7 +5353,7 @@
    "message": "Metadata row 2444 (Ref Nbr 1413): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0379",
+   "id": "ISS-0401",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5080,7 +5366,7 @@
    "message": "Metadata row 2445 (Ref Nbr 1414): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0380",
+   "id": "ISS-0402",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5093,7 +5379,7 @@
    "message": "Metadata row 2446 (Ref Nbr 1415): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0381",
+   "id": "ISS-0403",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5106,7 +5392,7 @@
    "message": "Metadata row 2447 (Ref Nbr 1416): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0382",
+   "id": "ISS-0404",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5119,7 +5405,7 @@
    "message": "Metadata row 2448 (Ref Nbr 1417): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0383",
+   "id": "ISS-0405",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5132,7 +5418,7 @@
    "message": "Metadata row 2449 (Ref Nbr 1418): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0384",
+   "id": "ISS-0406",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5145,7 +5431,7 @@
    "message": "Metadata row 2450 (Ref Nbr 1419): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0385",
+   "id": "ISS-0407",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5158,7 +5444,7 @@
    "message": "Metadata row 2451 (Ref Nbr 1420): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0386",
+   "id": "ISS-0408",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5171,7 +5457,7 @@
    "message": "Metadata row 2452 (Ref Nbr 1421): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0387",
+   "id": "ISS-0409",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5184,7 +5470,7 @@
    "message": "Metadata row 2453 (Ref Nbr 1422): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0388",
+   "id": "ISS-0410",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5197,7 +5483,7 @@
    "message": "Metadata row 2454 (Ref Nbr 1423): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0389",
+   "id": "ISS-0411",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5210,7 +5496,7 @@
    "message": "Metadata row 2455 (Ref Nbr 1424): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0390",
+   "id": "ISS-0412",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5223,7 +5509,7 @@
    "message": "Metadata row 2456 (Ref Nbr 1425): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0391",
+   "id": "ISS-0413",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5236,7 +5522,7 @@
    "message": "Metadata row 2457 (Ref Nbr 1426): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0392",
+   "id": "ISS-0414",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5249,7 +5535,7 @@
    "message": "Metadata row 2458 (Ref Nbr 1427): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0393",
+   "id": "ISS-0415",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5262,7 +5548,7 @@
    "message": "Metadata row 2459 (Ref Nbr 1428): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0394",
+   "id": "ISS-0416",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5275,7 +5561,7 @@
    "message": "Metadata row 2460 (Ref Nbr 1429): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0395",
+   "id": "ISS-0417",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5288,7 +5574,7 @@
    "message": "Metadata row 2461 (Ref Nbr 1430): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0396",
+   "id": "ISS-0418",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5301,7 +5587,7 @@
    "message": "Metadata row 2462 (Ref Nbr 1431): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0397",
+   "id": "ISS-0419",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5314,7 +5600,7 @@
    "message": "Metadata row 2463 (Ref Nbr 1432): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0398",
+   "id": "ISS-0420",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5327,7 +5613,7 @@
    "message": "Metadata row 2464 (Ref Nbr 1433): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0399",
+   "id": "ISS-0421",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5340,7 +5626,7 @@
    "message": "Metadata row 2465 (Ref Nbr 1434): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0400",
+   "id": "ISS-0422",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5353,7 +5639,7 @@
    "message": "Metadata row 2466 (Ref Nbr 1435): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0401",
+   "id": "ISS-0423",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5366,7 +5652,7 @@
    "message": "Metadata row 2467 (Ref Nbr 1436): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0402",
+   "id": "ISS-0424",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5379,7 +5665,7 @@
    "message": "Metadata row 2468 (Ref Nbr 1437): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0403",
+   "id": "ISS-0425",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5392,7 +5678,7 @@
    "message": "Metadata row 2469 (Ref Nbr 1438): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0404",
+   "id": "ISS-0426",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5405,7 +5691,7 @@
    "message": "Metadata row 2470 (Ref Nbr 1439): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0405",
+   "id": "ISS-0427",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5418,7 +5704,7 @@
    "message": "Metadata row 2471 (Ref Nbr 1440): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0406",
+   "id": "ISS-0428",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5431,7 +5717,7 @@
    "message": "Metadata row 2472 (Ref Nbr 1441): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0407",
+   "id": "ISS-0429",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5444,7 +5730,7 @@
    "message": "Metadata row 2473 (Ref Nbr 1442): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0408",
+   "id": "ISS-0430",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5457,7 +5743,7 @@
    "message": "Metadata row 2474 (Ref Nbr 1443): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0409",
+   "id": "ISS-0431",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5470,7 +5756,7 @@
    "message": "Metadata row 2475 (Ref Nbr 1444): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0410",
+   "id": "ISS-0432",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5483,7 +5769,7 @@
    "message": "Metadata row 2476 (Ref Nbr 1445): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0411",
+   "id": "ISS-0433",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5496,7 +5782,7 @@
    "message": "Metadata row 2477 (Ref Nbr 1446): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0412",
+   "id": "ISS-0434",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5509,7 +5795,7 @@
    "message": "Metadata row 2478 (Ref Nbr 1447): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0413",
+   "id": "ISS-0435",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5522,7 +5808,7 @@
    "message": "Metadata row 2479 (Ref Nbr 1448): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0414",
+   "id": "ISS-0436",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5535,7 +5821,7 @@
    "message": "Metadata row 2480 (Ref Nbr 1449): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0415",
+   "id": "ISS-0437",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5548,7 +5834,7 @@
    "message": "Metadata row 2481 (Ref Nbr 1450): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0416",
+   "id": "ISS-0438",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5561,7 +5847,7 @@
    "message": "Metadata row 2482 (Ref Nbr 1451): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0417",
+   "id": "ISS-0439",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5574,7 +5860,7 @@
    "message": "Metadata row 2483 (Ref Nbr 1452): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0418",
+   "id": "ISS-0440",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5587,7 +5873,7 @@
    "message": "Metadata row 2484 (Ref Nbr 1453): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0419",
+   "id": "ISS-0441",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5600,7 +5886,7 @@
    "message": "Metadata row 2485 (Ref Nbr 1454): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0420",
+   "id": "ISS-0442",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5613,7 +5899,7 @@
    "message": "Metadata row 2486 (Ref Nbr 1455): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0421",
+   "id": "ISS-0443",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5626,7 +5912,7 @@
    "message": "Metadata row 2487 (Ref Nbr 1456): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0422",
+   "id": "ISS-0444",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5639,7 +5925,7 @@
    "message": "Metadata row 2488 (Ref Nbr 1457): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0423",
+   "id": "ISS-0445",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5652,7 +5938,7 @@
    "message": "Metadata row 2489 (Ref Nbr 1458): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0424",
+   "id": "ISS-0446",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5665,7 +5951,7 @@
    "message": "Metadata row 2490 (Ref Nbr 1459): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0425",
+   "id": "ISS-0447",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5678,7 +5964,7 @@
    "message": "Metadata row 2491 (Ref Nbr 1460): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0426",
+   "id": "ISS-0448",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5691,7 +5977,7 @@
    "message": "Metadata row 2492 (Ref Nbr 1461): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0427",
+   "id": "ISS-0449",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5704,7 +5990,7 @@
    "message": "Metadata row 2493 (Ref Nbr 1462): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0428",
+   "id": "ISS-0450",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5717,7 +6003,7 @@
    "message": "Metadata row 2494 (Ref Nbr 1463): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0429",
+   "id": "ISS-0451",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5730,7 +6016,7 @@
    "message": "Metadata row 2495 (Ref Nbr 1464): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0430",
+   "id": "ISS-0452",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5743,7 +6029,7 @@
    "message": "Metadata row 2496 (Ref Nbr 1465): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0431",
+   "id": "ISS-0453",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5756,7 +6042,7 @@
    "message": "Metadata row 2497 (Ref Nbr 1466): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0432",
+   "id": "ISS-0454",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5769,7 +6055,7 @@
    "message": "Metadata row 2498 (Ref Nbr 1467): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0433",
+   "id": "ISS-0455",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5782,7 +6068,7 @@
    "message": "Metadata row 2499 (Ref Nbr 1468): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0434",
+   "id": "ISS-0456",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5795,7 +6081,7 @@
    "message": "Metadata row 2500 (Ref Nbr 1469): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0435",
+   "id": "ISS-0457",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5808,7 +6094,7 @@
    "message": "Metadata row 2501 (Ref Nbr 1470): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0436",
+   "id": "ISS-0458",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5821,7 +6107,7 @@
    "message": "Metadata row 2502 (Ref Nbr 1471): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0437",
+   "id": "ISS-0459",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5834,7 +6120,7 @@
    "message": "Metadata row 2503 (Ref Nbr 1472): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0438",
+   "id": "ISS-0460",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5847,7 +6133,7 @@
    "message": "Metadata row 2504 (Ref Nbr 1473): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0439",
+   "id": "ISS-0461",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5860,7 +6146,7 @@
    "message": "Metadata row 2505 (Ref Nbr 1474): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0440",
+   "id": "ISS-0462",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5873,7 +6159,7 @@
    "message": "Metadata row 2506 (Ref Nbr 1475): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0441",
+   "id": "ISS-0463",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5886,7 +6172,7 @@
    "message": "Metadata row 2507 (Ref Nbr 1476): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0442",
+   "id": "ISS-0464",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5899,7 +6185,7 @@
    "message": "Metadata row 2508 (Ref Nbr 1477): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0443",
+   "id": "ISS-0465",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5912,7 +6198,7 @@
    "message": "Metadata row 2509 (Ref Nbr 1478): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0444",
+   "id": "ISS-0466",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5925,7 +6211,7 @@
    "message": "Metadata row 2510 (Ref Nbr 1479): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0445",
+   "id": "ISS-0467",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5938,7 +6224,7 @@
    "message": "Metadata row 2511 (Ref Nbr 1480): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0446",
+   "id": "ISS-0468",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5951,7 +6237,7 @@
    "message": "Metadata row 2512 (Ref Nbr 1481): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0447",
+   "id": "ISS-0469",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5964,7 +6250,7 @@
    "message": "Metadata row 2513 (Ref Nbr 1482): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0448",
+   "id": "ISS-0470",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5977,7 +6263,7 @@
    "message": "Metadata row 2514 (Ref Nbr 1483): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0449",
+   "id": "ISS-0471",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -5990,7 +6276,7 @@
    "message": "Metadata row 2515 (Ref Nbr 1484): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0450",
+   "id": "ISS-0472",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6003,7 +6289,7 @@
    "message": "Metadata row 2516 (Ref Nbr 1485): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0451",
+   "id": "ISS-0473",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6016,7 +6302,7 @@
    "message": "Metadata row 2517 (Ref Nbr 1486): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0452",
+   "id": "ISS-0474",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6029,7 +6315,7 @@
    "message": "Metadata row 2518 (Ref Nbr 1487): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0453",
+   "id": "ISS-0475",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6042,7 +6328,7 @@
    "message": "Metadata row 2519 (Ref Nbr 1488): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0454",
+   "id": "ISS-0476",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6055,7 +6341,7 @@
    "message": "Metadata row 2520 (Ref Nbr 1489): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0455",
+   "id": "ISS-0477",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6068,7 +6354,7 @@
    "message": "Metadata row 2521 (Ref Nbr 1490): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0456",
+   "id": "ISS-0478",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6081,7 +6367,7 @@
    "message": "Metadata row 2522 (Ref Nbr 1491): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0457",
+   "id": "ISS-0479",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6094,7 +6380,7 @@
    "message": "Metadata row 2523 (Ref Nbr 1492): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0458",
+   "id": "ISS-0480",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6107,7 +6393,7 @@
    "message": "Metadata row 2524 (Ref Nbr 1493): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0459",
+   "id": "ISS-0481",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6120,7 +6406,7 @@
    "message": "Metadata row 2525 (Ref Nbr 1494): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0460",
+   "id": "ISS-0482",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6133,7 +6419,7 @@
    "message": "Metadata row 2526 (Ref Nbr 1495): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0461",
+   "id": "ISS-0483",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6146,7 +6432,7 @@
    "message": "Metadata row 2527 (Ref Nbr 1496): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0462",
+   "id": "ISS-0484",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6159,7 +6445,7 @@
    "message": "Metadata row 2528 (Ref Nbr 1497): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0463",
+   "id": "ISS-0485",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6172,7 +6458,7 @@
    "message": "Metadata row 2529 (Ref Nbr 1498): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0464",
+   "id": "ISS-0486",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6185,7 +6471,7 @@
    "message": "Metadata row 2530 (Ref Nbr 1499): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0465",
+   "id": "ISS-0487",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6198,7 +6484,7 @@
    "message": "Metadata row 2531 (Ref Nbr 1500): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0466",
+   "id": "ISS-0488",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6211,7 +6497,7 @@
    "message": "Metadata row 2532 (Ref Nbr 1501): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0467",
+   "id": "ISS-0489",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6224,7 +6510,7 @@
    "message": "Metadata row 2533 (Ref Nbr 1502): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0468",
+   "id": "ISS-0490",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6237,7 +6523,7 @@
    "message": "Metadata row 2534 (Ref Nbr 1503): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0469",
+   "id": "ISS-0491",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6250,7 +6536,7 @@
    "message": "Metadata row 2535 (Ref Nbr 1504): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0470",
+   "id": "ISS-0492",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6263,7 +6549,7 @@
    "message": "Metadata row 2536 (Ref Nbr 1505): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0471",
+   "id": "ISS-0493",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6276,7 +6562,7 @@
    "message": "Metadata row 2537 (Ref Nbr 1506): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0472",
+   "id": "ISS-0494",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6289,7 +6575,7 @@
    "message": "Metadata row 2538 (Ref Nbr 1507): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0473",
+   "id": "ISS-0495",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6302,7 +6588,7 @@
    "message": "Metadata row 2539 (Ref Nbr 1508): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0474",
+   "id": "ISS-0496",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6315,7 +6601,7 @@
    "message": "Metadata row 2540 (Ref Nbr 1509): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0475",
+   "id": "ISS-0497",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6328,7 +6614,7 @@
    "message": "Metadata row 2541 (Ref Nbr 1510): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0476",
+   "id": "ISS-0498",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6341,7 +6627,7 @@
    "message": "Metadata row 2542 (Ref Nbr 1511): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0477",
+   "id": "ISS-0499",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6354,7 +6640,7 @@
    "message": "Metadata row 2543 (Ref Nbr 1512): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0478",
+   "id": "ISS-0500",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6367,7 +6653,7 @@
    "message": "Metadata row 2544 (Ref Nbr 1513): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0479",
+   "id": "ISS-0501",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6380,7 +6666,7 @@
    "message": "Metadata row 2545 (Ref Nbr 1514): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0480",
+   "id": "ISS-0502",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6393,7 +6679,7 @@
    "message": "Metadata row 2546 (Ref Nbr 1515): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0481",
+   "id": "ISS-0503",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6406,7 +6692,7 @@
    "message": "Metadata row 2547 (Ref Nbr 1516): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0482",
+   "id": "ISS-0504",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6419,7 +6705,7 @@
    "message": "Metadata row 2548 (Ref Nbr 1517): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0483",
+   "id": "ISS-0505",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6432,7 +6718,7 @@
    "message": "Metadata row 2549 (Ref Nbr 1518): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0484",
+   "id": "ISS-0506",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6445,7 +6731,7 @@
    "message": "Metadata row 2550 (Ref Nbr 1519): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0485",
+   "id": "ISS-0507",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6458,7 +6744,7 @@
    "message": "Metadata row 2551 (Ref Nbr 1520): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0486",
+   "id": "ISS-0508",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6471,7 +6757,7 @@
    "message": "Metadata row 2552 (Ref Nbr 1521): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0487",
+   "id": "ISS-0509",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6484,7 +6770,7 @@
    "message": "Metadata row 2553 (Ref Nbr 1522): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0488",
+   "id": "ISS-0510",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6497,7 +6783,7 @@
    "message": "Metadata row 2554 (Ref Nbr 1523): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0489",
+   "id": "ISS-0511",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6510,7 +6796,7 @@
    "message": "Metadata row 2555 (Ref Nbr 1524): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0490",
+   "id": "ISS-0512",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6523,7 +6809,7 @@
    "message": "Metadata row 2556 (Ref Nbr 1525): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0491",
+   "id": "ISS-0513",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6536,7 +6822,7 @@
    "message": "Metadata row 2557 (Ref Nbr 1526): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0492",
+   "id": "ISS-0514",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6549,7 +6835,7 @@
    "message": "Metadata row 2558 (Ref Nbr 1527): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0493",
+   "id": "ISS-0515",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6562,7 +6848,7 @@
    "message": "Metadata row 2559 (Ref Nbr 1528): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0494",
+   "id": "ISS-0516",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6575,7 +6861,7 @@
    "message": "Metadata row 2560 (Ref Nbr 1529): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0495",
+   "id": "ISS-0517",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6588,7 +6874,7 @@
    "message": "Metadata row 2561 (Ref Nbr 1530): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0496",
+   "id": "ISS-0518",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6601,7 +6887,7 @@
    "message": "Metadata row 2562 (Ref Nbr 1531): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0497",
+   "id": "ISS-0519",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6614,7 +6900,7 @@
    "message": "Metadata row 2563 (Ref Nbr 1532): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0498",
+   "id": "ISS-0520",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6627,7 +6913,7 @@
    "message": "Metadata row 2564 (Ref Nbr 1533): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0499",
+   "id": "ISS-0521",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6640,7 +6926,7 @@
    "message": "Metadata row 2565 (Ref Nbr 1534): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0500",
+   "id": "ISS-0522",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6653,7 +6939,7 @@
    "message": "Metadata row 2566 (Ref Nbr 1535): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0501",
+   "id": "ISS-0523",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6666,7 +6952,7 @@
    "message": "Metadata row 2567 (Ref Nbr 1536): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0502",
+   "id": "ISS-0524",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6679,7 +6965,7 @@
    "message": "Metadata row 2568 (Ref Nbr 1537): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0503",
+   "id": "ISS-0525",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6692,7 +6978,7 @@
    "message": "Metadata row 2569 (Ref Nbr 1538): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0504",
+   "id": "ISS-0526",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6705,7 +6991,7 @@
    "message": "Metadata row 2570 (Ref Nbr 1539): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0505",
+   "id": "ISS-0527",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6718,7 +7004,7 @@
    "message": "Metadata row 2571 (Ref Nbr 1540): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0506",
+   "id": "ISS-0528",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6731,7 +7017,7 @@
    "message": "Metadata row 2572 (Ref Nbr 1541): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0507",
+   "id": "ISS-0529",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6744,7 +7030,7 @@
    "message": "Metadata row 2573 (Ref Nbr 1542): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0508",
+   "id": "ISS-0530",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6757,7 +7043,7 @@
    "message": "Metadata row 2574 (Ref Nbr 1543): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0509",
+   "id": "ISS-0531",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6770,7 +7056,7 @@
    "message": "Metadata row 2575 (Ref Nbr 1544): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0510",
+   "id": "ISS-0532",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6783,7 +7069,7 @@
    "message": "Metadata row 2576 (Ref Nbr 1545): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0511",
+   "id": "ISS-0533",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6796,7 +7082,7 @@
    "message": "Metadata row 2577 (Ref Nbr 1546): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0512",
+   "id": "ISS-0534",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6809,7 +7095,7 @@
    "message": "Metadata row 2578 (Ref Nbr 1547): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0513",
+   "id": "ISS-0535",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6822,7 +7108,7 @@
    "message": "Metadata row 2579 (Ref Nbr 1548): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0514",
+   "id": "ISS-0536",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6835,7 +7121,7 @@
    "message": "Metadata row 2580 (Ref Nbr 1549): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0515",
+   "id": "ISS-0537",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6848,7 +7134,7 @@
    "message": "Metadata row 2581 (Ref Nbr 1550): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0516",
+   "id": "ISS-0538",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6861,7 +7147,7 @@
    "message": "Metadata row 2582 (Ref Nbr 1551): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0517",
+   "id": "ISS-0539",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6874,7 +7160,7 @@
    "message": "Metadata row 2583 (Ref Nbr 1552): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0518",
+   "id": "ISS-0540",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6887,7 +7173,7 @@
    "message": "Metadata row 2584 (Ref Nbr 1553): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0519",
+   "id": "ISS-0541",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6900,7 +7186,7 @@
    "message": "Metadata row 2585 (Ref Nbr 1554): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0520",
+   "id": "ISS-0542",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6913,7 +7199,7 @@
    "message": "Metadata row 2586 (Ref Nbr 1555): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0521",
+   "id": "ISS-0543",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6926,7 +7212,7 @@
    "message": "Metadata row 2587 (Ref Nbr 1556): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0522",
+   "id": "ISS-0544",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6939,7 +7225,7 @@
    "message": "Metadata row 2588 (Ref Nbr 1557): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0523",
+   "id": "ISS-0545",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6952,7 +7238,7 @@
    "message": "Metadata row 2589 (Ref Nbr 1558): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0524",
+   "id": "ISS-0546",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6965,7 +7251,7 @@
    "message": "Metadata row 2590 (Ref Nbr 1559): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0525",
+   "id": "ISS-0547",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6978,7 +7264,7 @@
    "message": "Metadata row 2591 (Ref Nbr 1560): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0526",
+   "id": "ISS-0548",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -6991,7 +7277,7 @@
    "message": "Metadata row 2592 (Ref Nbr 1561): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0527",
+   "id": "ISS-0549",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7004,7 +7290,7 @@
    "message": "Metadata row 2593 (Ref Nbr 1562): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0528",
+   "id": "ISS-0550",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7017,7 +7303,7 @@
    "message": "Metadata row 2594 (Ref Nbr 1563): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0529",
+   "id": "ISS-0551",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7030,7 +7316,7 @@
    "message": "Metadata row 2595 (Ref Nbr 1564): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0530",
+   "id": "ISS-0552",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7043,7 +7329,7 @@
    "message": "Metadata row 2596 (Ref Nbr 1565): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0531",
+   "id": "ISS-0553",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7056,7 +7342,7 @@
    "message": "Metadata row 2597 (Ref Nbr 1566): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0532",
+   "id": "ISS-0554",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7069,7 +7355,7 @@
    "message": "Metadata row 2598 (Ref Nbr 1567): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0533",
+   "id": "ISS-0555",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7082,7 +7368,7 @@
    "message": "Metadata row 2599 (Ref Nbr 1568): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0534",
+   "id": "ISS-0556",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7095,7 +7381,7 @@
    "message": "Metadata row 2600 (Ref Nbr 1569): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0535",
+   "id": "ISS-0557",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7108,7 +7394,7 @@
    "message": "Metadata row 2601 (Ref Nbr 1570): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0536",
+   "id": "ISS-0558",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7121,7 +7407,7 @@
    "message": "Metadata row 2602 (Ref Nbr 1571): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0537",
+   "id": "ISS-0559",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7134,7 +7420,7 @@
    "message": "Metadata row 2603 (Ref Nbr 1572): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0538",
+   "id": "ISS-0560",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7147,7 +7433,7 @@
    "message": "Metadata row 2604 (Ref Nbr 1573): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0539",
+   "id": "ISS-0561",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7160,7 +7446,7 @@
    "message": "Metadata row 2605 (Ref Nbr 1574): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0540",
+   "id": "ISS-0562",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7173,7 +7459,7 @@
    "message": "Metadata row 2606 (Ref Nbr 1575): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0541",
+   "id": "ISS-0563",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7186,7 +7472,7 @@
    "message": "Metadata row 2607 (Ref Nbr 1576): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0542",
+   "id": "ISS-0564",
    "type": "failed_lookup",
    "severity": "issue",
    "offerId": null,
@@ -7199,7 +7485,7 @@
    "message": "Metadata row 2608 (Ref Nbr 1577): every lookup cell shows #N/A, so the row was skipped."
   },
   {
-   "id": "ISS-0543",
+   "id": "ISS-0565",
    "type": "new_status",
    "severity": "issue",
    "offerId": null,
@@ -7247,7 +7533,7 @@
    ]
   },
   {
-   "id": "ISS-0544",
+   "id": "ISS-0566",
    "type": "new_status",
    "severity": "issue",
    "offerId": null,
@@ -7282,7 +7568,7 @@
    ]
   },
   {
-   "id": "ISS-0545",
+   "id": "ISS-0567",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -7300,7 +7586,7 @@
    ]
   },
   {
-   "id": "ISS-0546",
+   "id": "ISS-0568",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -7329,7 +7615,7 @@
    ]
   },
   {
-   "id": "ISS-0547",
+   "id": "ISS-0569",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -7367,7 +7653,7 @@
    ]
   },
   {
-   "id": "ISS-0548",
+   "id": "ISS-0570",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -7412,7 +7698,7 @@
    ]
   },
   {
-   "id": "ISS-0549",
+   "id": "ISS-0571",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -7439,7 +7725,7 @@
    ]
   },
   {
-   "id": "ISS-0550",
+   "id": "ISS-0572",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -7463,7 +7749,7 @@
    ]
   },
   {
-   "id": "ISS-0551",
+   "id": "ISS-0573",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -7486,7 +7772,7 @@
    ]
   },
   {
-   "id": "ISS-0552",
+   "id": "ISS-0574",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -7509,7 +7795,7 @@
    ]
   },
   {
-   "id": "ISS-0553",
+   "id": "ISS-0575",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -7526,7 +7812,7 @@
    ]
   },
   {
-   "id": "ISS-0554",
+   "id": "ISS-0576",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -7546,7 +7832,7 @@
    ]
   },
   {
-   "id": "ISS-0555",
+   "id": "ISS-0577",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -7562,7 +7848,7 @@
    ]
   },
   {
-   "id": "ISS-0556",
+   "id": "ISS-0578",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,
@@ -7578,7 +7864,7 @@
    ]
   },
   {
-   "id": "ISS-0557",
+   "id": "ISS-0579",
    "type": "new_category_pair",
    "severity": "issue",
    "offerId": null,

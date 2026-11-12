@@ -21,6 +21,8 @@ import {
 import { computeRfCells } from '../src/lib/rfEngine';
 import { compareCell } from '../src/lib/excelFormat';
 import { RF_BY_LETTER } from '../src/lib/forecastColumnRegistry';
+import { computeMdCells } from '../src/lib/mdEngine';
+import { MD_REGISTRY } from '../src/lib/mdRegistry';
 import type { OfferRecord } from '../src/lib/types';
 
 const ROOT = process.cwd();
@@ -44,6 +46,7 @@ interface Issue {
     | 'duplicate_name'
     | 'failed_lookup'
     | 'excel_formula_gap'
+    | 'excel_error_cells'
     | 'rounded_export';
   severity: 'issue' | 'info';
   offerId: number | null;
@@ -73,7 +76,8 @@ const dropdowns = JSON.parse(fs.readFileSync(path.join(ROOT, 'src/data/dropdowns
   string[]
 >;
 const reference = JSON.parse(fs.readFileSync(path.join(ROOT, 'src/data/reference.json'), 'utf8')) as {
-  categorySubCategory: Array<{ category: string; subCategory: string }>;
+  categorySubCategory: Array<{ category: string; subCategory: string; foundInImport?: boolean }>;
+  lifecycle: Array<{ status: string; foundInImport?: boolean }>;
 };
 const control: Record<string, string> = Object.fromEntries(fields.map((f) => [f.id, f.control]));
 
@@ -404,6 +408,50 @@ function refineFromTotals(o: Offer, r: Row): boolean {
   return true;
 }
 
+// Same refinement for history offers (Metadata only), scored against the Metadata
+// file's own forecast columns: DP = DF x CJ (fixed designs), DP = DJ x CK x CJ (Multiplier).
+const MD_SCORE = MD_REGISTRY.filter((e) => e.band === 'MD_FORECAST' && e.letter !== 'CW');
+function refineHistory(o: Offer, r: Row): boolean {
+  const c0 = computeMdCells(o as OfferRecord, new Date(2026, 10, 11));
+  const W = typeof c0.CJ === 'number' ? c0.CJ : null;
+  const X = typeof o.basePtsPerDollar === 'number' ? o.basePtsPerDollar : 10;
+  const isMult = String(o.offerDesign ?? '').toLowerCase() === 'multiplier';
+  const low = sideCandidates(r, num(cell(r, 'CX')), { H: 'CZ', J: 'DB', N: 'DF', R: 'DJ', X: 'DP' }, W, X, isMult);
+  const high = sideCandidates(r, num(cell(r, 'CY')), { H: 'DA', J: 'DC', N: 'DG', R: 'DK', X: 'DQ' }, W, X, isMult);
+  const apply = (t: Offer, l: Pair, h: Pair) => {
+    const set = (id: string, v: number | null) => {
+      if (v === null || v === 0) delete t[id];
+      else t[id] = v;
+    };
+    set('bonusRateLow', l.rate);
+    set('avgSpendPerTxnLow', l.spend);
+    set('bonusRateHigh', h.rate);
+    set('avgSpendPerTxnHigh', h.spend);
+  };
+  const score = (t: Offer) => {
+    const c = computeMdCells(t as OfferRecord, new Date(2026, 10, 11));
+    let n = 0;
+    for (const e of MD_SCORE) if (compareCell(cell(r, e.letter), c[e.letter], e.format).match) n++;
+    return n;
+  };
+  let best = score(o);
+  let bestPair: [Pair, Pair] | null = null;
+  for (const l of low) {
+    for (const h of high) {
+      const t: Offer = { ...o };
+      apply(t, l, h);
+      const n = score(t);
+      if (n > best) {
+        best = n;
+        bestPair = [l, h];
+      }
+    }
+  }
+  if (!bestPair) return false;
+  apply(o, bestPair[0], bestPair[1]);
+  return true;
+}
+
 // ---------------------------------------------------------------- build Metadata offers
 const offers: Offer[] = [];
 const byName = new Map<string, Offer[]>();
@@ -685,7 +733,10 @@ for (const { row, r } of rfOnly) {
 for (const o of offers) {
   if (imp(o).inExcelRfTab) continue;
   const mr = mdRowByOffer.get(o);
-  if (mr) imp(o).derivedFields = rebuildForecast(o, mr, MD_FCST);
+  if (mr) {
+    imp(o).derivedFields = rebuildForecast(o, mr, MD_FCST);
+    refineHistory(o, mr);
+  }
 }
 
 // rounded export values (informational): rebuilt rate/spend differs from the shown text
@@ -719,6 +770,53 @@ for (const o of rfOffers) {
   }
 }
 
+// Metadata rows of real offers that show Excel errors in BW..FB (FC errors are
+// expected: Excel has no IFERROR there).
+for (const o of offers) {
+  const r = mdRowByOffer.get(o);
+  if (!r) continue;
+  const bad = colRange('BW', 'FB').filter((L) => /^#(N\/A|REF!|VALUE!|DIV\/0!)$/.test(trim(cell(r, L))));
+  if (!bad.length) continue;
+  const id = addIssue({
+    type: 'excel_error_cells',
+    severity: 'issue',
+    offerId: o.offerId as number,
+    offerName: String(o.offerName ?? ''),
+    file: 'Metadata',
+    row: imp(o).excelMetadataRow ?? null,
+    column: bad.join(', '),
+    excelValue: trim(cell(r, bad[0])),
+    valueUsed: '(calculated from the offer)',
+    message: `The Metadata row shows Excel errors in ${bad.length} column(s) (${bad.slice(0, 6).join(', ')}${bad.length > 6 ? ', ...' : ''}). The prototype calculates them from the offer.`,
+  });
+  imp(o).issues.push(id);
+}
+
+// Metadata CJ (Bonus point calculation) that does not follow its own formula
+// =IF(AF="Multiplier",LEFT(AD,LEN(AD)-1)-1,AE): e.g. 0 while AE is "N/A".
+for (const o of offers) {
+  const r = mdRowByOffer.get(o);
+  if (!r) continue;
+  const AF = trim(cell(r, 'AF')).toLowerCase();
+  const AE = trim(cell(r, 'AE'));
+  const CJ = trim(cell(r, 'CJ'));
+  if (AF !== 'multiplier' && AE === 'N/A' && typeof parseExcelCell(CJ) === 'number') {
+    const id = addIssue({
+      type: 'excel_formula_gap',
+      severity: 'issue',
+      offerId: o.offerId as number,
+      offerName: String(o.offerName ?? ''),
+      file: 'Metadata',
+      row: imp(o).excelMetadataRow ?? null,
+      column: 'CJ',
+      excelValue: CJ,
+      valueUsed: 'N/A (from AE)',
+      message: `Metadata column CJ shows ${CJ} although its formula gives "N/A" for this row (AE is "N/A"), so CT and CU differ too. The prototype follows the formula.`,
+    });
+    imp(o).issues.push(id);
+  }
+}
+
 // failed lookups
 for (const { row, r } of naRows) {
   addIssue({
@@ -736,7 +834,10 @@ for (const { row, r } of naRows) {
 }
 
 // ---------------------------------------------------------------- A5 statuses and pairs
-const knownStatuses = new Set(['Draft', ...(dropdowns.status ?? [])]);
+// Values added to the reference data from this import (tagged foundInImport)
+// still count as "found in imported data" for the report.
+const importedStatuses = new Set(reference.lifecycle.filter((l) => l.foundInImport).map((l) => l.status));
+const knownStatuses = new Set(['Draft', ...(dropdowns.status ?? [])].filter((x) => !importedStatuses.has(x)));
 const statusCounts: Record<string, { total: number; inRf: number }> = {};
 for (const o of offers) {
   const s = String(o.buildStatus ?? '');
@@ -760,7 +861,9 @@ for (const [s, c] of Object.entries(statusCounts)) {
     offerIds: offers.filter((o) => o.buildStatus === s).map((o) => o.offerId as number),
   });
 }
-const knownPairs = new Set(reference.categorySubCategory.map((p) => `${p.category}|${p.subCategory}`));
+const knownPairs = new Set(
+  reference.categorySubCategory.filter((p) => !p.foundInImport).map((p) => `${p.category}|${p.subCategory}`),
+);
 const pairCounts: Record<string, number> = {};
 for (const o of rfOffers) {
   const k = `${o.category ?? ''}|${o.subCategory ?? ''}`;

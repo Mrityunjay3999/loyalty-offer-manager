@@ -103,7 +103,7 @@ export function classify(
 ): MismatchReason {
   const t = types.get(offerId) ?? new Set<string>();
   if (t.has('files_disagree')) return 'The 2 files disagree';
-  if (t.has('text_in_number') || t.has('excel_formula_gap')) return 'Excel data issue';
+  if (t.has('text_in_number') || t.has('excel_formula_gap') || t.has('excel_error_cells')) return 'Excel data issue';
   const x = extra?.(offerId);
   if (x) return x;
   if (t.has('rounded_export')) return 'Export rounding';
@@ -183,4 +183,28 @@ export function runCheck(params: {
     changedNotCompared,
     byReason,
   };
+}
+
+/**
+ * E1 reasons specific to the Metadata file:
+ * - an Excel error or "null" from a lookup into the Results and Forecast tab that
+ *   finds no row for the offer -> Excel data issue;
+ * - a blank or frozen number on a row whose start date is before 2025 ->
+ *   Pasted history value.
+ */
+export function metadataReason(
+  o: Record<string, unknown> | undefined,
+  inExcelRfTab: boolean,
+  excelText: string,
+  letter?: string,
+): MismatchReason | null {
+  const t = String(excelText ?? '').trim();
+  if (/^#/.test(t)) return 'Excel data issue';
+  if (t === 'null' && !inExcelRfTab) return 'Excel data issue';
+  // EQ: Excel compares a range of cells to 100%, which it cannot evaluate reliably
+  // and shows blank; the prototype checks that the 5 shares add up to 100% (D1).
+  if (letter === 'EQ' && t === '') return 'Excel data issue';
+  const start = String(o?.startDate ?? '');
+  if (start && start < '2025-01-01' && (t === '' || t === 'TBD' || /^[$(\-\d]/.test(t))) return 'Pasted history value';
+  return null;
 }

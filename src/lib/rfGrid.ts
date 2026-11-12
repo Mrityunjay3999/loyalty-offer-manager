@@ -4,6 +4,7 @@ import type { XVal } from './excel';
 import { serial } from './excel';
 import { formatXVal } from './excelFormat';
 import { computeRfCells, totalOfferDaysOf } from './rfEngine';
+import { computeMdCells } from './mdEngine';
 import { forecastNeeded, includeForResultsForecast, rfRoundTrip } from './calculations';
 import { RF_REGISTRY, CALENDAR_BAND, type RegistryEntry } from './forecastColumnRegistry';
 import { isNoValue } from './format';
@@ -32,6 +33,7 @@ export function gridValue(
   asOf: Date,
   meta?: ImportMeta,
 ): XVal {
+  if (e.source === 'Metadata') return computeMdCells(o, asOf, meta)[e.letter] ?? '';
   if (e.source === 'R&F tab') {
     if (e.letter === 'A') return typeof o.offerId === 'number' ? o.offerId : String(o.offerId ?? '');
     return computeRfCells(o, asOf)[e.letter as keyof ReturnType<typeof computeRfCells>];

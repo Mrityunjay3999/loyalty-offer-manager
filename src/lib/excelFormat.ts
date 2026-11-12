@@ -15,6 +15,7 @@ export type Fmt =
   | 'pct1' // 0.0%
   | 'pct2' // 0.00%
   | 'dec1' // 0.0
+  | 'dec2' // 0.00
   | 'date' // m/d/yyyy
   | 'text'
   | 'status';
@@ -66,6 +67,9 @@ export function formatXVal(v: XVal, fmt: Fmt): string {
       break;
     case 'dec1':
       s = group(a, 1);
+      break;
+    case 'dec2':
+      s = group(a, 2);
       break;
     case 'date':
       return mdyyyy(v);
