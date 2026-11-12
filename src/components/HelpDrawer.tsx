@@ -18,6 +18,11 @@ const DEMO_STEPS: string[] = [
   'Submit a new offer, then click "View on calendar" in its header. The calendar opens on its start month with the offer highlighted.',
   'On the calendar, switch between Month, Week and Timeline. Read the summary strip, then click the busiest day to see every offer running that day.',
   'Sign in as Sample Admin → Users & roles → Roles & permissions. Untick a permission (e.g. Enter results for Offer Team Editor). Sign in as Sample Editor 1 and open Results & Forecast: that button is now gone.',
+  'Results & Forecast (real Excel data): the grid shows the same 768 rows as the Excel tab, all 78 columns A to BZ plus the CALENDAR band. Switch to "All included offers (2,127)". Click "Use Excel export date (11/11/2026)".',
+  'Open 20260330_CATLRGBGS_10X in the drawer: every number shows its Excel value with a tick and an fx breakdown with this offer\'s values.',
+  'Open "Check against Excel": 46,080 R&F cells compared, 99.99% match, 0 logic differences. Scroll to the Metadata file section and the Data issues list.',
+  'Open "Metadata view": the 85 Metadata columns BW to FC with the Metadata file\'s own logic and the Databricks column name under each header.',
+  'Enter results on an imported offer: its row recalculates, it gets "Changed since import" and leaves the Check comparison. Reset demo data returns to the Excel seed.',
 ];
 
 export function HelpDrawer({

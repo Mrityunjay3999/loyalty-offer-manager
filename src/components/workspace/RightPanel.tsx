@@ -5,32 +5,16 @@ import { useAppStore } from '@/store/useAppStore';
 import { ValidationSummary } from '@/components/ValidationSummary';
 import { TagPill } from '@/components/TagPill';
 import { toCalendarOffers, offersInRange } from '@/lib/calendar';
-import {
-  fiscalWeek,
-  softLockDate,
-  computeForecast,
-  computeResults,
-  startMonth,
-} from '@/lib/calculations';
+import { fiscalWeek, softLockDate, startMonth } from '@/lib/calculations';
 import { checklistProgress } from '@/lib/offers';
 import { subCategoriesForCategory } from '@/lib/options';
-import {
-  formatCurrency,
-  formatNumber,
-  formatPercent,
-  parseISO,
-} from '@/lib/format';
-import * as wbr from '@/lib/wbr';
+import { parseISO } from '@/lib/format';
 import type { OfferRecord, OfferSetupCombo } from '@/lib/types';
 import type { Issue } from '@/lib/validation';
 import { checklistFields } from '@/lib/dataLoaders';
-
-function num(v: number | null, digits = 0): string {
-  return v === null ? '—' : formatNumber(v, digits);
-}
-function cur(v: number | null): string {
-  return v === null ? '—' : formatCurrency(v);
-}
+import { computeRfCells, totalOfferDaysOf } from '@/lib/rfEngine';
+import { displayXVal } from '@/lib/excelFormat';
+import { RF_BY_LETTER } from '@/lib/forecastColumnRegistry';
 
 export function RightPanel({
   offer,
@@ -244,8 +228,9 @@ function StepContext({
   }
 
   if (step === '7. Forecast') {
-    const f = computeForecast(offer);
-    const isJbp = offer.offset === 'JBP';
+    // v3 C4: the same values as the Results & Forecast grid (R&F engine).
+    const c = computeRfCells(offer);
+    const v = (L: string) => displayXVal(c[L as keyof typeof c], RF_BY_LETTER[L].format) || '—';
     return (
       <Card title="Forecast summary">
         <table className="w-full text-xs">
@@ -258,16 +243,16 @@ function StepContext({
             </tr>
           </thead>
           <tbody className="tabular-nums">
-            <FRow label="Activations" lo={num(f.activationLow)} hi={num(f.activationHigh)} avg={num(f.activationAvg)} />
-            <FRow label="Bonused members" lo={num(f.bonusedMembersLow)} hi={num(f.bonusedMembersHigh)} avg={num(f.bonusedMembersAvg)} />
-            <FRow label="Bonused sales" lo={cur(f.bonusedSalesLow)} hi={cur(f.bonusedSalesHigh)} avg={cur(f.bonusedSalesAvg)} />
-            <FRow label="Bonus points" lo={num(f.bonusPointsLow)} hi={num(f.bonusPointsHigh)} avg={num(f.bonusPointsAvg)} />
-            <FRow label="Redeemable $ (100%)" lo={cur(f.bonusPointsRedeemableLow)} hi={cur(f.bonusPointsRedeemableHigh)} avg={cur(f.bonusPointsRedeemableAvg)} />
-            <FRow label={`Redeemable $ (breakage ${formatPercent(f.redemptionRate, 0)})`} lo={cur(f.bonusRedeemableLow)} hi={cur(f.bonusRedeemableHigh)} avg={cur(f.bonusRedeemableAvg)} />
-            {isJbp && <FRow label="JBP total" lo={cur(f.jbpLow)} hi={cur(f.jbpHigh)} avg={cur(f.jbpAvg)} />}
+            <FRow label="Activations" lo={v('AF')} hi={v('AG')} avg={v('AL')} />
+            <FRow label="Bonused members" lo={v('AN')} hi={v('AO')} avg={v('AP')} />
+            <FRow label="Bonused sales" lo={v('AR')} hi={v('AS')} avg={v('AT')} />
+            <FRow label="Bonus points" lo={v('AX')} hi={v('AY')} avg={v('AZ')} />
+            <FRow label="Redeemable $ (100%)" lo={v('BC')} hi={v('BD')} avg={v('BE')} />
+            <FRow label={`Redeemable $ (breakage ${v('BF')})`} lo={v('BG')} hi={v('BH')} avg={v('BI')} />
+            {offer.offset === 'JBP' && <FRow label="JBP total" lo={v('BJ')} hi={v('BK')} avg={v('BL')} />}
           </tbody>
         </table>
-        <p className="mt-2 text-xs text-muted">Total offer days: {num(f.totalOfferDays)}</p>
+        <p className="mt-2 text-xs text-muted">Total offer days: {totalOfferDaysOf(offer) ?? '—'}. Same values as Results &amp; Forecast columns AF to BL.</p>
       </Card>
     );
   }
@@ -307,37 +292,28 @@ function StepContext({
   }
 
   if (step === '9. Results') {
-    const r = computeResults(offer);
-    const f = computeForecast(offer);
-    const numberOfDays = (() => {
-      const s = parseISO(offer.startDate);
-      const e = parseISO(offer.endDate);
-      return s && e ? Math.round((e.getTime() - s.getTime()) / 86_400_000) + 1 : null;
-    })();
-    const elapsed = wbr.daysElapsed(offer.startDate, numberOfDays);
-    const pct = wbr.percentComplete(elapsed, numberOfDays);
-    const prorated = wbr.proratedPoints(typeof offer.bonusPtsIssued === 'number' ? offer.bonusPtsIssued : null, pct);
+    // v3 C4: the same values as the Results & Forecast grid (R&F engine, as of today).
+    const c = computeRfCells(offer);
+    const v = (L: string) => displayXVal(c[L as keyof typeof c], RF_BY_LETTER[L].format) || '—';
+    const colour = v('BZ');
     return (
       <>
         <Card title="Results summary">
           <dl className="space-y-1.5 text-sm">
-            <Row label="Bonus rate" value={r.bonusRate === null ? 'Not available' : formatPercent(r.bonusRate, 1)} />
-            <Row label="Activation rate" value={r.activationRate === null ? '—' : formatPercent(r.activationRate, 1)} />
-            <Row label="Bonused sales (actual)" value={typeof r.bonusedSalesActual === 'number' ? formatCurrency(r.bonusedSalesActual) : 'TBD'} />
-            <Row label="Redeemable $ (w/ breakage)" value={cur(r.bonusRedeemableActualWithBreakage)} />
-            <Row label="Spend / bonused member" value={cur(r.spendPerBonusedMember)} />
+            <Row label="Bonus rate" value={v('U')} />
+            <Row label="Bonused sales (actual)" value={v('Y')} />
+            <Row label="Redeemable $ (w/ breakage)" value={v('AD')} />
+            <Row label="Spend / bonused member" value={v('AE')} />
           </dl>
         </Card>
         <Card title="WBR strings">
           <dl className="space-y-1.5 text-xs">
-            <Row label="Actual activations" value={wbr.actualActivations(typeof offer.activations === 'number' ? offer.activations : null) || '—'} />
-            <Row label="Actual bonus pts (MDs)" value={wbr.forecastBonusPts(typeof offer.bonusPtsIssued === 'number' ? offer.bonusPtsIssued : null, r.bonusRedeemableActualWithBreakage)} />
-            <Row label="% complete by days" value={pct === null ? '—' : formatPercent(pct, 0)} />
-            <Row
-              label="Colour code"
-              value={wbr.colourCode(prorated, f.bonusPointsLow, f.bonusPointsHigh) || '—'}
-            />
+            <Row label="Actual activations" value={v('BR')} />
+            <Row label="Actual bonus pts (MDs)" value={v('BU')} />
+            <Row label="% complete by days" value={v('BX')} />
+            <Row label="Colour code" value={colour} />
           </dl>
+          <p className="mt-2 text-[11px] text-muted">Same values as Results &amp; Forecast columns U to BZ.</p>
         </Card>
       </>
     );

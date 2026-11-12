@@ -1186,3 +1186,39 @@ The permission matrix is now data in `src/data/permissions.json` (capabilities g
 - The business can add / edit / delete values for **every** list: Categories & sub-categories, all dropdown lists, Offer tiering, Statuses, Offer setups, Soft-lock planner, Deactivation rules, Brands and Databricks table names. Changes are audited and instantly live; a value in use on an offer cannot be hard-deleted (rename/retire instead); fields/columns still cannot be added or removed.
 - **Categories tab is the single source:** saving it also syncs the `planningCategory` / `planningSubCategory` dropdown lists (additive, via `mergedCategoryDropdowns`), so a new category/sub-category becomes selectable on the offer form with no second step.
 - **Per-area capabilities:** list editing uses `addChangeListValues`, status definitions use `editStatusDefs`, and Databricks table names use `editDatabricksNames` — each gated independently in the permission matrix (all Admin-only by default).
+
+# v3 addendum — Results & Forecast with the real Excel data
+
+Where this conflicts with an earlier section, this section wins. The old `lib/resultsForecast.ts` module (Package B of v2) is removed; everything below replaces it.
+
+## Package A — Import (`scripts/importExcel.ts`, `npm run import:excel`)
+- Sources in `data/source/`: `rf_live.csv` (tab "LIVE - Results and Forecast"), `metadata_master.csv` (tab "Master Sheet"), plus the prototype grid export and screenshot for reference.
+- Offer ID is the only key. Offer names are used only inside the import to join the 2 files.
+- Output in `src/data/imported/`: `offers.base.json` (2,425 offers), `excelSnapshot.rf.json`, `excelSnapshot.metadata.json`, `importReport.json`.
+- Counts: 768 R&F rows, 2,423 Metadata offers, 766 matched, 2 R&F-only, 2,127 included in Results & Forecast, 15 offers where the 2 files disagree, 8 duplicate-name rows (all imported), 182 failed-lookup rows, 2 new statuses (Initial QA, Ready to Go), 13 new category pairs.
+- The Step 7 / Step 9 inputs are rebuilt from the Excel values (A4); where several inputs could explain a pulled total the import scores the candidates against the Excel snapshot and keeps the closest.
+
+## Package B — Engine (`lib/excel.ts`, `lib/rfEngine.ts`, `lib/mdEngine.ts`)
+- `lib/excel.ts` reproduces Excel semantics: #VALUE! on text arithmetic, IFERROR, AVERAGE ignoring text, case-insensitive `=`, ROUND half away from zero, 12 significant digit cleanup.
+- `rfEngine.computeRfCells(offer, asOf)` returns every R&F column A to BZ; `mdEngine` returns the Metadata columns BW to FC with the Metadata file's own rules (date-based Offer Status, its own redemption rule in CP, no Cancelled check in DP/DQ, no IFERROR in FC).
+- Column registries: `forecastColumnRegistry.ts` (78 R&F + 18 CALENDAR band + 11 twins), `mdRegistry.ts` (103 Metadata columns, headers generated into `mdHeaders.ts`).
+
+## Package C — Results & Forecast page (`/results-forecast`)
+- Tabs: Grid, WBR, Metadata view, How it is calculated, Check against Excel.
+- Grid: all 78 columns in Excel order plus the CALENDAR band, band header row, rich tooltips, 6 preset views plus saved personal views, rows selector (Excel tab 768 / all included 2,127), as-of date with "Use Excel export date (11/11/2026)".
+- Drawer: every value with its Excel value and match tick, fx breakdown with the offer's own values, data issues, Open offer at Step 7 / Step 9.
+- Exports: grid CSV and "Export all forecasting columns" (R&F + CALENDAR + Metadata) for the filtered rows.
+
+## Package D — Metadata view and new fields
+- Metadata view shows the 85 columns BW to FC with the Databricks name under each header.
+- 9 new fields (now 138 in `fields.json`) with visibility rules in `lib/visibility.ts`; the data feed reads BW to FC from `mdEngine`.
+
+## Package E — Check against Excel (`lib/excelCheck.ts`)
+- Numbers match within max(1, 0.5%); percentages compare at the displayed precision; text compares exactly.
+- Mismatch reasons: Export rounding, The 2 files disagree, Excel data issue, Pasted history value, Logic difference.
+- R&F: 768 offers, 46,080 cells, 99.99% match, 0 logic differences. Metadata: 2,423 offers, 205,955 cells, 0 logic differences (the rest are explained by Excel "null" lookups, pasted history values and the 2 files disagreeing).
+- Offers edited in the prototype show as "Changed since import (not compared)".
+
+## Storage (v3)
+- localStorage key `lom-prototype-v3`. The imported base is read-only and loaded on demand; the store persists only per-offer diffs, created offers and deleted ids. v2 data is migrated; colliding Offer IDs get the next free ID.
+- Imported offers unchanged since import are exempt from feed validation and from the Approvals queue until changed in the prototype. Reset demo data returns to the Excel seed.

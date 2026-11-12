@@ -91,6 +91,9 @@ export function OfferWorkspace() {
   const [step, setStep] = useState<string>(
     requestedStep && STEP_ORDER.includes(requestedStep) ? requestedStep : STEP_ORDER[0],
   );
+  useEffect(() => {
+    if (requestedStep && STEP_ORDER.includes(requestedStep)) setStep(requestedStep);
+  }, [requestedStep]);
   const [saveState, setSaveState] = useState<SaveState>('saved');
   const [lastSavedAt, setLastSavedAt] = useState<string>('');
   const [historyOpen, setHistoryOpen] = useState(false);

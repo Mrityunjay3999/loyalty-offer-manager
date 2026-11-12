@@ -45,6 +45,16 @@ const OPEN_QUESTIONS: string[] = [
   'Who approves offers (existing open question).',
   'The full list of roles and who holds each role.',
   'Whether roles are managed inside this app or by the company’s identity system.',
+  // v3 (imported Excel data)
+  'Is "Ready to Go" the same as "Audited / Ready to go"? Is "Initial QA" a status the team still uses?',
+  'Should the 13 Category / Sub-Category pairs found in the imported data be added to the official list?',
+  'Should Limited Time Bonus points removed use the build status (Results and Forecast) or the date-based status (Metadata)?',
+  'Who may change the points economics ($ per 1,000 points, base points per $1)?',
+  'Column FB "Bonus Member per day (Prorated)" is empty in Excel. Define it or drop it?',
+  'The EQ "Check" formula compares a range to 100%. Is the intent "the 5 shares add up to 100%"?',
+  'For the 15 offers where the 2 Excel files disagree, which value is right?',
+  'Are the 260 offers from 1 Nov 2025 onward that have no row in the Excel Results and Forecast tab expected to have a forecast?',
+  'Can the business share an export of the Calendar main tab ("LIVE - Treats Rewards Calendar")? It is the only source for Offer Request Date, Submitted By, P&P Contact, Forecast Created by, Forecast Status, Activation by day, Results Date Updated and LOPD Actuals.',
 ];
 
 export function DataDictionary() {
