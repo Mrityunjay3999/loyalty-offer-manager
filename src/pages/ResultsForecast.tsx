@@ -12,6 +12,7 @@ import { ExcelGrid, type ExcelColumn } from '@/components/ExcelGrid';
 import { rfColumn, BAND_STYLE } from '@/components/rf/rfColumns';
 import { RfDetailDrawer } from '@/components/rf/RfDetailDrawer';
 import { RfHowTab } from '@/components/rf/RfHowTab';
+import { RfCheckTab } from '@/components/rf/RfCheckTab';
 import { statusOf } from '@/lib/lifecycle';
 import { computeRfCells, EXCEL_EXPORT_DATE } from '@/lib/rfEngine';
 import { forecastNeeded, includeForResultsForecast } from '@/lib/calculations';
@@ -309,7 +310,7 @@ export function ResultsForecast() {
 
       <Tabs.Root defaultValue="grid">
         <Tabs.List className="mb-3 flex gap-1 border-b border-border">
-          {[['grid', 'Grid'], ['wbr', 'WBR'], ['metadata', 'Metadata view'], ['how', 'How it is calculated']].map(([v, l]) => (
+          {[['grid', 'Grid'], ['wbr', 'WBR'], ['metadata', 'Metadata view'], ['how', 'How it is calculated'], ['check', 'Check against Excel']].map(([v, l]) => (
             <Tabs.Trigger key={v} value={v} className="border-b-2 border-transparent px-3 py-2 text-sm text-muted data-[state=active]:border-primary data-[state=active]:font-medium data-[state=active]:text-primary">
               {l}
             </Tabs.Trigger>
@@ -385,6 +386,10 @@ export function ResultsForecast() {
               }
             />
           )}
+        </Tabs.Content>
+
+        <Tabs.Content value="check">
+          <RfCheckTab onOpen={(uid) => setDetailUid(uid)} />
         </Tabs.Content>
 
         <Tabs.Content value="how">

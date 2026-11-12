@@ -83,3 +83,24 @@ describe('A6 approvals are not flooded by imported offers', () => {
     expect(S().nextOfferId()).toBe(2609);
   });
 });
+
+describe('E1 Check tab: changed offers are not compared', () => {
+  it('an imported offer edited in the prototype moves to "Changed since import (not compared)"', async () => {
+    const { runCheck } = await import('@/lib/excelCheck');
+    const rfSnap = (await import('@/data/imported/excelSnapshot.rf.json')).default;
+    const report = (await import('@/data/imported/importReport.json')).default;
+    const o = byName('20260330_CATLRGBGS_10X');
+    S().updateOffer(o._uid!, { activations: 1 });
+    const res = runCheck({
+      offers: S().offers,
+      snapshot: rfSnap as never,
+      columns: [{ letter: 'U', header: 'Bonus rate', format: 'pct1' }],
+      compute: (x) => computeRfCells(x, new Date(2026, 10, 11)),
+      isChanged: (x) => isChangedSinceImport(x._uid, S().offerDiffs),
+      issues: report.issues as never,
+    });
+    expect(res.offersCompared).toBe(767);
+    expect(res.changedNotCompared.map((c) => c.offerName)).toEqual(['20260330_CATLRGBGS_10X']);
+    expect(res.byReason['Logic difference']).toBe(0);
+  });
+});
