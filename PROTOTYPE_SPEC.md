@@ -347,7 +347,7 @@ Shown only when Grouped Offer = Yes.
 - Buttons: **Add child**, **Generate daily children** (creates one child per day from Start to End, named `<parent name> - M/D`, all fields editable; this is a UX convenience, not a new rule), **Remove child**.
 - Totals row: sum of activations, bonused members and bonus points; bonus rate computed from totals.
 - Validation: child Transaction External Ref IDs must be unique.
-- Seed: for the sample offers `20260323_TIERA_50_5000` and `20251229_CATFOODLITTER_25_5000`, load children from `reference.groupedChildrenSamples`.
+- Seed: for the sample offers `20260325_TIERBOOSTWEEKPLUS_45_7500` and `20251230_CATSNACKSRUSH_20_4000`, load children from `reference.groupedChildrenSamples`.
 
 ### 7.6 History (audit trail) drawer
 
@@ -562,7 +562,7 @@ Errors block submission or the relevant status change. Warnings never block. All
 | endDate | ≥ startDate | Error | "End Date must be on or after Start Date." |
 | earlyActivationDate | If a date: < startDate | Error | "Early Activation must be before the Start Date." |
 | ltbpRemovalDate | If both dates: ≥ ltbpExpiryDisplayed | Error | "Removal date must be on or after the displayed expiry date." |
-| offerName | Matches `^\d{8}_[A-Z0-9$&_.\-]+$` | Warning | "Standard format is YYYYMMDD_DESCRIPTION_REWARD, e.g. 20251103_CANJBPDOGMERRICK_3X." |
+| offerName | Matches `^\d{8}_[A-Z0-9$&_.\-]+$` | Warning | "Standard format is YYYYMMDD_DESCRIPTION_REWARD, e.g. 20251104_CANKITTENCHEWSMAX_3X." |
 | offerName | First 8 digits equal Start Date (yyyyMMdd) | Warning | "Name date {x} differs from Start Date {y}." |
 | offerName | Unique across offers (case-insensitive) | Warning | "Another offer already uses this name. Allowed only in agreed cases (e.g. an activation offer and its promotion)." |
 | subCategory | Pair exists in `categorySubCategory` | Error | "{Sub} is not a valid sub-category for {Category}." |
@@ -660,8 +660,8 @@ Use this as the in-app Help drawer content and as a test script.
 7. Review: fix any required-field errors, **Submit offer** (Proposed). Show History.
 8. Switch role to **Approver (TBC)**. Approvals queue shows the offer with its waiting time. **Approve offer and forecast** (Planning Phase). Point out the "SKUs to Promo Advisor within 7 days" reminder.
 9. Switch back to Editor. Step 8 checklist: Submission Form Made = Yes, Submitted to Kognitiv = Yes, then **Mark submitted to loyalty platform** (Approved / Build Phase). Try **Mark audited and ready** before Offer Card and Audit are done: guard message. Complete them, move to Audited / Ready to go, then **Mark live**.
-10. Open sample offer `20251229_BETTA_2500` (Completed - Data Final) and show step 9 results, calculated bonus rate and redeemable dollars. Open **WBR** and show forecast vs actual strings and colour codes.
-11. Open `20260323_TIERA_50_5000`: Grouped Offer = Yes, show the Child promotions tab with 7 daily children and totals.
+10. Open sample offer `20251230_FISHFOODWEEK_4000` (Completed - Data Final) and show step 9 results, calculated bonus rate and redeemable dollars. Open **WBR** and show forecast vs actual strings and colour codes.
+11. Open `20260325_TIERBOOSTWEEKPLUS_45_7500`: Grouped Offer = Yes, show the Child promotions tab with 7 daily children and totals.
 12. **Copy** an offer; **Cancel** another with a reason; show it stays visible as Cancelled and disappears from the WBR and the data feed count.
 13. Switch to **Admin**. Reference data: add sub-category "PUPPY" under MERCH; go back to an offer and see it in the dropdown. Show the soft lock planner rows flagged as inconsistent.
 14. **Data feed (Databricks):** pick an offer, show the 169 metadata columns with values, run **Simulate daily load**, then **Simulate failed load** and show that nothing was blanked.
@@ -784,7 +784,7 @@ Tooltip text is shown in full. "Req" = required to submit. Options are keys into
 
 | # | Field (id) | Excel col | Control | Options | Req | Show if / rule | Tooltip (source) |
 |---|---|---|---|---|---|---|---|
-| 1 | **Offer Name** (`offerName`) | O | text |  | Yes | Validate: Guide: YYYYMMDD_DESCRIPTION_REWARD (e.g. 20251103_CANJBPDOGMERRICK_3X). Warn if format differs or name already exists. | Standardized nomenclature for offer name should include date, type of offer, key offer format details (e.g., 3X,Spend Get). Column should be unique but in new UX there are times when it is not (e.g., an activation offer is set up with the same name as the corresponding promotion) - that said, for this purpose, the column is unique & we will navigate the other challenge as we work towards automation _(Calendar data dictionary)_ |
+| 1 | **Offer Name** (`offerName`) | O | text |  | Yes | Validate: Guide: YYYYMMDD_DESCRIPTION_REWARD (e.g. 20251104_CANKITTENCHEWSMAX_3X). Warn if format differs or name already exists. | Standardized nomenclature for offer name should include date, type of offer, key offer format details (e.g., 3X,Spend Get). Column should be unique but in new UX there are times when it is not (e.g., an activation offer is set up with the same name as the corresponding promotion) - that said, for this purpose, the column is unique & we will navigate the other challenge as we work towards automation _(Calendar data dictionary)_ |
 | 2 | **Loyalty Planning Category** (`category`) | K | select | `planningCategory` (15) | Yes |  | Categorize the loyalty into bigger buckets like Associate, Benefit, CRM, Digital, IMPO, etc. For all the cateogries, refer to "All Keys" tab in this file. _(Calendar data dictionary)_ |
 | 3 | **Loyalty Planning Sub-Category** (`subCategory`) | L | select | `planningSubCategory` (44) | Yes | Depends on: category; Note: Filter options using reference.categorySubCategory for the chosen category. | Sub-Categorize the loyalty into one level down from Category like Afterpay, Anniversary, etc. For all the cateogries, refer to "All Keys" tab in this file. _(Calendar data dictionary)_ |
 | 4 | **Category - Sub-Category** (`categoryConcat`) | DB | computed |  |  | Calc: Category + ' - ' + Sub-Category | Calculated: Category + ' - ' + Sub-Category _(Excel formula)_ |
@@ -1222,3 +1222,11 @@ Where this conflicts with an earlier section, this section wins. The old `lib/re
 ## Storage (v3)
 - localStorage key `lom-prototype-v3`. The imported base is read-only and loaded on demand; the store persists only per-offer diffs, created offers and deleted ids. v2 data is migrated; colliding Offer IDs get the next free ID.
 - Imported offers unchanged since import are exempt from feed validation and from the Approvals queue until changed in the prototype. Reset demo data returns to the Excel seed.
+
+## Dummy data (replaces the real Excel values in the shipped prototype)
+- The app ships **dummy data only**. `scripts/anonymizeData.ts` (`npm run anonymize`, also run at the end of `npm run import:excel`) turns the real import into dummy data with the same shape.
+- The real Excel exports and the real import output stay on the developer's machine in `data/source/` and `data/private/` (both git-ignored).
+- Changed: Offer IDs (now 3001 to 5426), offer names, descriptions, descriptors and codes, SKUs, brands, people's names in Submitted By, every metric and forecast input, thresholds, fixed points, division shares, and dates (each offer moves a few days inside its own months, on the same side of 11/11/2026).
+- Kept: fields, dropdown values and option lists (including the transaction type and P&P contact lists), statuses, categories, tiering, countries, offer designs, multipliers, the calculation engine and the structure of every Excel data issue.
+- The Excel snapshots are rebuilt cell by cell, so the Check tab tells the same story: R&F 99.99% match, Metadata 0 logic differences, the same mismatch reasons.
+- The stored state moved to version 4: edits saved against the old imported offers are reset; offers created in the prototype are kept.

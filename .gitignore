@@ -5,3 +5,7 @@ dist
 *.tsbuildinfo
 vite.config.js
 vite.config.d.ts
+
+# Real Excel exports and the real import output: never committed (the app ships dummy data)
+data/source/
+data/private/

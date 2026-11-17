@@ -678,7 +678,28 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: STORAGE_KEY,
-      version: 3,
+      // v4: the imported base became dummy data with new Offer IDs and uids, so
+      // edits saved against the old imported offers no longer apply.
+      version: 4,
+      migrate: (persisted, version) => {
+        const st = (persisted ?? {}) as Record<string, unknown>;
+        if (version < 4) {
+          const created = Array.isArray(st.createdOffers) ? (st.createdOffers as OfferRecord[]) : [];
+          return {
+            ...st,
+            offerDiffs: {},
+            deletedUids: [],
+            groupedChildren: {},
+            feedState: {},
+            createdOffers: created,
+            migrationLog: [
+              ...(Array.isArray(st.migrationLog) ? (st.migrationLog as string[]) : []),
+              'Imported offers replaced with dummy data: edits to imported offers were reset.',
+            ],
+          } as unknown as AppState;
+        }
+        return st as unknown as AppState;
+      },
       // v3 A7: never persist the merged offers (2,425 imported records); only the
       // diffs, prototype-created offers, views and settings.
       partialize: (s) => {

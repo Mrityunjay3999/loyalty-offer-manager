@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "import:excel": "tsx scripts/importExcel.ts"
+    "import:excel": "tsx scripts/importExcel.ts && tsx scripts/anonymizeData.ts",
+    "anonymize": "tsx scripts/anonymizeData.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.4",

@@ -246,7 +246,7 @@ export function ResultsForecast() {
         are entered on the offer (Step 7 and Step 9).
       </p>
       <p className="mb-3 text-[11px] text-muted">
-        Data: Excel exports of 11/11/2026. Results and Forecast tab (768 rows) and Metadata Master Sheet (2,423 offers). Imported into the prototype; edits made here do not change Excel.
+        Data: dummy data with the same shape as the Excel exports of 11/11/2026. Results and Forecast tab (768 rows) and Metadata Master Sheet (2,423 offers). Offer names, IDs, numbers and descriptions are made up; edits made here do not change Excel.
       </p>
 
       {/* C2 header controls */}

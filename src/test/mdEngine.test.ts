@@ -22,8 +22,10 @@ const byName = (n: string) => offers().find((o) => o.offerName === n)!;
 const md = (L: string) => MD_REGISTRY.find((e) => e.letter === L)!;
 const show = (o: OfferRecord, L: string) => formatXVal(computeMdCells(o, AS_OF, importMetaOf(o._uid))[L], md(L).format);
 
-describe('C3b coverage (Metadata file)', () => {
-  const rows = Papa.parse<string[]>(fs.readFileSync('data/source/metadata_master.csv', 'utf8')).data;
+// Needs the real Excel export, which stays on the developer's machine (data/source is git-ignored).
+const MD_CSV = 'data/source/metadata_master.csv';
+describe.skipIf(!fs.existsSync(MD_CSV))('C3b coverage (Metadata file)', () => {
+  const rows = fs.existsSync(MD_CSV) ? Papa.parse<string[]>(fs.readFileSync(MD_CSV, 'utf8')).data : [];
   it('every Master Sheet header BW..FC has exactly 1 registry entry with the same letter and header', () => {
     for (const L of colRange('BW', 'FC')) {
       const matches = REGISTRY.filter((e) => e.source === 'Metadata' && e.letter === L);
@@ -61,25 +63,25 @@ describe('D2 new fields are data-driven', () => {
   });
 });
 
-describe('D1 Metadata logic: 20260330_CATLRGBGS_10X', () => {
+describe('D1 Metadata logic: 20260331_CATSNACKSDAYS_10X', () => {
   it('matches the Excel Master Sheet values', () => {
-    const o = byName('20260330_CATLRGBGS_10X');
-    expect(show(o, 'CC')).toBe('148,186');
-    expect(show(o, 'CF')).toBe('13,265,665.20');
-    expect(show(o, 'CG')).toBe('0.20%');
-    expect(show(o, 'CH')).toBe('15.18%');
+    const o = byName('20260331_CATSNACKSDAYS_10X');
+    expect(show(o, 'CC')).toBe('204,278');
+    expect(show(o, 'CF')).toBe('19,749,234.28');
+    expect(show(o, 'CG')).toBe('0.34%');
+    expect(show(o, 'CH')).toBe('16.09%');
     expect(show(o, 'CJ')).toBe('9');
     expect(show(o, 'CK')).toBe('10.00');
-    expect(show(o, 'CL')).toBe('$1,031,773.96');
+    expect(show(o, 'CL')).toBe('$1,536,051.56');
     expect(show(o, 'CP')).toBe('88%');
-    expect(show(o, 'CR')).toBe('$46');
+    expect(show(o, 'CR')).toBe('$47');
     expect(show(o, 'CS')).toBe('TBD');
     expect(show(o, 'CV')).toBe('USD');
     expect(show(o, 'ET')).toBe('90');
     expect(show(o, 'EU')).toBe('Yes');
     expect(show(o, 'EZ')).toBe('7');
-    expect(show(o, 'FA')).toBe('21,169');
-    expect(show(o, 'FC')).toBe('92,859,656');
+    expect(show(o, 'FA')).toBe('29,183');
+    expect(show(o, 'FC')).toBe('138,244,640');
     expect(show(o, 'I')).toBe('Completed');
   });
 });
@@ -105,11 +107,11 @@ describe('E1 Metadata reconciliation (as of 11/11/2026)', () => {
   it('CP, CV, ET and EZ match 100%', () => {
     for (const L of ['CP', 'CV', 'ET', 'EZ']) expect(`${L} ${col(L).compared - col(L).matches}`).toBe(`${L} 0`);
   });
-  it('CG differs only on explained rows, incl. the REPLENISHMENTCAT Excel data issue', () => {
+  it('CG differs only on explained rows, incl. an Excel data issue ("null" lookup)', () => {
     expect(col('CG').byReason['Logic difference']).toBe(0);
-    const m = res.mismatches.find((x) => x.letter === 'CG' && x.offerName === '20241024_REPLENISHMENTCAT_3X')!;
+    const m = res.mismatches.find((x) => x.letter === 'CG' && x.offerName === '20241020_POINTSPARTYPERKS_3X')!;
     expect(m.excel).toBe('null');
-    expect(m.proto).toBe('4.70%');
+    expect(m.proto).toBe('3.77%');
     expect(m.reason).toBe('Excel data issue');
   });
   it('ED blanks on older rows are pasted history values', () => {
@@ -122,7 +124,7 @@ describe('E1 Metadata reconciliation (as of 11/11/2026)', () => {
 
 describe('D4 data feed wiring', () => {
   it('the listed Metadata columns now show a value instead of "Not captured"', () => {
-    const o = byName('20260330_CATLRGBGS_10X');
+    const o = byName('20260331_CATSNACKSDAYS_10X');
     const letters = ['CA', 'CB', 'CC', 'CF', 'CS', 'CT', 'CU', 'ET', 'DS', 'DT', 'DU', 'DV', 'DW', 'EA', 'ED', 'EE', 'EI', 'EJ', 'EK', 'EL', 'EM', 'EN', 'EO', 'EP', 'EQ', 'FA', 'FC'];
     for (const L of letters) {
       const m = metadataFields.find((x) => metadataLetterOf(x) === L)!;

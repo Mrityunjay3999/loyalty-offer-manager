@@ -26,48 +26,48 @@ describe('C2 rows selector', () => {
   });
 });
 
-describe('Package F fixes against the current prototype export', () => {
+describe('Package F fixes (on the dummy data)', () => {
   it('F1: values come from the newer Excel data', () => {
-    expect(show(byId(2447), 'C')).toBe('Live');
-    expect(show(byId(2417), 'C')).toBe('Completed');
-    expect(show(byId(2417), 'B')).toBe('Sep 26');
-    expect(show(byId(2083), 'O')).toBe('83,755,274');
+    expect(show(byId(5054), 'C')).toBe('Live');
+    expect(show(byId(5025), 'C')).toBe('Completed');
+    expect(show(byId(5025), 'B')).toBe('Sep 26');
+    expect(show(byId(4956), 'O')).toBe('56,122,114');
   });
   it('F2: blank pulled inputs show 0', () => {
-    const o = byId(2578);
+    const o = byId(5163);
     for (const L of ['O', 'P', 'Q', 'R']) expect(`${L}=${show(o, L)}`).toBe(`${L}=0`);
   });
   it('F3: colour code shows once the offer has started', () => {
-    expect(show(byId(2578), 'BZ')).toBe('Light green');
-    expect(show(byId(1575), 'BZ')).toBe('Dark Green');
-    expect(show(byId(1507), 'BZ')).toBe('Dark Green');
+    expect(show(byId(5163), 'BZ')).toBe('Light green');
+    expect(show(byId(4599), 'BZ')).toBe('Dark Green');
+    expect(show(byId(4503), 'BZ')).toBe('Dark Green');
   });
   it('F4: Bonus rate Avg uses 0.0%', () => {
-    expect(show(byId(1499), 'AM')).toBe('26.5%');
-    expect(show(byId(1418), 'AM')).toBe('13.5%');
-    expect(show(byId(1492), 'AM')).toBe('65.5%');
-    expect(show(byId(1942), 'AM')).toBe('87.5%');
+    expect(show(byId(4495), 'AM')).toBe('24.8%');
+    expect(show(byId(4423), 'AM')).toBe('11.8%');
+    expect(show(byId(4491), 'AM')).toBe('71.5%');
+    expect(show(byId(4612), 'AM')).toBe('100.0%');
   });
   it('F5: Bonus Pts Issued shows 2 decimals when not whole (grid and export)', () => {
-    expect(show(byId(1417), 'R')).toBe('1,306,070.40');
-    const t = buildExportTable([rf('R')], [byId(1417)], AS_OF, importMetaOf);
-    expect(t.data[0][0]).toBe('1,306,070.40');
+    expect(show(byId(4412), 'R')).toBe('870,185.34');
+    const t = buildExportTable([rf('R')], [byId(4412)], AS_OF, importMetaOf);
+    expect(t.data[0][0]).toBe('870,185.34');
   });
-  it('F6: imported forecast inputs give Activation Avg 31,500 for 2578', () => {
-    expect(show(byId(2578), 'AL')).toBe('31,500');
+  it('F6: imported forecast inputs give Activation Avg 40,750 for 5163', () => {
+    expect(show(byId(5163), 'AL')).toBe('40,750');
   });
   it('F7 / F8: calculated zeros show instead of blanks', () => {
-    const o = byId(1507);
+    const o = byId(4503);
     expect([show(o, 'AM'), show(o, 'AP'), show(o, 'AZ'), show(o, 'BI')]).toEqual(['0.0%', '0', '0', '$0']);
-    const p = byId(1575);
+    const p = byId(4599);
     expect([show(p, 'AZ'), show(p, 'BI')]).toEqual(['0', '$0']);
   });
   it('F9: the export writes the displayed value (Promo Days included)', () => {
-    const o = byId(2578);
+    const o = byId(5163);
     const t = buildExportTable([rf('A'), rf('F'), rf('BZ')], [o], AS_OF, importMetaOf);
     expect(t.header).toEqual(['Offer ID', 'Promo Days', 'Color code']);
     expect(t.letters).toEqual(['A', 'F', 'BZ']);
-    expect(t.data[0]).toEqual(['2578', '14', 'Light green']);
+    expect(t.data[0]).toEqual(['5163', '14', 'Light green']);
   });
   it('F10: Offer ID and Offer Name first, then Excel order (Promo Days after End Date)', () => {
     const letters = GRID_ENTRIES.filter((e) => e.source === 'R&F tab').map((e) => e.letter);
@@ -96,7 +96,8 @@ describe('C3 views', () => {
 });
 
 describe('C3b coverage (R&F tab and Calendar main tab)', () => {
-  it('every R&F header A..BZ has exactly 1 registry entry with the same letter and header', () => {
+  // Needs the real Excel export, which stays on the developer's machine (data/source is git-ignored).
+  it.skipIf(!fs.existsSync('data/source/rf_live.csv'))('every R&F header A..BZ has exactly 1 registry entry with the same letter and header', () => {
     const rows = Papa.parse<string[]>(fs.readFileSync('data/source/rf_live.csv', 'utf8')).data;
     const headers = rows[3];
     expect(headers).toHaveLength(78);
@@ -115,7 +116,7 @@ describe('C3b coverage (R&F tab and Calendar main tab)', () => {
       ['CP', 'DD', 'DE', 'DF', 'DG', 'DM', 'DN', 'DO', 'DP', 'DQ', 'DR', 'CS', 'DC', 'DH', 'DI', 'DJ', 'DK', 'DL', 'DS', 'DT', 'DU', 'DV', 'DW', 'DX', 'DY', 'DZ', 'CW', 'CX', 'CV'].sort(),
     );
     // the band copies of R&F AN/AO/AR/AS/BG/BH equal their R&F twins
-    const o = byId(1957);
+    const o = byId(4661);
     const pairs: Array<[string, string]> = [['DS', 'AN'], ['DT', 'AO'], ['DU', 'AR'], ['DV', 'AS'], ['DW', 'BG'], ['DX', 'BH']];
     for (const [c, r] of pairs) {
       const ce = CALENDAR_BAND.find((e) => e.letter === c)!;
@@ -140,5 +141,5 @@ describe('C6 How it is calculated', () => {
       const idx = c.letters.map((l) => order.indexOf(l));
       expect(idx).toEqual([...idx].sort((a, b) => a - b));
     }
-  });
+  }, 20000); // the dynamic import of the tab can be slow on a busy machine
 });

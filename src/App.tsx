@@ -46,7 +46,7 @@ function BaseGate({ children }: { children: ReactElement }) {
   if (!loaded) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-surface text-sm text-muted">
-        Loading the imported offers from the Excel exports of 11/11/2026…
+        Loading the dummy offers (shaped like the Excel exports of 11/11/2026)…
       </div>
     );
   }

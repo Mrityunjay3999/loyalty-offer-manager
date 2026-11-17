@@ -8,7 +8,7 @@ import { useImportReport } from '@/lib/importData';
 import { fillFormula } from './RfDetailDrawer';
 import type { OfferRecord } from '@/lib/types';
 
-const DEFAULT_EXAMPLE = '20260330_CATLRGBGS_10X';
+const DEFAULT_EXAMPLE = '20260331_CATSNACKSDAYS_10X';
 
 /** C3b coverage targets. */
 const COVERAGE: Array<{ source: string; columns: string; target: number; shownIn: string; count: () => number }> = [

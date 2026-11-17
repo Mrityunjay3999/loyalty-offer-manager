@@ -82,7 +82,7 @@ export function validateOffer(offer: OfferRecord, ctx: ValidationCtx): Validatio
     if (!OFFER_NAME_RE.test(name)) {
       warn(
         'offerName',
-        'Standard format is YYYYMMDD_DESCRIPTION_REWARD, e.g. 20251103_CANJBPDOGMERRICK_3X.',
+        'Standard format is YYYYMMDD_DESCRIPTION_REWARD, e.g. 20251104_CANKITTENCHEWSMAX_3X.',
       );
     }
     const s = parseISO(offer.startDate);

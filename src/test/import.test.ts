@@ -5,7 +5,7 @@ import base from '@/data/imported/offers.base.json';
 
 describe('A1 parsing rules', () => {
   it('parses money, negatives, percentages, accounting zero, kept text and errors', () => {
-    expect(parseExcelCell('$1,031,774')).toBe(1031774);
+    expect(parseExcelCell('$1,234,567')).toBe(1234567);
     expect(parseExcelCell('(1,234)')).toBe(-1234);
     expect(parseExcelCell('1,234')).toBe(1234);
     expect(parseExcelCell('15.2%')).toBe(0.152);
@@ -17,8 +17,8 @@ describe('A1 parsing rules', () => {
     expect(parseExcelCell('#N/A')).toEqual({ error: '#N/A' });
     expect(parseExcelCell('#DIV/0!')).toEqual({ error: '#DIV/0!' });
     expect(parseExcelCell('')).toBe('');
-    expect(parseExcelCell(' 92,859,656.40 ')).toBe(92859656.4);
-    expect(parseExcelCell('20260713_FLASHSALEGCPROMO_IMPO')).toBe('20260713_FLASHSALEGCPROMO_IMPO');
+    expect(parseExcelCell(' 12,345,678.90 ')).toBe(12345678.9);
+    expect(parseExcelCell('20260706_CHECKINFEST_IMPO')).toBe('20260706_CHECKINFEST_IMPO');
   });
   it('parses m/d/yyyy dates to ISO and leaves other text alone', () => {
     expect(parseExcelDate('3/30/2026')).toBe('2026-03-30');
@@ -56,11 +56,11 @@ describe('A8 import report counts', () => {
   it('lists the 15 offers where the 2 files disagree', () => {
     expect([...report.filesDisagreeOfferNames].sort()).toEqual(
       [
-        '20251201_ADOPTDEC_VIPP', '20260101_ADOPTJAN_VIPP', '20260201_ADOPTFEB_VIPP',
-        '20260201_TENTTRSG_1000000', '20260213_NEWCUSTOMER_LTBP_5000', '20261217_CAN_TIERA_49_5000',
-        '20260202_CANJBPNULO_5X', '20260105_CANJBPBOXIE_5X', '20260105_CANJBPMERRICK_5X',
-        '20260105_CANJBPBLUE_5X', '20260105_CANJBPNATURALBALANCE_5X', '20260928_LTBP_TGT_5000',
-        '20260928_LTBP_TGT_2500', '20261024_GOPVS_PICORIVERA_10X_2280', '20260908_REPTILEFOODSUPPFEEDERS_20_2500',
+        '20251201_MEMBERWEEKDUO_VIPP', '20260101_BIRTHDAYTREATWEEK_VIPP', '20260201_VIPPERKPERKS_VIPP',
+        '20260201_SUMMERPAWPOINTS_500000', '20260216_BLOOMPETPASS_LTBP_3000', '20261212_CAN_TIERBOOSTWEEKPLUS_60_7500',
+        '20260206_CANPETDENTALCHEWSPLUS_5X', '20260106_CANKITTENWETFOODDEALTRIO_5X', '20260110_CANREPTILEFOODPLUS_5X',
+        '20260110_CANBUNNYTREATSPERKS_5X', '20260106_CANAQUAWETFOODDEAL_5X', '20260930_LTBP_TGT_3000',
+        '20260929_LTBP_TGT_3000', '20261029_MEMBERBONUSXTRA_PERKPACKPERKS_10X_9740', '20260906_REPTILEFOODSAVER_10_3000',
       ].sort(),
     );
   });
@@ -78,19 +78,19 @@ describe('A8 import report counts', () => {
     });
   });
 
-  it('A2: the 2 R&F-only offers get new IDs 2607 and 2608 with an issue', () => {
+  it('A2: the 2 R&F-only offers get new IDs 5098 and 5361 with an issue', () => {
     const rfOnly = report.issues.filter((i) => i.type === 'rf_only');
     expect(rfOnly.map((i) => i.offerName).sort()).toEqual([
-      '20261005_CANJBPNUTRIENCE_SELECT_5X', '20270402_PTSBOOST_DOGBEDS_25X',
+      '20261008_CANREPTILEFOODFEST_SELECT_5X', '20270404_PTSBOOST_REPTILESUPPLIES_25X',
     ]);
-    expect(rfOnly.map((i) => i.offerId).sort()).toEqual([2607, 2608]);
+    expect(rfOnly.map((i) => i.offerId).sort()).toEqual([5098, 5361]);
   });
 
   it('records the text-in-number cell, failed lookups and the duplicate name', () => {
     const t = report.issues.filter((i) => i.type === 'text_in_number');
     expect(t).toHaveLength(1);
-    expect(t[0].offerName).toBe('20260908_REPTILEFOODSUPPFEEDERS_20_2500');
-    expect(t[0].excelValue).toBe('20260713_FLASHSALEGCPROMO_IMPO');
+    expect(t[0].offerName).toBe('20260906_REPTILEFOODSAVER_10_3000');
+    expect(t[0].excelValue).toBe('20260706_CHECKINFEST_IMPO');
     expect(report.issues.filter((i) => i.type === 'failed_lookup')).toHaveLength(182);
     expect(c.duplicateNames).toBe(1);
   });
@@ -98,18 +98,18 @@ describe('A8 import report counts', () => {
 
 describe('A3/A4 imported values', () => {
   const byName = (n: string) => (base as Array<Record<string, unknown>>).find((o) => o.offerName === n)!;
-  it('rebuilds exact forecast inputs for 20260330_CATLRGBGS_10X', () => {
-    const o = byName('20260330_CATLRGBGS_10X');
-    expect(o.bonusRateLow).toBeCloseTo(0.13, 12);
-    expect(o.bonusRateHigh).toBeCloseTo(0.16, 12);
+  it('rebuilds exact forecast inputs for 20260331_CATSNACKSDAYS_10X', () => {
+    const o = byName('20260331_CATSNACKSDAYS_10X');
+    expect(o.bonusRateLow).toBeCloseTo(0.135, 12);
+    expect(o.bonusRateHigh).toBeCloseTo(0.165, 12);
     expect(o.avgSpendPerTxnLow).toBe(45);
     expect(o.avgSpendPerTxnHigh).toBe(50);
-    expect(o.activationByDayLow).toBe(30000);
-    expect(o.activationByDayHigh).toBe(33000);
-    expect(o.bonusPtsIssued).toBe(92859656.4);
+    expect(o.activationByDayLow).toBeCloseTo(40142.857142857145, 6);
+    expect(o.activationByDayHigh).toBeCloseTo(44714.28571428572, 6);
+    expect(o.bonusPtsIssued).toBe(138244639.97);
   });
   it('keeps the Metadata audience size where the R&F cell holds text', () => {
-    expect(byName('20260908_REPTILEFOODSUPPFEEDERS_20_2500').audienceSize).toBe(83855722);
+    expect(byName('20260906_REPTILEFOODSAVER_10_3000').audienceSize).toBe(114514656);
   });
   it('sets points economics per offer', () => {
     const all = base as Array<Record<string, unknown>>;

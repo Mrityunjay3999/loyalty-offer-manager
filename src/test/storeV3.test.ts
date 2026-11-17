@@ -16,26 +16,26 @@ describe('A7 seed: imported base + demo sample', () => {
     expect(S().baseLoaded).toBe(true);
     expect(S().offers).toHaveLength(2426);
     const demo = S().offers.filter((o) => o._demoSample);
-    expect(demo.map((o) => o.offerId)).toEqual([1570]);
+    expect(demo.map((o) => o.offerId)).toEqual([4581]);
     expect(demo[0].buildStatus).toBe('Cancelled');
   });
   it('keeps the _import block beside each imported offer', () => {
-    const o = byName('20260330_CATLRGBGS_10X');
+    const o = byName('20260331_CATSNACKSDAYS_10X');
     const m = importMetaOf(o._uid)!;
     expect(m.source).toBe('Excel R&F tab + Metadata');
     expect(m.inExcelRfTab).toBe(true);
-    expect(m.excelRfRefNumber).toBe(547);
+    expect(m.excelRfRefNumber).toBe(5141);
     expect(o._import).toBeUndefined(); // not on the record itself
   });
 });
 
 describe('A7 diffs, badges and the round trip', () => {
   it('editing Step 7 / Step 9 recalculates the row and sets Changed since import', () => {
-    const o = byName('20260330_CATLRGBGS_10X');
+    const o = byName('20260331_CATSNACKSDAYS_10X');
     const before = computeRfCells(o, new Date(2026, 10, 11));
     expect(isChangedSinceImport(o._uid, S().offerDiffs)).toBe(false);
     S().updateOffer(o._uid!, { bonusPtsIssued: 100_000_000, bonusRateLow: 0.2 });
-    const after = byName('20260330_CATLRGBGS_10X');
+    const after = byName('20260331_CATSNACKSDAYS_10X');
     const cells = computeRfCells(after, new Date(2026, 10, 11));
     expect(cells.R).toBe(100_000_000);
     expect(cells.AH).toBe(0.2);
@@ -43,7 +43,7 @@ describe('A7 diffs, badges and the round trip', () => {
     expect(isChangedSinceImport(o._uid, S().offerDiffs)).toBe(true);
   });
   it('writing the same values does not count as a change', () => {
-    const o = byName('20260323_TIERA_50_5000');
+    const o = byName('20260325_TIERBOOSTWEEKPLUS_45_7500');
     S().updateOffer(o._uid!, { ...o });
     expect(isChangedSinceImport(o._uid, S().offerDiffs)).toBe(false);
   });
@@ -57,7 +57,7 @@ describe('A7 diffs, badges and the round trip', () => {
     expect(payload).not.toContain('"offers"'); // the merged list is never persisted
   });
   it('Reset demo data returns to the seed', () => {
-    const o = byName('20260330_CATLRGBGS_10X');
+    const o = byName('20260331_CATSNACKSDAYS_10X');
     S().updateOffer(o._uid!, { activations: 1 });
     const uid = S().createDraft();
     expect(S().offers.some((x) => x._uid === uid)).toBe(true);
@@ -65,7 +65,7 @@ describe('A7 diffs, badges and the round trip', () => {
     expect(S().offers).toHaveLength(2426);
     expect(Object.keys(S().offerDiffs)).toHaveLength(0);
     expect(S().createdOffers).toHaveLength(0);
-    expect(byName('20260330_CATLRGBGS_10X').activations).toBe(148186);
+    expect(byName('20260331_CATSNACKSDAYS_10X').activations).toBe(204278);
   });
 });
 
@@ -79,8 +79,8 @@ describe('A6 approvals are not flooded by imported offers', () => {
     const changed = S().offers.find((x) => x._uid === o._uid)!;
     expect(submittedInPrototype(changed, S().offerDiffs)).toBe(true);
   });
-  it('a new offer gets the next auto-generated Offer ID after the import (2609)', () => {
-    expect(S().nextOfferId()).toBe(2609);
+  it('a new offer gets the next auto-generated Offer ID after the import (5427)', () => {
+    expect(S().nextOfferId()).toBe(5427);
   });
 });
 
@@ -89,7 +89,7 @@ describe('E1 Check tab: changed offers are not compared', () => {
     const { runCheck } = await import('@/lib/excelCheck');
     const rfSnap = (await import('@/data/imported/excelSnapshot.rf.json')).default;
     const report = (await import('@/data/imported/importReport.json')).default;
-    const o = byName('20260330_CATLRGBGS_10X');
+    const o = byName('20260331_CATSNACKSDAYS_10X');
     S().updateOffer(o._uid!, { activations: 1 });
     const res = runCheck({
       offers: S().offers,
@@ -100,7 +100,7 @@ describe('E1 Check tab: changed offers are not compared', () => {
       issues: report.issues as never,
     });
     expect(res.offersCompared).toBe(767);
-    expect(res.changedNotCompared.map((c) => c.offerName)).toEqual(['20260330_CATLRGBGS_10X']);
+    expect(res.changedNotCompared.map((c) => c.offerName)).toEqual(['20260331_CATSNACKSDAYS_10X']);
     expect(res.byReason['Logic difference']).toBe(0);
   });
 });

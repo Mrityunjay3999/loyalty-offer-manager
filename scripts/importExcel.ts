@@ -27,7 +27,8 @@ import type { OfferRecord } from '../src/lib/types';
 
 const ROOT = process.cwd();
 const SRC = path.join(ROOT, 'data/source');
-const OUT = path.join(ROOT, 'src/data/imported');
+// Real output stays private (git-ignored); scripts/anonymizeData.ts writes the dummy copy the app ships.
+const OUT = path.join(ROOT, 'data/private/imported');
 const IMPORTED_ON = '2026-11-11';
 const IMPORTED_AT_ISO = '2026-11-11T09:00:00.000Z';
 
