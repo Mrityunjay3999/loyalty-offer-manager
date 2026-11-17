@@ -135,7 +135,7 @@ function RecordPreview({ offers, attrName, metricName }: { offers: OfferRecord[]
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <label className="text-sm text-muted">Offer:</label>
         <select className="min-w-[260px] rounded-md border border-border px-2 py-1.5 text-sm" value={uid} onChange={(e) => setUid(e.target.value)}>
-          {offers.map((o) => <option key={o._uid} value={o._uid}>{String(o.offerName ?? o.offerId)} — {String(o.buildStatus)}</option>)}
+          {offers.map((o) => <option key={o._uid} value={o._uid}>{String(o.offerName || o.offerId || '(unnamed)')} — {String(o.buildStatus)}</option>)}
         </select>
         <input className="rounded-md border border-border px-2 py-1.5 text-sm" placeholder="Search columns" value={q} onChange={(e) => setQ(e.target.value)} />
         <div className="flex gap-1">
@@ -285,6 +285,8 @@ function ColumnMapping({ attrName, metricName, push }: { attrName: string; metri
 }
 
 function Exceptions({ exceptions, navigate }: { exceptions: ReturnType<typeof allExceptions>; navigate: (p: string) => void }) {
+  const role = useAppStore((s) => s.role);
+  const canEdit = can(role, 'openEditArea');
   return (
     <div>
       <div className="mb-2 flex items-center gap-2 rounded-md border border-warning/40 bg-warning/5 px-3 py-1.5 text-sm text-warning">
@@ -304,7 +306,7 @@ function Exceptions({ exceptions, navigate }: { exceptions: ReturnType<typeof al
                   <td className="px-2 py-1">{e.status}</td>
                   <td className="px-2 py-1 text-muted">{e.fieldId}</td>
                   <td className="px-2 py-1">{e.rule}</td>
-                  <td className="px-2 py-1"><button onClick={() => navigate(`/offers/${e.offerUid}`)} className="inline-flex items-center gap-1 text-primary hover:underline"><ExternalLink size={12} /> Open</button></td>
+                  <td className="px-2 py-1">{canEdit && <button onClick={() => navigate(`/offers/${e.offerUid}`)} className="inline-flex items-center gap-1 text-primary hover:underline"><ExternalLink size={12} /> Open</button>}</td>
                 </tr>
               ))}
             </tbody>

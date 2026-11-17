@@ -7,6 +7,7 @@ import { PageHeader } from '@/components/PageHeader';
 import { EmptyState } from '@/components/EmptyState';
 import { StatusPill } from '@/components/StatusPill';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { OfferDetailDrawer } from '@/components/OfferDetailDrawer';
 import { computeForecast, forecastNeeded, softLockDate } from '@/lib/calculations';
 import { formatCurrency, formatNumber, formatDate } from '@/lib/format';
 import { can } from '@/lib/permissions';
@@ -52,7 +53,15 @@ export function ApprovalsQueue() {
   const push = useToasts((s) => s.push);
 
   const [returnUid, setReturnUid] = useState<string | null>(null);
+  const [detailUid, setDetailUid] = useState<string | null>(null);
   const canApprove = can(role, 'approve');
+  const canEdit = can(role, 'openEditArea');
+
+  /** Editors open the workspace; roles without the edit area (e.g. Approver) get the read-only detail panel. */
+  function openOffer(o: OfferRecord) {
+    if (canEdit) navigate(`/offers/${o._uid}`);
+    else setDetailUid(o._uid ?? null);
+  }
 
   // v3 A6: imported offers do not create approval tasks; only offers submitted in the prototype appear.
   const queue = useMemo(
@@ -83,6 +92,7 @@ export function ApprovalsQueue() {
   }
 
   const returnOffer = offers.find((o) => o._uid === returnUid);
+  const detailOffer = offers.find((o) => o._uid === detailUid);
 
   return (
     <div>
@@ -125,7 +135,7 @@ export function ApprovalsQueue() {
                   <tr key={o._uid} className="border-b border-border last:border-0 hover:bg-surface/50">
                     <td className="px-3 py-2 tabular-nums">{String(o.offerId ?? '—')}</td>
                     <td className="px-3 py-2">
-                      <button onClick={() => navigate(`/offers/${o._uid}`)} className="font-medium text-primary hover:underline">
+                      <button onClick={() => openOffer(o)} className="font-medium text-primary hover:underline">
                         {String(o.offerName ?? '(unnamed)')}
                       </button>
                     </td>
@@ -142,7 +152,7 @@ export function ApprovalsQueue() {
                     </td>
                     <td className="px-3 py-2">
                       <div className="flex items-center gap-1.5">
-                        <button onClick={() => navigate(`/offers/${o._uid}`)} className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-surface">
+                        <button onClick={() => openOffer(o)} className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-surface">
                           <ExternalLink size={13} /> Open
                         </button>
                         {canApprove && (
@@ -164,6 +174,8 @@ export function ApprovalsQueue() {
           </table>
         </div>
       )}
+
+      <OfferDetailDrawer offer={detailOffer} open={detailUid !== null} onClose={() => setDetailUid(null)} />
 
       <ConfirmDialog
         open={returnUid !== null}

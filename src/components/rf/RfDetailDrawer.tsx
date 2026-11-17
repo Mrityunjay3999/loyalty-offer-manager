@@ -10,6 +10,7 @@ import { StatusPill } from '@/components/StatusPill';
 import { FieldRenderer } from '@/components/fields/FieldRenderer';
 import { fieldsByStep } from '@/lib/dataLoaders';
 import { statusOf } from '@/lib/lifecycle';
+import { can } from '@/lib/permissions';
 import { computeRfCells, RF_COLUMNS, type RfCells } from '@/lib/rfEngine';
 import { compareCell, formatXVal, displayXVal } from '@/lib/excelFormat';
 import { RF_BY_LETTER } from '@/lib/forecastColumnRegistry';
@@ -66,6 +67,8 @@ export function RfDetailDrawer({
   onClose: () => void;
 }) {
   const navigate = useNavigate();
+  const role = useAppStore((s) => s.role);
+  const canEdit = can(role, 'openEditArea');
   const offerDiffs = useAppStore((s) => s.offerDiffs);
   const [panel, setPanel] = useState<null | 'forecast' | 'results'>(null);
   const report = useImportReport();
@@ -130,8 +133,10 @@ export function RfDetailDrawer({
               <span className="text-xs font-normal text-muted">Offer ID {String(offer?.offerId ?? '')}</span>
             </Dialog.Title>
             <div className="flex shrink-0 items-center gap-1.5">
+              {canEdit && <>
               <button onClick={() => { onClose(); navigate(`/offers/${offer?._uid}?step=7. Forecast`); }} className="inline-flex items-center gap-1 rounded border border-border px-2 py-1 text-xs hover:bg-surface"><ExternalLink size={12} /> Open offer (Step 7)</button>
               <button onClick={() => { onClose(); navigate(`/offers/${offer?._uid}?step=9. Results`); }} className="inline-flex items-center gap-1 rounded border border-border px-2 py-1 text-xs hover:bg-surface"><ExternalLink size={12} /> Step 9</button>
+              </>}
               <Dialog.Close asChild><button aria-label="Close" className="text-muted hover:text-ink"><X size={18} /></button></Dialog.Close>
             </div>
           </div>
