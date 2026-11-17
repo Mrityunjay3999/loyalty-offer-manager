@@ -4,12 +4,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#2C6E76',
-        accent: '#B5651D',
-        ink: '#1E2229',
-        muted: '#6B7280',
-        border: '#E5E1D8',
-        surface: '#FAF9F6',
+        // Databricks-inspired palette
+        primary: '#FF3621', // Lava Red: primary buttons, active indicators
+        accent: '#0B2026', // Dark Navy
+        navy: '#0B2026', // Sidebar
+        canvas: '#F9F7F4', // Oat Light: main app background
+        ink: '#333333', // Charcoal: headings and primary text
+        muted: '#6B6B6B',
+        border: '#DEDDD8', // subtle neutral grey
+        surface: '#EEEDE9', // Oat Medium: secondary surfaces
         success: '#3D7A4E',
         warning: '#A5761E',
         danger: '#B8452F',

@@ -11,10 +11,10 @@ import type { OfferRecord } from './types';
 
 export type ColourGroup = 'Broad' | 'Targeted' | 'Other';
 
-/** Broad = teal, Targeted = indigo, N/A/empty = grey (business-chosen palette). */
+/** Broad = Lava Red, Targeted = Dark Navy, N/A/empty = grey (Databricks-inspired palette). */
 export const GROUP_COLOURS: Record<ColourGroup, string> = {
-  Broad: '#2C6E76',
-  Targeted: '#4F46E5',
+  Broad: '#FF3621',
+  Targeted: '#0B2026',
   Other: '#B9C0C4',
 };
 export const GROUP_LABELS: Record<ColourGroup, string> = {

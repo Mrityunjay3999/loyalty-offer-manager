@@ -5,7 +5,7 @@ import * as Tooltip from '@radix-ui/react-tooltip';
  * business sees the roadmap, but stays non-functional. Default copy matches the
  * common tooltip; pass `note` to override.
  */
-export function PhaseBadge({ note }: { note?: string }) {
+export function PhaseBadge({ note, onDark }: { note?: string; onDark?: boolean }) {
   const text = note ?? 'Planned for Phase 2, not part of this MVP prototype.';
   return (
     <Tooltip.Provider delayDuration={150}>
@@ -13,7 +13,9 @@ export function PhaseBadge({ note }: { note?: string }) {
         <Tooltip.Trigger asChild>
           <span
             tabIndex={0}
-            className="inline-flex cursor-help items-center rounded-full border border-accent bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent"
+            className={`inline-flex cursor-help items-center rounded-full border px-2 py-0.5 text-xs font-medium ${
+              onDark ? 'border-white/40 bg-white/10 text-white/90' : 'border-accent bg-accent/10 text-accent'
+            }`}
           >
             Phase 2
           </span>

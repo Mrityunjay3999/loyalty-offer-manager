@@ -126,7 +126,7 @@ export function AppShell() {
 
       <div className="flex flex-1">
         {/* Sidebar */}
-        <nav className="w-60 shrink-0 border-r border-border bg-white px-2 py-3">
+        <nav className="w-60 shrink-0 border-r border-navy bg-navy px-2 py-3">
           <ul className="space-y-0.5">
             {NAV.filter((item) => !item.cap || can(role, item.cap, permissions)).map((item) => (
               <li key={item.to}>
@@ -136,8 +136,8 @@ export function AppShell() {
                   className={({ isActive }) =>
                     `flex items-center gap-2.5 rounded-md px-3 py-2 ${
                       isActive
-                        ? 'bg-primary/10 font-medium text-primary'
-                        : 'text-ink hover:bg-surface'
+                        ? 'bg-primary font-medium text-white'
+                        : 'text-white/80 hover:bg-white/10'
                     }`
                   }
                 >
@@ -148,10 +148,10 @@ export function AppShell() {
                       {approvalsCount}
                     </span>
                   )}
-                  {item.phase2 && <PhaseBadge />}
+                  {item.phase2 && <PhaseBadge onDark />}
                 </NavLink>
                 {item.adminNote && role !== 'Admin' && (
-                  <div className="px-3 pb-1 pl-10 text-xs text-muted">Read-only</div>
+                  <div className="px-3 pb-1 pl-10 text-xs text-white/60">Read-only</div>
                 )}
               </li>
             ))}
@@ -159,7 +159,7 @@ export function AppShell() {
         </nav>
 
         {/* Main content */}
-        <main className="min-w-0 flex-1 bg-surface px-6 py-5">
+        <main className="min-w-0 flex-1 bg-canvas px-6 py-5">
           <Outlet />
         </main>
       </div>

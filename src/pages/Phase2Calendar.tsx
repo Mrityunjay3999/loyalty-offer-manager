@@ -206,7 +206,7 @@ export function Phase2Calendar() {
         {view === 'month' && (
           <span className="ml-auto flex items-center gap-1 text-muted">
             Fewer
-            {[0.12, 0.28, 0.5, 0.75, 1].map((a) => <span key={a} className="inline-block h-3 w-3 rounded" style={{ background: `rgba(44,110,118,${a})` }} />)}
+            {[0.12, 0.28, 0.5, 0.75, 1].map((a) => <span key={a} className="inline-block h-3 w-3 rounded" style={{ background: `rgba(255,54,33,${a})` }} />)}
             More
           </span>
         )}
@@ -281,7 +281,7 @@ function MonthWeekGrid({
                 onClick={() => c.total && onDayClick(day)}
                 title={`${c.total} offers running: ${c.Broad} Broad, ${c.Targeted} Targeted, ${c.Other} N/A`}
                 className={`flex ${view === 'week' ? 'h-40' : 'h-24'} flex-col rounded border p-1 text-left ${dim ? 'opacity-40' : ''} ${c.total ? 'hover:border-primary' : 'border-border'} ${isToday(day) ? 'border-primary ring-1 ring-primary' : 'border-border'} ${highlighted ? 'ring-2 ring-accent' : ''}`}
-                style={{ background: shade ? `rgba(44,110,118,${shade * 0.18})` : undefined }}
+                style={{ background: shade ? `rgba(255,54,33,${shade * 0.18})` : undefined }}
               >
                 <div className="flex items-center justify-between text-[11px]">
                   <span className={dim ? 'text-muted' : 'text-ink'}>{format(day, 'd')}</span>
